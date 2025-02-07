@@ -17,7 +17,8 @@ public class ModItemProperties {
                     if (nbt == null) {return rarity;}
 
                     CompoundTag enchantmentTag = nbt.getCompound("Enchantment");
-                    String enchantment = enchantmentTag.getString("id");
+                    String enchantmentId = enchantmentTag.getString("id");
+                    int enchantmentLevel = enchantmentTag.getInt("lvl");
 
                     if (nbt.getBoolean("IconOnly")) {
                         rarity = 5f;
@@ -25,7 +26,7 @@ public class ModItemProperties {
                     }
 
                     for (BookRarityProperties bookProperties : BookRarityProperties.getAllProperties()) {
-                        if (bookProperties.isEnchantmentInPool(enchantment)) {
+                        if (bookProperties.isEnchantmentInPool(enchantmentId, enchantmentLevel)) {
                             rarity = bookProperties.rarity;
                         }
                     }

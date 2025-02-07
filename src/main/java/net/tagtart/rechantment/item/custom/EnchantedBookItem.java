@@ -63,10 +63,11 @@ public class EnchantedBookItem extends Item {
         if (rootTag == null) return Component.literal("Empty book!");
         CompoundTag enchantmentTag = rootTag.getCompound("Enchantment");
         String enchantmentRaw = enchantmentTag.getString("id");
+        int enchantmentLevel = enchantmentTag.getInt("lvl");
         String[] enchantmentInfo = enchantmentRaw.split(":");
         String enchantmentSource = enchantmentInfo[0];
         String enchantmentName = enchantmentInfo[1];
-        BookRarityProperties enchantRarityInfo = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw);
+        BookRarityProperties enchantRarityInfo = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw, enchantmentLevel);
 
         ResourceLocation resourceLocation = new ResourceLocation(enchantmentRaw);
         Enchantment enchantment = ForgeRegistries.ENCHANTMENTS.getValue(resourceLocation);

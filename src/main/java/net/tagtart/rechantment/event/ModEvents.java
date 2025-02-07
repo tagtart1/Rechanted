@@ -144,8 +144,11 @@ public class ModEvents {
                     String enchantmentRaw1 = ForgeRegistries.ENCHANTMENTS.getKey(component1.getKey()).toString();
                     String enchantmentRaw2 = ForgeRegistries.ENCHANTMENTS.getKey(component2.getKey()).toString();
 
-                    BookRarityProperties rarity1 = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw1);
-                    BookRarityProperties rarity2 = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw2);
+                    int enchantmentLevel1 = component1.getValue();
+                    int enchantmentLevel2 = component2.getValue();
+
+                    BookRarityProperties rarity1 = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw1, enchantmentLevel1);
+                    BookRarityProperties rarity2 = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw2, enchantmentLevel2);
 
                     float rarityValue1 = 0f;
                     float rarityValue2 = 0f;
@@ -177,8 +180,9 @@ public class ModEvents {
                     Map.Entry<Enchantment, Integer> entry = enchantsSorted.get(i - 1);
 
                     String enchantmentRaw = ForgeRegistries.ENCHANTMENTS.getKey(entry.getKey()).toString();
+                    int enchantmentLevel = entry.getValue();
 
-                    BookRarityProperties rarityProperties = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw);
+                    BookRarityProperties rarityProperties = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw, enchantmentLevel);
 
                     Style style = Style.EMPTY;
                     if (entry.getKey().isCurse()) {
@@ -696,7 +700,7 @@ public class ModEvents {
             Component displayName = pStack.getDisplayName();
             Style displayHoverStyle = displayName.getStyle();
 
-            BookRarityProperties bookProps = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw);
+            BookRarityProperties bookProps = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw, enchantLevel);
             if (bookProps == null) return;
 
             for (ServerPlayer otherPlayer : level.players()) {
@@ -726,7 +730,8 @@ public class ModEvents {
                 CompoundTag rootTag = currentStack.getTag();
                 CompoundTag enchantmentTag = rootTag.getCompound("Enchantment");
                 String enchantmentRaw = enchantmentTag.getString("id");
-                BookRarityProperties enchantRarityInfo = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw);
+                int enchantmentLevel = enchantmentTag.getInt("lvl");
+                BookRarityProperties enchantRarityInfo = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw, enchantmentLevel);
 
                 Random rand = new Random();
                 event.setXp(rand.nextInt(enchantRarityInfo.minGrindstoneXP, enchantRarityInfo.maxGrindstoneXP + 1));

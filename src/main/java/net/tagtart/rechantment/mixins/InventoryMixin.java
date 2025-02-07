@@ -52,7 +52,7 @@ public class InventoryMixin {
                     Style displayHoverStyle = displayName.getStyle();
 
                     Component playerName = inventory.player.getDisplayName();
-                    BookRarityProperties bookProps = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw);
+                    BookRarityProperties bookProps = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw, enchantLevel);
                     if (bookProps != null) {
                         for (ServerPlayer otherPlayer : serverLevel.players()) {
 

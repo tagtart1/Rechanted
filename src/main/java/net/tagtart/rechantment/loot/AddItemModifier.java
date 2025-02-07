@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Supplier;
 
 // Adds a single item to any specified loot table
-// If wanting to drop our custom enchant book then it needs additional functionality in doApply
 public class AddItemModifier extends LootModifier {
 
     public static final Supplier<Codec<AddItemModifier>> CODEC = Suppliers.memoize(()

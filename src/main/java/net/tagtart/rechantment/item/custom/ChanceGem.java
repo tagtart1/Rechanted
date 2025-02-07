@@ -74,7 +74,8 @@ public class ChanceGem extends Item {
 
             CompoundTag enchantmentTag = stack.getTag().getCompound("Enchantment");
             String enchantmentRaw = enchantmentTag.getString("id");
-            BookRarityProperties appliedBookProperties = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw);
+            int enchantmentLevel = enchantmentTag.getInt("lvl");
+            BookRarityProperties appliedBookProperties = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw, enchantmentLevel);
 
             if (appliedBookProperties == null) return false;
 

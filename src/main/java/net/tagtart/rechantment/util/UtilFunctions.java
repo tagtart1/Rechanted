@@ -85,9 +85,9 @@ public class UtilFunctions {
     }
 
     @Nullable
-    public static BookRarityProperties getPropertiesFromEnchantment(String enchantmentRaw) {
+    public static BookRarityProperties getPropertiesFromEnchantment(String enchantmentRaw, int level) {
         for (BookRarityProperties bookProperties : BookRarityProperties.getAllProperties()) {
-            if (bookProperties.isEnchantmentInPool(enchantmentRaw)) {
+            if (bookProperties.isEnchantmentInPool(enchantmentRaw, level)) {
                 return bookProperties;
             }
         }
