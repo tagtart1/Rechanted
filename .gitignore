@@ -24,4 +24,7 @@ runs
 run-data
 .vscode
 
+# mod
+generated
+
 repo
