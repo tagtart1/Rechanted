@@ -1,6 +1,10 @@
 package net.tagtart.rechantment;
 
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.item.ModCreativeModeTabs;
+import net.tagtart.rechantment.item.ModItemProperties;
 import net.tagtart.rechantment.item.ModItems;
 import org.slf4j.Logger;
 
@@ -59,6 +63,7 @@ public class Rechantment {
 
         ModItems.register(modEventBus);
 
+        ModDataComponents.register(modEventBus);
 
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
@@ -74,5 +79,14 @@ public class Rechantment {
     public void onServerStarting(ServerStartingEvent event) {
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
+    }
+
+
+    @EventBusSubscriber(modid = MOD_ID, value = Dist.CLIENT)
+    public static class ClientModEvents {
+        @SubscribeEvent
+        public static void onClientSetup(FMLClientSetupEvent event) {
+            ModItemProperties.addCustomItemProperties();
+        }
     }
 }
