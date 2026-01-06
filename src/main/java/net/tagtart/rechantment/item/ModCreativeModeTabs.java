@@ -18,6 +18,7 @@ public class ModCreativeModeTabs {
                     .title(Component.translatable("creative.rechantment.title"))
                     .displayItems((itemDisplayParameters, output) -> {
                         output.accept(ModItems.CHANCE_GEM.get());
+                        output.accept(ModItems.RECHANTMENT_BOOK.get());
                     }).build());
 
     public static void register(IEventBus eventBus) {
