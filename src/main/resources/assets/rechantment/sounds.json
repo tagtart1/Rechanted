@@ -1,0 +1,74 @@
+{
+  "enchanted_book_fail": {
+    "subtitles": "sounds.rechantment.enchanted_book_fail",
+    "sounds": [
+        "rechantment:enchanted_book_fail"
+    ]
+  },
+
+  "rebirth_item": {
+    "subtitles": "sounds.rechantment.rebirth_item",
+    "sounds": [
+      "rechantment:rebirth_item"
+    ]
+  },
+
+  "enchant_table_ambient": {
+    "subtitles": "sounds.rechantment.enchant_table_ambient",
+    "sounds": [
+      {
+        "name": "rechantment:enchant_table_ambient",
+        "stream": true,
+        "attenuation_distance": 5
+      }
+    ]
+  },
+
+  "enchant_table_charge": {
+    "subtitles": "sounds.rechantment.enchant_table_charge",
+    "sounds": [
+      "rechantment:enchant_table_charge"
+    ]
+  },
+
+  "enchant_table_discharge": {
+    "subtitles": "sounds.rechantment.enchant_table_discharge",
+    "sounds": [
+      {
+        "name": "rechantment:enchant_table_discharge"
+      }
+    ]
+  },
+
+  "enchant_table_open": {
+    "subtitles": "sounds.rechantment.enchant_table_open",
+    "sounds": [
+      {
+        "name": "rechantment:enchant_table_flip1"
+      },
+      {
+        "name": "rechantment:enchant_table_flip2"
+      },
+      {
+        "name": "rechantment:enchant_table_flip3"
+      }
+    ]
+  },
+  "enchant_table_close": {
+    "subtitles": "sounds.rechantment.enchant_table_close",
+    "sounds": [
+      {
+        "name": "rechantment:enchant_table_close1"
+      },
+      {
+        "name": "rechantment:enchant_table_close2"
+      },
+      {
+        "name": "rechantment:enchant_table_close3"
+      },
+      {
+        "name": "rechantment:enchant_table_close4"
+      }
+    ]
+  }
+}

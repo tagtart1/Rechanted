@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.tagtart.rechantment.mixins",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "mixins.rechantment.refmap.json",
+  "mixins": [
+    "EnchantmentTableBlockMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
