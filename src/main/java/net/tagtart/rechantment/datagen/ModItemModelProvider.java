@@ -23,18 +23,43 @@ public class ModItemModelProvider extends ItemModelProvider {
 
 // TODO: make this dynamic now based on actual enchantment rarities, refer to ModItemProperties not here
     private void rechantmentBookItem() {
+        withExistingParent("simple", mcLoc("item/generated"))
+                .texture("layer0", ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "item/simple"));
+
         withExistingParent("unique", mcLoc("item/generated"))
                 .texture("layer0", ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "item/unique"));
 
         withExistingParent("ultimate", mcLoc("item/generated"))
                 .texture("layer0", ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "item/ultimate"));
 
+        withExistingParent("legendary", mcLoc("item/generated"))
+                .texture("layer0", ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "item/legendary"));
 
+        withExistingParent("elite", mcLoc("item/generated"))
+                .texture("layer0", ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "item/elite"));
+
+    // TODO: change to modLoc, just copy pasted so thats why its not there
         withExistingParent(ModItems.RECHANTMENT_BOOK.getId().getPath(), mcLoc("item/generated"))
                 .texture("layer0", ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "item/simple"))
                 .override()
                 .predicate(modLoc("book_rarity"), 1)
-                .model(new ModelFile.UncheckedModelFile(ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "item/unique")));
+                .model(new ModelFile.UncheckedModelFile(ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "item/simple")))
+                .end()
+                .override()
+                .predicate(modLoc("book_rarity"),2)
+                .model(new ModelFile.UncheckedModelFile( ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "item/unique")))
+                .end()
+                .override()
+                .predicate(modLoc("book_rarity"),3)
+                .model(new ModelFile.UncheckedModelFile( ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "item/elite")))
+                .end()
+                .override()
+                .predicate(modLoc("book_rarity"),4)
+                .model(new ModelFile.UncheckedModelFile( ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "item/ultimate")))
+                .end()
+                .override()
+                .predicate(modLoc("book_rarity"),5)
+                .model(new ModelFile.UncheckedModelFile( ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "item/legendary")));
 
     }
 }

@@ -1,12 +1,24 @@
 package net.tagtart.rechantment.item;
 
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.tagtart.rechantment.Rechantment;
+import net.tagtart.rechantment.util.BookRarityProperties;
+import net.tagtart.rechantment.util.EnchantmentPoolEntry;
 
 import java.util.function.Supplier;
 
@@ -18,8 +30,39 @@ public class ModCreativeModeTabs {
                     .title(Component.translatable("creative.rechantment.title"))
                     .displayItems((itemDisplayParameters, output) -> {
                         output.accept(ModItems.CHANCE_GEM.get());
-                        output.accept(ModItems.RECHANTMENT_BOOK.get());
-                    }).build());
+
+
+                        BookRarityProperties[] bookRarityProperties = BookRarityProperties.getAllProperties();
+                        for(BookRarityProperties bookRarityProperty : bookRarityProperties) {
+                            for(EnchantmentPoolEntry enchantPoolEntry : bookRarityProperty.enchantmentPool) {
+
+                                String enchantmentRaw = enchantPoolEntry.enchantment;
+                                int enchantEntryMinLevel = enchantPoolEntry.minLevel;
+                                int enchantEntryMaxLevel = enchantPoolEntry.maxLevel;
+                                ResourceLocation enchantmentResourceLocation = ResourceLocation.parse(enchantmentRaw);
+
+                                HolderLookup.RegistryLookup<Enchantment> enchantmentRegistry = itemDisplayParameters.holders().lookupOrThrow(Registries.ENCHANTMENT);
+
+                                ResourceKey<Enchantment> key = ResourceKey.create(Registries.ENCHANTMENT, enchantmentResourceLocation);
+
+                                enchantmentRegistry.get(key).ifPresent(enchantment -> {
+                                    for(int i = enchantEntryMinLevel ; i <= enchantEntryMaxLevel ; i++) {
+                                        ItemStack book = new ItemStack(ModItems.RECHANTMENT_BOOK.get());
+
+                                        ItemEnchantments.Mutable storedEnchants = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
+
+                                        storedEnchants.set(enchantment, i);
+
+                                        book.set(DataComponents.STORED_ENCHANTMENTS, storedEnchants.toImmutable());
+                                        output.accept(book);
+                                    }
+                                });
+
+
+                            }
+                        }
+                    })
+                    .build());
 
     public static void register(IEventBus eventBus) {
         CREATIVE_MODE_TAB.register(eventBus);

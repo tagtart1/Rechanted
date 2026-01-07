@@ -3,6 +3,7 @@ package net.tagtart.rechantment;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.tagtart.rechantment.component.ModDataComponents;
+import net.tagtart.rechantment.config.RechantmentCommonConfigs;
 import net.tagtart.rechantment.item.ModCreativeModeTabs;
 import net.tagtart.rechantment.item.ModItemProperties;
 import net.tagtart.rechantment.item.ModItems;
@@ -67,7 +68,7 @@ public class Rechantment {
 
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        modContainer.registerConfig(ModConfig.Type.COMMON, RechantmentCommonConfigs.SPEC);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
