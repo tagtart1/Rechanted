@@ -23,6 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.tagtart.rechantment.screen.RechantmentTableMenu;
 import net.tagtart.rechantment.sound.ModSounds;
+import net.tagtart.rechantment.util.BookRarityProperties;
 import net.tagtart.rechantment.util.UtilFunctions;
 import org.jetbrains.annotations.Nullable;
 import oshi.util.tuples.Pair;

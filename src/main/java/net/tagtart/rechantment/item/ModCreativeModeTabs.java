@@ -17,6 +17,7 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.tagtart.rechantment.Rechantment;
+import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.util.BookRarityProperties;
 import net.tagtart.rechantment.util.EnchantmentPoolEntry;
 
@@ -53,7 +54,8 @@ public class ModCreativeModeTabs {
 
                                         storedEnchants.set(enchantment, i);
 
-                                        book.set(DataComponents.STORED_ENCHANTMENTS, storedEnchants.toImmutable());
+                                        book.set(DataComponents.STORED_ENCHANTMENTS, storedEnchants.toImmutable().withTooltip(false));
+                                        book.set(ModDataComponents.SUCCESS_RATE, 100);
                                         output.accept(book);
                                     }
                                 });

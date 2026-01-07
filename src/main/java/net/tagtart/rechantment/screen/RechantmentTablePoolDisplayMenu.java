@@ -10,6 +10,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.tagtart.rechantment.block.entity.RechantmentTableBlockEntity;
+import net.tagtart.rechantment.util.BookRarityProperties;
 
 public class RechantmentTablePoolDisplayMenu extends AbstractContainerMenu {
 

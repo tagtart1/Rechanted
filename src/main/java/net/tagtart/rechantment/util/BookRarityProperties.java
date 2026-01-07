@@ -39,9 +39,9 @@ public class BookRarityProperties {
 
     }
 
-    public boolean isEnchantmentInPool(String pEnchantment, int pLevel) {
+    public boolean isEnchantmentInPool(String pEnchantment) {
         for (EnchantmentPoolEntry entry : enchantmentPool) {
-            if (entry.enchantment.equals(pEnchantment) && entry.potentialLevels.contains(pLevel)) {
+            if (entry.enchantment.equals(pEnchantment)) {
                 return true;
             }
         }

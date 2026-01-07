@@ -11,11 +11,14 @@ import net.neoforged.neoforge.event.AnvilUpdateEvent;
 import net.neoforged.neoforge.event.GrindstoneEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.tagtart.rechantment.Rechantment;
+import net.tagtart.rechantment.config.RechantmentCommonConfigs;
 import net.tagtart.rechantment.item.ModItems;
 import net.tagtart.rechantment.util.UtilFunctions;
 
 import java.util.*;
 import java.util.List;
+
+import static net.tagtart.rechantment.util.UtilFunctions.getPropertiesFromEnchantment;
 
 public class ModEvents {
 
@@ -649,36 +652,36 @@ public class ModEvents {
 //
 //        }
 
-        @SubscribeEvent
-        public static void onGrindstoneChange(GrindstoneEvent.OnPlaceItem event) {
-
-            ItemStack topSlot = event.getTopItem();
-            ItemStack bottomSlot = event.getBottomItem();
-
-            boolean rechantmentBookInTopOnly = (!topSlot.isEmpty() && topSlot.is(ModItems.ENCHANTED_BOOK.get()) && bottomSlot.isEmpty());
-            boolean rechantmentBookInBottomOnly = (!bottomSlot.isEmpty() && bottomSlot.is(ModItems.ENCHANTED_BOOK.get()) && topSlot.isEmpty());
-
-            if (rechantmentBookInTopOnly || rechantmentBookInBottomOnly) {
-
-                ItemStack currentStack = rechantmentBookInTopOnly ? topSlot : bottomSlot;
-
-                // TODO: Double check this still works and possibly refactor when enchantments are figured out.
-                // Just did this to see if it could become compatible with the UtilFunctions.getPropertiesFromEnchantments method still somehow.
-                ItemEnchantments enchantments = currentStack.get(DataComponents.ENCHANTMENTS);
-//               CompoundTag rootTag = currentStack.getTag();
-//               CompoundTag enchantmentTag = rootTag.getCompound("Enchantment");
-//               String enchantmentRaw = enchantmentTag.getString("id");
-                Holder<Enchantment> enchantmentHolder = enchantments.entrySet().iterator().next().getKey();
-                String enchantmentRaw = enchantmentHolder.unwrapKey().orElseThrow().location().toString();
-                BookRarityProperties enchantRarityInfo = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw);
-
-                Random rand = new Random();
-                event.setXp(rand.nextInt(enchantRarityInfo.minGrindstoneXP, enchantRarityInfo.maxGrindstoneXP + 1));
-
-                ResourceLocation itemLocation = ResourceLocation.parse(RechantmentCommonConfigs.GRINDSTONE_RESULT_ITEM.get());
-                event.setOutput(new ItemStack(BuiltInRegistries.ITEM.get(itemLocation)));
-            }
-
-        }
+//        @SubscribeEvent
+//        public static void onGrindstoneChange(GrindstoneEvent.OnPlaceItem event) {
+//
+//            ItemStack topSlot = event.getTopItem();
+//            ItemStack bottomSlot = event.getBottomItem();
+//
+//            boolean rechantmentBookInTopOnly = (!topSlot.isEmpty() && topSlot.is(ModItems.ENCHANTED_BOOK.get()) && bottomSlot.isEmpty());
+//            boolean rechantmentBookInBottomOnly = (!bottomSlot.isEmpty() && bottomSlot.is(ModItems.ENCHANTED_BOOK.get()) && topSlot.isEmpty());
+//
+//            if (rechantmentBookInTopOnly || rechantmentBookInBottomOnly) {
+//
+//                ItemStack currentStack = rechantmentBookInTopOnly ? topSlot : bottomSlot;
+//
+//                // TODO: Double check this still works and possibly refactor when enchantments are figured out.
+//                // Just did this to see if it could become compatible with the UtilFunctions.getPropertiesFromEnchantments method still somehow.
+//                ItemEnchantments enchantments = currentStack.get(DataComponents.ENCHANTMENTS);
+////               CompoundTag rootTag = currentStack.getTag();
+////               CompoundTag enchantmentTag = rootTag.getCompound("Enchantment");
+////               String enchantmentRaw = enchantmentTag.getString("id");
+//                Holder<Enchantment> enchantmentHolder = enchantments.entrySet().iterator().next().getKey();
+//                String enchantmentRaw = enchantmentHolder.unwrapKey().orElseThrow().location().toString();
+//                BookRarityProperties enchantRarityInfo = getPropertiesFromEnchantment(enchantmentRaw);
+//
+//                Random rand = new Random();
+//                event.setXp(rand.nextInt(enchantRarityInfo.minGrindstoneXP, enchantRarityInfo.maxGrindstoneXP + 1));
+//
+//                ResourceLocation itemLocation = ResourceLocation.parse(RechantmentCommonConfigs.GRINDSTONE_RESULT_ITEM.get());
+//                event.setOutput(new ItemStack(BuiltInRegistries.ITEM.get(itemLocation)));
+//            }
+//
+//        }
     }
 }

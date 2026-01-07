@@ -22,12 +22,11 @@ public class ModItemProperties {
 
                     // We only care about the books first enchant as they should only have one anyway
                     Object2IntMap.Entry<Holder<Enchantment>> bookEnchant = itemEnchants.entrySet().iterator().next();
-                    int enchantLevel = bookEnchant.getIntValue();
                     String enchantId = bookEnchant.getKey().getRegisteredName();
 
 
                     for (BookRarityProperties bookProperties : BookRarityProperties.getAllProperties()) {
-                        if (bookProperties.isEnchantmentInPool(enchantId, enchantLevel)) {
+                        if (bookProperties.isEnchantmentInPool(enchantId)) {
                             book_rarity = bookProperties.rarity;
                         }
                     }

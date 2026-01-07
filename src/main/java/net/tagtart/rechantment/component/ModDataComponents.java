@@ -1,5 +1,6 @@
 package net.tagtart.rechantment.component;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
@@ -15,9 +16,9 @@ public class ModDataComponents {
             DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, Rechantment.MOD_ID);
 
 
-    // TODO: remove later this is a test one
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<BlockPos>> COORDINATES = register("coordinates",
-            builder -> builder.persistent(BlockPos.CODEC));
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> SUCCESS_RATE = register("success_rate",
+            builder -> builder.persistent(Codec.INT));
 
 
     private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register (String name, UnaryOperator<DataComponentType.Builder<T>> builderOperator) {
