@@ -148,86 +148,87 @@ public class RechantmentBookItem extends Item {
     public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction action, Player player) {
         ItemStack itemToEnchantStack = slot.getItem();
 
-        if (action == ClickAction.PRIMARY && (itemToEnchantStack.isEnchanted() || itemToEnchantStack.isEnchantable())) {
-            if (player.getAbilities().instabuild) {
-                player.sendSystemMessage(Component.literal("Books cannot be applied in creative mode!").withStyle(ChatFormatting.RED));
-                return true;
-            }
-            if (!player.level().isClientSide()) {
-                // Server stuff here
-                Level level = player.level();
+        boolean shouldAttemptEnchant = action == ClickAction.PRIMARY && (itemToEnchantStack.isEnchanted() || itemToEnchantStack.isEnchantable());
+        if (!shouldAttemptEnchant) { return false; }
 
-                // Get the stored enchantment from the book using data components
-                ItemEnchantments storedEnchants = stack.get(DataComponents.STORED_ENCHANTMENTS);
-                if (storedEnchants == null || storedEnchants.isEmpty()) return false;
+        // Dont allow creative mode enchants due to weird behavior with this method
+        if (player.getAbilities().instabuild) {
+            player.sendSystemMessage(Component.literal("Books cannot be applied in creative mode!").withStyle(ChatFormatting.RED));
+            return true;
+        }
 
-                // Get the first (and should be only) enchantment from the book
-                var bookEnchantEntry = storedEnchants.entrySet().iterator().next();
-                Holder<Enchantment> enchantmentHolder = bookEnchantEntry.getKey();
-                int enchantmentLevel = bookEnchantEntry.getIntValue();
-                Enchantment enchantment = enchantmentHolder.value();
+        // Only allow server side logic
+        if (player.level().isClientSide()) { return true; }
 
-                boolean canEnchantGeneral = itemToEnchantStack.supportsEnchantment(enchantmentHolder);
+        // Server level
+        Level level = player.level();
 
-                // Get current enchantments on the target item
-                ItemEnchantments itemEnchants = itemToEnchantStack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
-                ItemEnchantments.Mutable mutableEnchants = new ItemEnchantments.Mutable(itemEnchants);
+        // Get the stored enchantment from the book using data components
+        ItemEnchantments storedEnchants = stack.get(DataComponents.STORED_ENCHANTMENTS);
+        if (storedEnchants == null || storedEnchants.isEmpty()) return false;
 
-                if (canEnchantGeneral && !itemToEnchantStack.isEnchanted()) {
-                    // No enchantments on the other item so it can be applied
+        // Get the first (and should be only) enchantment from the book
+        var bookEnchantEntry = storedEnchants.entrySet().iterator().next();
+        Holder<Enchantment> enchantmentHolder = bookEnchantEntry.getKey();
+        int enchantmentLevel = bookEnchantEntry.getIntValue();
+        Enchantment enchantment = enchantmentHolder.value();
+
+        boolean canEnchantGeneral = itemToEnchantStack.supportsEnchantment(enchantmentHolder);
+
+        // Get current enchantments on the target item
+        ItemEnchantments itemEnchants = itemToEnchantStack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+        ItemEnchantments.Mutable mutableEnchants = new ItemEnchantments.Mutable(itemEnchants);
+
+        if (canEnchantGeneral && !itemToEnchantStack.isEnchanted()) {
+            // No enchantments on the other item so it can be applied
+            mutableEnchants.set(enchantmentHolder, enchantmentLevel);
+            applyEnchantsSafely(mutableEnchants, itemToEnchantStack, player, level, stack);
+        } else if (canEnchantGeneral) {
+            // Check if item already has this enchantment
+            if (itemEnchants.getLevel(enchantmentHolder) > 0) {
+                int otherEnchantLevel = itemEnchants.getLevel(enchantmentHolder);
+                if (otherEnchantLevel == enchantment.getMaxLevel()) {
+                        sendClientMessage(player, Component.literal("This item already has this enchantment maxed!").withStyle(ChatFormatting.RED));
+
+                } else if (enchantmentLevel < otherEnchantLevel) {
+                    sendClientMessage(player, Component.literal("This item already has this enchantment!").withStyle(ChatFormatting.RED));
+
+                } else {
+                    if (otherEnchantLevel == enchantmentLevel) {
+                        mutableEnchants.set(enchantmentHolder, otherEnchantLevel + 1);
+                    } else {
+                        mutableEnchants.set(enchantmentHolder, enchantmentLevel);
+                    }
+                    applyEnchantsSafely(mutableEnchants, itemToEnchantStack, player, level, stack);
+                }
+            } else {
+                // Check compatibility with other enchantments
+                boolean allCompatible = true;
+                for (var otherEnchantEntry : itemEnchants.entrySet()) {
+                    Holder<Enchantment> otherEnchantHolder = otherEnchantEntry.getKey();
+                    Enchantment otherEnchantment = otherEnchantHolder.value();
+                            
+                    if (!Enchantment.areCompatible(enchantmentHolder, otherEnchantHolder)) {
+                        sendClientMessage(player, Component.translatable(enchantment.description().getString())
+                                .append(" is not compatible with ")
+                                .append(Component.translatable(otherEnchantment.description().getString()))
+                                .withStyle(ChatFormatting.RED));
+                        allCompatible = false;
+                        break;
+                    }
+                }
+                        
+                if (allCompatible) {
+                    // Enchant good to go, enchant that thing!
                     mutableEnchants.set(enchantmentHolder, enchantmentLevel);
                     applyEnchantsSafely(mutableEnchants, itemToEnchantStack, player, level, stack);
-
-                } else if (canEnchantGeneral) {
-                    // Check if item already has this enchantment
-                    if (itemEnchants.getLevel(enchantmentHolder) > 0) {
-                        int otherEnchantLevel = itemEnchants.getLevel(enchantmentHolder);
-                        if (otherEnchantLevel == enchantment.getMaxLevel()) {
-                            sendClientMessage(player, Component.literal("This item already has this enchantment maxed!").withStyle(ChatFormatting.RED));
-
-                        } else if (enchantmentLevel < otherEnchantLevel) {
-                            sendClientMessage(player, Component.literal("This item already has this enchantment!").withStyle(ChatFormatting.RED));
-
-                        } else {
-                            if (otherEnchantLevel == enchantmentLevel) {
-                                mutableEnchants.set(enchantmentHolder, otherEnchantLevel + 1);
-                            } else {
-                                mutableEnchants.set(enchantmentHolder, enchantmentLevel);
-                            }
-                            applyEnchantsSafely(mutableEnchants, itemToEnchantStack, player, level, stack);
-                        }
-                    } else {
-                        // Check compatibility with other enchantments
-                        boolean allCompatible = true;
-                        for (var otherEnchantEntry : itemEnchants.entrySet()) {
-                            Holder<Enchantment> otherEnchantHolder = otherEnchantEntry.getKey();
-                            Enchantment otherEnchantment = otherEnchantHolder.value();
-                            
-                            if (!Enchantment.areCompatible(enchantmentHolder, otherEnchantHolder)) {
-                                sendClientMessage(player, Component.translatable(enchantment.description().getString())
-                                        .append(" is not compatible with ")
-                                        .append(Component.translatable(otherEnchantment.description().getString()))
-                                        .withStyle(ChatFormatting.RED));
-                                allCompatible = false;
-                                break;
-                            }
-                        }
-                        
-                        if (allCompatible) {
-                            // Enchant good to go, enchant that thing!
-                            mutableEnchants.set(enchantmentHolder, enchantmentLevel);
-                            applyEnchantsSafely(mutableEnchants, itemToEnchantStack, player, level, stack);
-                        }
-                    }
-                } else {
-                    sendClientMessage(player, Component.literal("Enchantment cannot be applied to this item").withStyle(ChatFormatting.RED));
                 }
             }
-
-            return true;
         } else {
-            return false;
+            sendClientMessage(player, Component.literal("Enchantment cannot be applied to this item").withStyle(ChatFormatting.RED));
         }
+
+        return true;
     }
 
     private void applyEnchantsSafely(ItemEnchantments.Mutable enchants, ItemStack item, Player player, Level level, ItemStack enchantedBook) {

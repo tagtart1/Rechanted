@@ -20,8 +20,6 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.CHANCE_GEM.get());
     }
 
-
-// TODO: make this dynamic now based on actual enchantment rarities, refer to ModItemProperties not here
     private void rechantmentBookItem() {
         withExistingParent("simple", mcLoc("item/generated"))
                 .texture("layer0", ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "item/simple"));

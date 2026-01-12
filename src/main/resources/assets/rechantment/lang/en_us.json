@@ -44,7 +44,7 @@
 
   "creative.rechantment.title": "Rechantment",
 
-  "item.rechantment.chance_gem": "Gem of Chance",
+  "item.rechantment.chance_gem": "Chance Gem",
   "item.rechantment.chance_gem.description": "Randomizes the success rate on an enchanted book.",
 
   "enchantment.rechantment.thunder_strike": "Thunder Strike",
@@ -172,7 +172,7 @@
   "config.rechantment.simple.floor_block_type.title": "Floor Block Type",
   "config.rechantment.simple.floor_block_type.tooltip": "Block type required under the enchantment table",
   "config.rechantment.simple.reroll_gem_chance.title": "Reroll Gem Chance",
-  "config.rechantment.simple.reroll_gem_chance.tooltip": "Chance for the gem of chance to reroll success rate",
+  "config.rechantment.simple.reroll_gem_chance.tooltip": "Chance for the chance gem to reroll success rate",
   "config.rechantment.simple.grindstone_xp_min.title": "Grindstone XP Minimum",
   "config.rechantment.simple.grindstone_xp_min.tooltip": "Minimum XP orbs from grindstone (for this tier)",
   "config.rechantment.simple.grindstone_xp_max.title": "Grindstone XP Maximum",
@@ -184,13 +184,13 @@
   "config.rechantment.unique.title": "Unique Rarity",
 
   "config.rechantment.elite.name": "Edit Elite Rarity",
-  "config.rechantment.elite.title": "Elite Rarity",
+
 
   "config.rechantment.ultimate.name": "Edit Ultimate Rarity",
-  "config.rechantment.ultimate.title": "Ultimate Rarity",
+
 
   "config.rechantment.legendary.name": "Edit Legendary Rarity",
-  "config.rechantment.legendary.title": "Legendary Rarity",
+
 
   "config.rechantment.configs_for_all_rarities.name": "Global Rarity Settings",
 
@@ -245,7 +245,7 @@
   "config.rechantment.elite.floor_block_type.title": "Floor Block Type",
   "config.rechantment.elite.floor_block_type.tooltip": "Block type required under the enchantment table",
   "config.rechantment.elite.reroll_gem_chance.title": "Reroll Gem Chance",
-  "config.rechantment.elite.reroll_gem_chance.tooltip": "Chance for the gem of chance to reroll success rate",
+  "config.rechantment.elite.reroll_gem_chance.tooltip": "Chance for the chance gem to reroll success rate",
   "config.rechantment.elite.grindstone_xp_min.title": "Grindstone XP Minimum",
   "config.rechantment.elite.grindstone_xp_min.tooltip": "Minimum XP orbs from grindstone (for this tier)",
   "config.rechantment.elite.grindstone_xp_max.title": "Grindstone XP Maximum",
@@ -281,7 +281,7 @@
   "config.rechantment.ultimate.floor_block_type.title": "Floor Block Type",
   "config.rechantment.ultimate.floor_block_type.tooltip": "Block type required under the enchantment table",
   "config.rechantment.ultimate.reroll_gem_chance.title": "Reroll Gem Chance",
-  "config.rechantment.ultimate.reroll_gem_chance.tooltip": "Chance for the gem of chance to reroll success rate",
+  "config.rechantment.ultimate.reroll_gem_chance.tooltip": "Chance for the chance gem to reroll success rate",
   "config.rechantment.ultimate.grindstone_xp_min.title": "Grindstone XP Minimum",
   "config.rechantment.ultimate.grindstone_xp_min.tooltip": "Minimum XP orbs from grindstone (for this tier)",
   "config.rechantment.ultimate.grindstone_xp_max.title": "Grindstone XP Maximum",
@@ -317,7 +317,7 @@
   "config.rechantment.legendary.floor_block_type.title": "Floor Block Type",
   "config.rechantment.legendary.floor_block_type.tooltip": "Block type required under the enchantment table",
   "config.rechantment.legendary.reroll_gem_chance.title": "Reroll Gem Chance",
-  "config.rechantment.legendary.reroll_gem_chance.tooltip": "Chance for the gem of chance to reroll success rate",
+  "config.rechantment.legendary.reroll_gem_chance.tooltip": "Chance for the chance gem to reroll success rate",
   "config.rechantment.legendary.grindstone_xp_min.title": "Grindstone XP Minimum",
   "config.rechantment.legendary.grindstone_xp_min.tooltip": "Minimum XP orbs from grindstone (for this tier)",
   "config.rechantment.legendary.grindstone_xp_max.title": "Grindstone XP Maximum",
@@ -339,11 +339,11 @@
   "config.rechantment.grindstone_result_item.title": "Grindstone Result Item",
   "config.rechantment.grindstone_result_item.tooltip": "Item received when grinding any enchanted book",
 
-  "config.rechantment.announce_rare_drop_list.title": "Rare Drop Announcements",
+
   "config.rechantment.announce_enchantments.title": "Announced Enchantments",
   "config.rechantment.announce_enchantments.tooltip": "Enchantments that will be announced when found in loot",
 
-  "config.rechantment.loot_table_enhancements.title": "Loot Table Enhancements",
+
   "config.rechantment.clear_enchanted_loot.title": "Clear Enchanted Loot",
   "config.rechantment.clear_enchanted_loot.tooltip": "Remove enchantments from generated loot, leaving blank items",
   "config.rechantment.replace_enchanted_loot.title": "Replace Enchanted Loot",
@@ -355,7 +355,6 @@
   "config.rechantment.nerf_fishing_loot.title": "Nerf Fishing Loot",
   "config.rechantment.nerf_fishing_loot.tooltip": "Make fishing loot have weaker enchantments",
 
-  "config.rechantment.fortune_nerf.title": "Fortune Nerf Settings",
   "config.rechantment.nerf_enabled.title": "Fortune Nerf Enabled",
   "config.rechantment.nerf_enabled.tooltip": "Enable fortune enchantment nerfing",
   "config.rechantment.fortune_1_chance.title": "Fortune I Chance",
