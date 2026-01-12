@@ -124,14 +124,13 @@ public class RechantmentCommonConfigs {
     static {
 
         // Simple rarity builder default config
-        BUILDER.push("Configs for Rechantment Mod"); // TODO: WE NEED CONFIG TRANSLATIONS FOR THESE NOW NOW NOW
+       // TODO: WE NEED CONFIG TRANSLATIONS FOR THESE NOW NOW NOW
 
-        BUILDER.comment("Configs for Simple Rarity Enchantments");
 
-        BUILDER.push("Book Rarities");
+        BUILDER.translation("config.rechantment.book_rarities.title").comment("Configs for Each Book Rarity").push("Book Rarities");
 
         // Simple rarity properties.
-        BUILDER.push("Simple");
+        BUILDER.translation("config.rechantment.simple.name").push("Simple");
         RARITY_0_KEY = BUILDER.translation("config.rechantment.simple.key.title").define("key", "simple");
         RARITY_0_COLOR = BUILDER.translation("config.rechantment.simple.color.title").defineInRange("color", 11184810, 0, Integer.MAX_VALUE);
         RARITY_0_EXP_COST = BUILDER.translation("config.rechantment.simple.exp_cost.title").defineInRange("exp_cost", 75, 0, Integer.MAX_VALUE);
@@ -172,8 +171,7 @@ public class RechantmentCommonConfigs {
         RARITY_0_ENCHANTMENTS = BUILDER.translation("config.rechantment.simple.enchantments.title").defineList("enchantments", rarity_0_default_enchantments, () -> "minecraft:sharpness|1|1-4|3,3,2,1", s -> s instanceof String);
         BUILDER.pop();
         // Unique rarity builder default config
-        BUILDER.comment("Configs for Unique Rarity Enchantments");
-        BUILDER.push("unique");
+        BUILDER.translation("config.rechantment.unique.name").comment("Configs for Unique Rarity Enchantments").push("unique");
         RARITY_1_KEY = BUILDER.translation("config.rechantment.unique.key.title").define("key", "unique");
         RARITY_1_COLOR = BUILDER.translation("config.rechantment.unique.color.title").defineInRange("color", 5635925, 0, Integer.MAX_VALUE);
         RARITY_1_EXP_COST = BUILDER.translation("config.rechantment.unique.exp_cost.title").defineInRange("exp_cost", 100, 0, Integer.MAX_VALUE);
@@ -207,7 +205,7 @@ public class RechantmentCommonConfigs {
 
         BUILDER.pop();
 
-        BUILDER.comment("Configs for Elite Rarity Enchantments").push("elite");
+        BUILDER.translation("config.rechantment.elite.name").comment("Configs for Elite Rarity Enchantments").push("elite");
         RARITY_2_KEY = BUILDER.translation("config.rechantment.elite.key.title").define("key", "elite");
         RARITY_2_COLOR = BUILDER.translation("config.rechantment.elite.color.title").defineInRange("color", 5636095, 0, Integer.MAX_VALUE);
         RARITY_2_EXP_COST = BUILDER.translation("config.rechantment.elite.exp_cost.title").defineInRange("exp_cost", 200, 0, Integer.MAX_VALUE);
@@ -238,7 +236,7 @@ public class RechantmentCommonConfigs {
 
 
         // Ultimate rarity builder default config
-        BUILDER.comment("Configs for Ultimate Rarity Enchantments").push("ultimate");
+        BUILDER.translation("config.rechantment.ultimate.name").comment("Configs for Ultimate Rarity Enchantments").push("ultimate");
         RARITY_3_KEY = BUILDER.translation("config.rechantment.ultimate.key.title").define("key", "ultimate");
         RARITY_3_COLOR = BUILDER.translation("config.rechantment.ultimate.color.title").defineInRange("color", 16777045, 0, Integer.MAX_VALUE);
         RARITY_3_EXP_COST = BUILDER.translation("config.rechantment.ultimate.exp_cost.title").defineInRange("exp_cost", 500, 0, Integer.MAX_VALUE);
@@ -268,7 +266,7 @@ public class RechantmentCommonConfigs {
 
 
         // Legendary rarity builder default config
-        BUILDER.comment("Configs for Legendary Rarity Enchantments").push("legendary");
+        BUILDER.translation("config.rechantment.legendary.name").comment("Configs for Legendary Rarity Enchantments").push("legendary");
         RARITY_4_KEY = BUILDER.translation("config.rechantment.legendary.key.title").define("key", "legendary");
         RARITY_4_COLOR = BUILDER.translation("config.rechantment.legendary.color.title").defineInRange("color", 16755200, 0, Integer.MAX_VALUE);
         RARITY_4_EXP_COST = BUILDER.translation("config.rechantment.legendary.exp_cost.title").defineInRange("exp_cost", 1500, 0, Integer.MAX_VALUE);
@@ -292,12 +290,12 @@ public class RechantmentCommonConfigs {
         BUILDER.pop();
         BUILDER.pop();
 
-        BUILDER.push("Configs for all rarities");
+        BUILDER.translation("config.rechantment.configs_for_all_rarities.name").comment("Global settings that apply to all rarity tiers").push("Configs for all rarities");
         GRINDSTONE_RESULT_ITEM = BUILDER.translation("config.rechantment.grindstone_result_item.title").define("grindstone_result_item", "minecraft:paper");
 
         BUILDER.pop();
 
-        BUILDER.push("Announce Rare Drop List");
+        BUILDER.translation("config.rechantment.announce_rare_drop_list.name").comment("Settings for broadcasting rare enchantment drops to all players").push("Announce Rare Drop List");
         BUILDER.comment("The game will broadcast a message to all players if a player gets any listed enchantments within the level range to drop from the enchantment table",
                 "Format: <enchantment>|<level-range>",
                 "Example: minecraft:unbreaking|1-3");
@@ -307,8 +305,7 @@ public class RechantmentCommonConfigs {
 
         BUILDER.pop();
 
-        BUILDER.comment("Configurations for all things related to generated loot drops. Ex: end_city_treasure");
-        BUILDER.push("Loot Table Enhancements");
+        BUILDER.translation("config.rechantment.loot_table_enhancements.name").comment("Configurations for all things related to generated loot drops. Ex: end_city_treasure").push("Loot Table Enhancements");
 
         BUILDER.comment("Clears enchantments from found generated loot resulting in blank pieces of gear");
         BUILDER.comment("Example: A chest plate found with enchants in the end city loot will be blank with no enchants");
@@ -337,7 +334,7 @@ public class RechantmentCommonConfigs {
 
         BUILDER.pop();
 
-        BUILDER.push("Fortune Nerf");
+        BUILDER.translation("config.rechantment.fortune_nerf.name").comment("Settings to control Fortune enchantment drop multipliers").push("Fortune Nerf");
         BUILDER.comment(
                 "If enabled, fortune will only double drops based on the chances defined at each level");
         FORTUNE_NERF_ENABLED = BUILDER.translation("config.rechantment.nerf_enabled.title").define("nerf_enabled", false);
