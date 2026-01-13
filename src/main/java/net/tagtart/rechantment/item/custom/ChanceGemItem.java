@@ -16,6 +16,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.*;
 import net.minecraft.world.level.Level;
+import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.util.BookRarityProperties;
 import net.tagtart.rechantment.util.UtilFunctions;
@@ -69,11 +70,13 @@ public class ChanceGemItem extends Item {
             player.playSound(SoundEvents.VILLAGER_NO, 1f, 1f);
             if (player.level().isClientSide) player.sendSystemMessage(Component.literal("This book has already been randomized!").withStyle(ChatFormatting.RED));
         } else {
-
-            ItemEnchantments storedEnchants = otherItemStack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+           
+            ItemEnchantments storedEnchants = otherItemStack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
             if (storedEnchants.isEmpty()) {
+
                 return false;
             }
+            
             // Get the first (and should be only) enchantment from the book
             var bookEnchantEntry = storedEnchants.entrySet().iterator().next();
             Holder<Enchantment> enchantmentHolder = bookEnchantEntry.getKey();
@@ -84,8 +87,21 @@ public class ChanceGemItem extends Item {
 
             if (appliedBookProperties == null) return false;
 
-            // Randomize the rate
+            // Check current success rate
+            int currentSuccessRate = otherItemStack.getOrDefault(ModDataComponents.SUCCESS_RATE, appliedBookProperties.minSuccess);
             int upperBound = appliedBookProperties.maxSuccess;
+
+            // If current success rate is already at or above the maximum, don't allow reroll
+            if (currentSuccessRate >= upperBound) {
+                player.playSound(SoundEvents.VILLAGER_NO, 1f, 1f);
+                if (player.level().isClientSide) {
+                    player.sendSystemMessage(Component.literal("This book's success rate (" + currentSuccessRate + "%) is already at maximum reroll result!")
+                            .withStyle(ChatFormatting.RED));
+                }
+                return true; // Return true to prevent further processing but don't consume the gem
+            }
+
+            // Randomize the rate
             int lowerBound = appliedBookProperties.minSuccess;
             Random rand = new Random();
 
@@ -97,6 +113,7 @@ public class ChanceGemItem extends Item {
             otherItemStack.set(ModDataComponents.REROLLED_SUCCESS_RATE, true);
 
             player.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 1f, 1f);
+            if (player.level().isClientSide) player.sendSystemMessage(Component.literal("Rerolled!").withStyle(ChatFormatting.GREEN));
 
             // Delete gem
             stack.shrink(1);
