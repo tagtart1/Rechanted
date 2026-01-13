@@ -5,6 +5,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.config.RechantmentCommonConfigs;
+import net.tagtart.rechantment.enchantment.ModEnchantmentEffects;
 import net.tagtart.rechantment.item.ModCreativeModeTabs;
 import net.tagtart.rechantment.item.ModItemProperties;
 import net.tagtart.rechantment.item.ModItems;
@@ -48,18 +49,17 @@ public class Rechantment {
     // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
 
-
-
-    // The constructor for the mod class is the first code that is run when your mod is loaded.
-    // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
+    // The constructor for the mod class is the first code that is run when your mod
+    // is loaded.
+    // FML will recognize some parameter types like IEventBus or ModContainer and
+    // pass them in automatically.
     public Rechantment(IEventBus modEventBus, ModContainer modContainer) {
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
-
-
         // Register ourselves for server and other game events we are interested in.
-        // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
+        // Do not add this line if there are no @SubscribeEvent-annotated functions in
+        // this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
 
         ModCreativeModeTabs.register(modEventBus);
@@ -68,8 +68,10 @@ public class Rechantment {
 
         ModDataComponents.register(modEventBus);
 
+        ModEnchantmentEffects.register(modEventBus);
 
-        // Register our mod's ModConfigSpec so that FML can create and load the config file for us
+        // Register our mod's ModConfigSpec so that FML can create and load the config
+        // file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, RechantmentCommonConfigs.SPEC);
 
         // Register the config screen to enable the config button in the Mods menu
@@ -86,7 +88,6 @@ public class Rechantment {
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
     }
-
 
     @EventBusSubscriber(modid = MOD_ID, value = Dist.CLIENT)
     public static class ClientModEvents {
