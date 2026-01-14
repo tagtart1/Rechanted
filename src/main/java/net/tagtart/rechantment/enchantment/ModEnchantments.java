@@ -11,28 +11,27 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentTarget;
 import net.tagtart.rechantment.Rechantment;
-import net.tagtart.rechantment.enchantment.custom.LightningStrikerEnchantmentEffect;
+import net.tagtart.rechantment.enchantment.custom.ThunderStrikeEnchantmentEffect;
 
 public class ModEnchantments {
-    public static final ResourceKey<Enchantment> LIGHTNING_STRIKER = ResourceKey.create(Registries.ENCHANTMENT,
-            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "lightning_striker"));
+    public static final ResourceKey<Enchantment> THUNDER_STRIKE = ResourceKey.create(Registries.ENCHANTMENT,
+            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "thunder_strike"));
 
     public static void bootstrap(BootstrapContext<Enchantment> context) {
         var enchantments = context.lookup(Registries.ENCHANTMENT);
         var items = context.lookup(Registries.ITEM);
 
-        register(context, LIGHTNING_STRIKER, Enchantment.enchantment(Enchantment.definition(
+        register(context, THUNDER_STRIKE, Enchantment.enchantment(Enchantment.definition(
                 items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
                 items.getOrThrow(ItemTags.SWORD_ENCHANTABLE),
                 5,
-                2,
+                4,
                 Enchantment.dynamicCost(5, 7),
                 Enchantment.dynamicCost(25, 7),
                 2,
                 EquipmentSlotGroup.MAINHAND))
-                .exclusiveWith(enchantments.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
                 .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER,
-                        EnchantmentTarget.VICTIM, new LightningStrikerEnchantmentEffect()));
+                        EnchantmentTarget.VICTIM, new ThunderStrikeEnchantmentEffect()));
     }
 
     private static void register(BootstrapContext<Enchantment> registry, ResourceKey<Enchantment> key,
