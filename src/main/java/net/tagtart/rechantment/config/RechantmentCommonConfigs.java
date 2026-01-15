@@ -228,6 +228,8 @@ public class RechantmentCommonConfigs {
         rarity_2_default_enchantments.add("minecraft:frost_walker|1|2|1");
         rarity_2_default_enchantments.add("minecraft:depth_strider|1|3|1");
         rarity_2_default_enchantments.add("minecraft:soul_speed|1|3|1");
+        rarity_2_default_enchantments.add("rechantment:hells_fury|1|4|1");
+        rarity_2_default_enchantments.add("rechantment:voids_bane|1|4|1");
         rarity_2_default_enchantments.add("minecraft:fire_aspect|1|1-2|2,1");
         rarity_2_default_enchantments.add("minecraft:fortune|1|1-3|2,2,1");
         RARITY_2_ENCHANTMENTS = BUILDER.translation("config.rechantment.elite.enchantments.title").defineList("enchantments", rarity_2_default_enchantments, () -> "minecraft:sharpness|1|1-4|3,3,2,1", s -> s instanceof String);
@@ -258,6 +260,7 @@ public class RechantmentCommonConfigs {
         rarity_3_default_enchantments.add("minecraft:luck_of_the_sea|1|2-3|2,1");
         rarity_3_default_enchantments.add("minecraft:sweeping|1|2-3|2,1");
         rarity_3_default_enchantments.add("minecraft:silk_touch|1|1|1");
+        rarity_3_default_enchantments.add("rechantment:ice_aspect|1|1-2|2,1");
         rarity_3_default_enchantments.add("minecraft:multishot|1|1|1");
         rarity_3_default_enchantments.add("minecraft:channeling|1|1|1");
         RARITY_3_ENCHANTMENTS = BUILDER.translation("config.rechantment.ultimate.enchantments.title").defineList("enchantments", rarity_3_default_enchantments, () -> "minecraft:sharpness|1|1-4|3,3,2,1", s -> s instanceof String);

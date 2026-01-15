@@ -9,7 +9,10 @@ import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.tagtart.rechantment.Rechantment;
+import net.tagtart.rechantment.enchantment.custom.HellsFuryEnchantmentEffect;
+import net.tagtart.rechantment.enchantment.custom.IceAspectEnchantmentEffect;
 import net.tagtart.rechantment.enchantment.custom.ThunderStrikeEnchantmentEffect;
+import net.tagtart.rechantment.enchantment.custom.VoidsBaneEnchantmentEffect;
 
 public class ModEnchantmentEffects {
     public static final DeferredRegister<MapCodec<? extends EnchantmentEntityEffect>> ENTITY_ENCHANTMENT_EFFECTS = DeferredRegister
@@ -17,6 +20,15 @@ public class ModEnchantmentEffects {
 
     public static final Supplier<MapCodec<? extends EnchantmentEntityEffect>> THUNDER_STRIKE = ENTITY_ENCHANTMENT_EFFECTS
             .register("thunder_strike", () -> ThunderStrikeEnchantmentEffect.CODEC);
+
+    public static final Supplier<MapCodec<? extends EnchantmentEntityEffect>> HELLS_FURY = ENTITY_ENCHANTMENT_EFFECTS
+            .register("hells_fury", () -> HellsFuryEnchantmentEffect.CODEC);
+
+    public static final Supplier<MapCodec<? extends EnchantmentEntityEffect>> VOIDS_BANE = ENTITY_ENCHANTMENT_EFFECTS
+            .register("voids_bane", () -> VoidsBaneEnchantmentEffect.CODEC);
+
+    public static final Supplier<MapCodec<? extends EnchantmentEntityEffect>> ICE_ASPECT = ENTITY_ENCHANTMENT_EFFECTS
+            .register("ice_aspect", () -> IceAspectEnchantmentEffect.CODEC);
 
     public static void register(IEventBus eventBus) {
         ENTITY_ENCHANTMENT_EFFECTS.register(eventBus);

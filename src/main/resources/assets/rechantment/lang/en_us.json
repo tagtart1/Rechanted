@@ -58,13 +58,13 @@
   "enchantment.rechantment.courage.description": "Gain a burst of speed on a successful block.",
 
   "enchantment.rechantment.voids_bane": "Void's Bane",
-  "enchantment.rechantment.voids_bane.description": "Increases damage to end mobs.",
+  "enchantment.rechantment.voids_bane.description": "Greatly increases damage to mobs while in the End.",
 
   "enchantment.rechantment.hells_fury": "Hell's Fury",
-  "enchantment.rechantment.hells_fury.description": "Increases damage to nether mobs.",
+  "enchantment.rechantment.hells_fury.description": "Greatly increases damage to mobs while in the Nether.",
 
   "enchantment.rechantment.ice_aspect": "Ice Aspect",
-  "enchantment.rechantment.ice_aspect.description": "Targets will be frozen for a short period when attacked.",
+  "enchantment.rechantment.ice_aspect.description": "Targets will be slowed for a short period when attacked.",
 
   "enchantment.rechantment.wisdom": "Wisdom",
   "enchantment.rechantment.wisdom.description": "Increased EXP drops from mined ores.",

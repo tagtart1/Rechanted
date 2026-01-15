@@ -1,10 +1,7 @@
 package net.tagtart.rechantment.item;
 
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -12,7 +9,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -38,8 +34,6 @@ public class ModCreativeModeTabs {
                             for(EnchantmentPoolEntry enchantPoolEntry : bookRarityProperty.enchantmentPool) {
 
                                 String enchantmentRaw = enchantPoolEntry.enchantment;
-                                int enchantEntryMinLevel = enchantPoolEntry.minLevel;
-                                int enchantEntryMaxLevel = enchantPoolEntry.maxLevel;
                                 ResourceLocation enchantmentResourceLocation = ResourceLocation.parse(enchantmentRaw);
 
                                 HolderLookup.RegistryLookup<Enchantment> enchantmentRegistry = itemDisplayParameters.holders().lookupOrThrow(Registries.ENCHANTMENT);
@@ -47,7 +41,10 @@ public class ModCreativeModeTabs {
                                 ResourceKey<Enchantment> key = ResourceKey.create(Registries.ENCHANTMENT, enchantmentResourceLocation);
 
                                 enchantmentRegistry.get(key).ifPresent(enchantment -> {
-                                    for(int i = enchantEntryMinLevel ; i <= enchantEntryMaxLevel ; i++) {
+                                    // Use the enchantment's actual max level, not the config's max level
+                                    int actualMaxLevel = enchantment.value().getMaxLevel();
+                                    
+                                    for(int i = 1 ; i <= actualMaxLevel ; i++) {
                                         ItemStack book = new ItemStack(ModItems.RECHANTMENT_BOOK.get());
 
                                         ItemEnchantments.Mutable storedEnchants = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
