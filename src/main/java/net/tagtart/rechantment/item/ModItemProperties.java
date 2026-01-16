@@ -9,6 +9,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.util.BookRarityProperties;
+import net.tagtart.rechantment.util.UtilFunctions;
 
 public class ModItemProperties {
     public static void addCustomItemProperties() {
@@ -22,14 +23,15 @@ public class ModItemProperties {
 
                     // We only care about the books first enchant as they should only have one anyway
                     Object2IntMap.Entry<Holder<Enchantment>> bookEnchant = itemEnchants.entrySet().iterator().next();
+                    int enchantLevel = bookEnchant.getIntValue();
                     String enchantId = bookEnchant.getKey().getRegisteredName();
 
 
-                    for (BookRarityProperties bookProperties : BookRarityProperties.getAllProperties()) {
-                        if (bookProperties.isEnchantmentInPool(enchantId)) {
-                            book_rarity = bookProperties.rarity;
-                        }
+                    BookRarityProperties bookRarityProperties = UtilFunctions.getPropertiesFromEnchantment(enchantId);
+                    if (bookRarityProperties != null) {
+                        book_rarity = bookRarityProperties.rarity;
                     }
+
                     return book_rarity;
                 });
     }

@@ -233,7 +233,7 @@ public class RechantmentBookItem extends Item {
 
     private void applyEnchantsSafely(ItemEnchantments.Mutable enchants, ItemStack item, Player player, Level level, ItemStack enchantedBook) {
         int successRate = enchantedBook.getOrDefault(ModDataComponents.SUCCESS_RATE, 0);
-        
+
         if (isSuccessfulEnchant(successRate)) {
             // Apply the enchantments to the item using data components
             item.set(DataComponents.ENCHANTMENTS, enchants.toImmutable());

@@ -15,7 +15,11 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.tagtart.rechantment.Rechantment;
+import net.tagtart.rechantment.block.entity.RechantmentTableBlockEntity;
+import net.tagtart.rechantment.networking.data.OpenEnchantTableScreenC2SPayload;
+import net.tagtart.rechantment.networking.data.PlayerPurchaseEnchantedBookC2SPayload;
 import net.tagtart.rechantment.util.BookRarityProperties;
 import net.tagtart.rechantment.util.UtilFunctions;
 import oshi.util.tuples.Pair;
@@ -215,8 +219,7 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
                     }
 
                     // At this point, they meet the requirements. Can try to send a packet to server!
-                    // TODO: UNCOMMENT SENT TO SERVER LINE WHEN NETWORKING IS RE-IMPLEMENTED.
-                    //ModPackets.sentToServer(new PurchaseEnchantedBookC2SPacket(i, menu.blockEntity.getBlockPos()));
+                    PacketDistributor.sendToServer(new PlayerPurchaseEnchantedBookC2SPayload(i, menu.blockEntity.getBlockPos()));
                     hoverable.updateTooltipLines();
                     return true;
                 }
@@ -229,9 +232,11 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
                 HoverableWithTooltipGuiRenderable hoverable = hoverables.get(i);
                 if (hoverable.tryClickMouse(pMouseX, pMouseY, pButton)) {
 
-                    // Need to open from server so that menu info is based on server.
-                    // TODO: UNCOMMENT SENT TO SERVER LINE WHEN NETWORKING IS RE-IMPLEMENTED.
+                    RechantmentTableBlockEntity rbe = menu.blockEntity;
+                    int propertyIndex = i;
+
                     //ModPackets.sentToServer(new OpenEnchantTableScreenC2SPacket(1, i, menu.blockEntity.getBlockPos()));
+                    PacketDistributor.sendToServer(new OpenEnchantTableScreenC2SPayload(1, i, menu.blockEntity.getBlockPos()));
                 }
             }
         }

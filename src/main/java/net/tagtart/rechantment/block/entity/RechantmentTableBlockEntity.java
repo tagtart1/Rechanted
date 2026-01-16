@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.EnchantingTableBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import net.tagtart.rechantment.block.custom.RechantmentTableBlock;
 import net.tagtart.rechantment.screen.RechantmentTableMenu;
 import net.tagtart.rechantment.sound.ModSounds;
 import net.tagtart.rechantment.util.BookRarityProperties;
@@ -28,7 +29,7 @@ import net.tagtart.rechantment.util.UtilFunctions;
 import org.jetbrains.annotations.Nullable;
 import oshi.util.tuples.Pair;
 
-public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity implements MenuProvider {
+public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity implements MenuProvider{
 
     private final ItemStackHandler itemHandler = new ItemStackHandler(1) {
 
@@ -52,28 +53,15 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
         super(pPos, pBlockState);
     }
 
-//
-//    // Ties forge's lazyItemHandler to the itemHandler we defined.
-//    @Override
-//    public void onLoad() {
-//        super.onLoad();
-//        lazyItemHandler = LazyOptional.of(() -> itemHandler);
-//    }
-//
-//
-//    @Override
-//    public void invalidateCaps() {
-//        super.invalidateCaps();
-//        lazyItemHandler.invalidate();
-//    }
-
     public ItemStackHandler getItemHandler() {
         return itemHandler;
     }
 
+    public ItemStack getItemHandlerLapisStack() { return itemHandler.getStackInSlot(0); }
+
     @Override
     public BlockEntityType<?> getType() {
-        return ModReplacementBlockEntities.RECHANTMENT_TABLE_BE.get();
+        return ModBlockEntities.RECHANTMENT_TABLE_BE.get();
     }
 
     // Makes the object drop the items currently inside the itemHandler slots.
@@ -89,6 +77,8 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
         dropInventory();
         stopAmbientSound();
     }
+
+
 
     @Nullable
     @Override
@@ -109,6 +99,8 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
         super.loadAdditional(pTag, registries);
         itemHandler.deserializeNBT(registries, pTag.getCompound("inventory"));
     }
+
+
 
     @Override
     public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
@@ -143,17 +135,13 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
 
     @Override
     public Component getDisplayName() {
-        return super.getDisplayName();
+        return Component.literal("Enchanting Table");
     }
 
     public void stopAmbientSound() {
         if (level.isClientSide()) {
             UtilFunctions.tryStopAmbientSound(getBlockPos());
         }
-    }
-
-    public ItemStack getItemHandlerLapisStack() {
-        return itemHandler.getStackInSlot(0);
     }
 
     public boolean getIsCharged() {
@@ -259,12 +247,12 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
 
         // Requirements have started being met on this tick.
         if (currentIndexRequirementsMet >= 0 && prevIndexRequirementsMet == -1) {
-            if (totalTicks != 0) {
-                pLevel.playSound(null, pPos, ModSounds.ENCHANT_TABLE_CHARGE.get(), SoundSource.BLOCKS, 0.5f, 1.0f);
-                pLevel.playSound(null, pPos, ModSounds.ENCHANT_TABLE_OPEN.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
-            }
-
             if (pLevel.isClientSide()) {
+                if (totalTicks != 0) {
+                    pLevel.playLocalSound(pPos, ModSounds.ENCHANT_TABLE_CHARGE.get(), SoundSource.BLOCKS, 0.5f, 1.0f, false);
+                    pLevel.playLocalSound(pPos, ModSounds.ENCHANT_TABLE_OPEN.get(), SoundSource.BLOCKS, 1.0f, 1.0f, false);
+                }
+
                 UtilFunctions.createAndPlayAmbientSound(ModSounds.ENCHANT_TABLE_AMBIENT.get(), pPos, 0.5f);
             }
         }
@@ -272,9 +260,11 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
         // Requirements no longer being met on this tick.
         else if (currentIndexRequirementsMet == -1 && prevIndexRequirementsMet != -1) {
             if (totalTicks != 0) {
-                pLevel.playSound(null, pPos, ModSounds.ENCHANT_TABLE_DISCHARGE.get(), SoundSource.BLOCKS, 0.5f, 1.0f);
-                pLevel.playSound(null, pPos, ModSounds.ENCHANT_TABLE_CLOSE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
-                stopAmbientSound();
+                if (pLevel.isClientSide()) {
+                    pLevel.playLocalSound(pPos, ModSounds.ENCHANT_TABLE_DISCHARGE.get(), SoundSource.BLOCKS, 0.5f, 1.0f, false);
+                    pLevel.playLocalSound(pPos, ModSounds.ENCHANT_TABLE_CLOSE.get(), SoundSource.BLOCKS, 1.0f, 1.0f, false);
+                    stopAmbientSound();
+                }
             }
         }
     }

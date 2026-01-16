@@ -15,9 +15,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.minecraft.world.level.block.entity.EnchantingTableBlockEntity;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.tagtart.rechantment.Rechantment;
+import net.tagtart.rechantment.attachments.ModAttachments;
+import net.tagtart.rechantment.block.ModBlocks;
 import net.tagtart.rechantment.block.entity.RechantmentTableBlockEntity;
 
 public class RechantmentTableMenu extends AbstractContainerMenu {
@@ -97,11 +100,11 @@ public class RechantmentTableMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player player) {
         return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()),
-                player, Blocks.ENCHANTING_TABLE);
+                player, ModBlocks.RECHANTMENT_TABLE_BLOCK.get());
     }
 
     public ItemStack getLapisSlotStack() {
-        return blockEntity.getItemHandlerLapisStack();
+        return blockEntity.getItemHandler().getStackInSlot(0);
     }
 
     private void addPlayerInventory(Inventory playerInventory) {

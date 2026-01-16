@@ -10,9 +10,11 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.world.level.ItemLike;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.tagtart.rechantment.Rechantment;
+import net.tagtart.rechantment.block.ModBlocks;
 import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.util.BookRarityProperties;
 import net.tagtart.rechantment.util.EnchantmentPoolEntry;
@@ -26,8 +28,9 @@ public class ModCreativeModeTabs {
             () -> CreativeModeTab.builder().icon(() -> new ItemStack(ModItems.CHANCE_GEM.get()))
                     .title(Component.translatable("creative.rechantment.title"))
                     .displayItems((itemDisplayParameters, output) -> {
-                        output.accept(ModItems.CHANCE_GEM.get());
+                        output.accept(ModBlocks.RECHANTMENT_TABLE_BLOCK);
 
+                        output.accept(ModItems.CHANCE_GEM.get());
 
                         BookRarityProperties[] bookRarityProperties = BookRarityProperties.getAllProperties();
                         for(BookRarityProperties bookRarityProperty : bookRarityProperties) {

@@ -10,10 +10,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Inventory;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.tagtart.rechantment.Rechantment;
+import net.tagtart.rechantment.block.entity.RechantmentTableBlockEntity;
+import net.tagtart.rechantment.networking.data.OpenEnchantTableScreenC2SPayload;
 import net.tagtart.rechantment.util.BookRarityProperties;
-
 import net.tagtart.rechantment.util.EnchantmentPoolEntry;
 import net.tagtart.rechantment.util.UtilFunctions;
 
@@ -70,8 +73,11 @@ public class RechantmentTablePoolDisplayScreen extends AbstractContainerScreen<R
     private int scissorMinY;
     private int scissorMaxY;
 
+    private Inventory playerInventory;
+
     public RechantmentTablePoolDisplayScreen(RechantmentTablePoolDisplayMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
+        playerInventory = pPlayerInventory;
     }
 
     @Override
@@ -156,7 +162,7 @@ public class RechantmentTablePoolDisplayScreen extends AbstractContainerScreen<R
         scissorMinX = entry_base_posX;
         scissorMinY = entry_base_posY;
         scissorMaxX = scissorMinX + VISIBLE_WIDTH;
-        scissorMaxY = scissorMinY + VISIBLE_HEIGHT;
+        scissorMaxY = Math.min(scissorMinY + VISIBLE_HEIGHT, maxEntryOffset);
 
         // Render all entries within scissored view; apply scroll pos, then render background first
         guiGraphics.enableScissor(scissorMinX, scissorMinY, scissorMaxX, scissorMaxY);
@@ -254,18 +260,25 @@ public class RechantmentTablePoolDisplayScreen extends AbstractContainerScreen<R
         }
     }
 
-    // TODO: UNCOMMENT SENT TO SERVER LINE WHEN NETWORKING IS RE-IMPLEMENTED.
     private void onReleaseBackArrowEvent(double pMouseX, double pMouseY, int pButton) {
         if (pButton == 0 && backArrow.isMouseOverlapped((int)Math.round(pMouseX), (int)Math.round(pMouseY))) {
+
+            RechantmentTableBlockEntity rbe = menu.blockEntity;
+
             //ModPackets.sentToServer(new OpenEnchantTableScreenC2SPacket(0, 0, menu.blockEntity.getBlockPos()));
+            SimpleMenuProvider menuToOpen = new SimpleMenuProvider(rbe, rbe.getDisplayName());
+            PacketDistributor.sendToServer(new OpenEnchantTableScreenC2SPayload(0, 0, rbe.getBlockPos()));
             Minecraft.getInstance().player.playSound(SoundEvents.BOOK_PUT, 0.5F, 1.0f);
         }
     }
 
-    // TODO: UNCOMMENT SENT TO SERVER LINE WHEN NETWORKING IS RE-IMPLEMENTED.
     private void onClickBookIconEvent(double pMouseX, double pMouseY, int pButton) {
         if (pButton == 1 && bookIcon.isMouseOverlapped((int)Math.round(pMouseX), (int)Math.round(pMouseY))) {
-            //ModPackets.sentToServer(new OpenEnchantTableScreenC2SPacket(0, 0, menu.blockEntity.getBlockPos()));
+
+            RechantmentTableBlockEntity rbe = menu.blockEntity;
+
+            SimpleMenuProvider menuToOpen = new SimpleMenuProvider(rbe, rbe.getDisplayName());
+            PacketDistributor.sendToServer(new OpenEnchantTableScreenC2SPayload(0, 0, rbe.getBlockPos()));
             Minecraft.getInstance().player.playSound(SoundEvents.BOOK_PUT, 0.5F, 1.0f);
         }
     }

@@ -1,20 +1,27 @@
 package net.tagtart.rechantment.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.tagtart.rechantment.Rechantment;
+import net.tagtart.rechantment.item.custom.RechantmentBookItem;
 import net.tagtart.rechantment.util.BookRarityProperties;
 import net.tagtart.rechantment.util.EnchantmentPoolEntry;
 import net.tagtart.rechantment.util.UtilFunctions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderable{
 
@@ -38,6 +45,7 @@ public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderabl
     private String enchantmentName;
     private String enchantmentDropRate;
     private ArrayList<String> levelDropRates;
+    private int maxLevel;
 
     public int scrollOffset = 0;
 
@@ -84,23 +92,28 @@ public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderabl
         return retVal;
     }
 
-    // TODO: Reimplement when enchantments are ported over.
     protected void generatePoolEntryInfo() {
-        //enchantment =  BuiltInRegistries.ENCHANTMENTS.getValue(ResourceLocation.parse(poolEntry.enchantment));
-        if (enchantment == null) {
+        Holder.Reference<Enchantment> holder = UtilFunctions.getEnchantmentReferenceIfPresent(Minecraft.getInstance().player.registryAccess(), poolEntry.enchantment);
+
+        if (holder == null) {
+            enchantment = null;
             iconList = "";
             enchantmentName = "Invalid:Enchantment!";
             enchantmentDropRate = "-";
             levelDropRates.add("-");
+            maxLevel = 0;
             return;
         }
-//        String nameID = enchantment.getDescriptionId();
-//        enchantmentName = Component.translatable(nameID).getString();
-//        enchantmentDropRate = String.format("%6.2f%%", ((float)poolEntry.weight / getBookProperties().enchantmentPoolTotalWeights) * 100.0f);
-//        iconList = EnchantedBookItem.getApplicableIcons(enchantment).getString();
-//        for (int i = 0; i < poolEntry.levelWeights.size(); ++i) {
-//            levelDropRates.add(String.format("%6.2f%%", ((float)poolEntry.levelWeights.get(i) / poolEntry.levelWeightsSum) * 100.0f));
-//        }
+        enchantment = holder.value();
+
+        String nameID = enchantment.description().getString();
+        enchantmentName = Component.translatable(nameID).getString();
+        enchantmentDropRate = String.format("%6.2f%%", ((float)poolEntry.weight / getBookProperties().enchantmentPoolTotalWeights) * 100.0f);
+        iconList = RechantmentBookItem.getApplicableIcons(holder).getString();
+        for (int i = 0; i < poolEntry.levelWeights.size(); ++i) {
+            levelDropRates.add(String.format("%6.2f%%", ((float)poolEntry.levelWeights.get(i) / poolEntry.levelWeightsSum) * 100.0f));
+        }
+        maxLevel = enchantment.getMaxLevel();
     }
 
 
@@ -184,7 +197,7 @@ public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderabl
 
 
     private boolean displayShortenedVersion() {
-        return levelDropRates.size() <= 1 && enchantment.getMaxLevel() <= 1;
+        return levelDropRates.size() <= 1 && maxLevel <= 1;
     }
 
     public int getEntryLabelBottomY() {

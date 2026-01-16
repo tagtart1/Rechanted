@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.tagtart.rechantment.block.ModBlocks;
 import net.tagtart.rechantment.block.entity.RechantmentTableBlockEntity;
 import net.tagtart.rechantment.util.BookRarityProperties;
 
@@ -26,7 +27,7 @@ public class RechantmentTablePoolDisplayMenu extends AbstractContainerMenu {
     public RechantmentTablePoolDisplayMenu(int pContainerId, Inventory inv, BlockEntity entity, int bookPropertiesIndex) {
         super(ModMenuTypes.RECHANTMENT_TABLE_POOL_DISPLAY_MENU.get(), pContainerId);
 
-        blockEntity = ((RechantmentTableBlockEntity) entity);
+        blockEntity = (RechantmentTableBlockEntity) entity;
         level = inv.player.level();
         startingPropertiesIndex = bookPropertiesIndex % BookRarityProperties.getAllProperties().length;
     }
@@ -39,6 +40,6 @@ public class RechantmentTablePoolDisplayMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player player) {
         return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()),
-                player, Blocks.ENCHANTING_TABLE);
+                player, ModBlocks.RECHANTMENT_TABLE_BLOCK.get());
     }
 }
