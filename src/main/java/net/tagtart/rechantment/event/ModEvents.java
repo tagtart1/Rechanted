@@ -15,9 +15,18 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.EnchantmentTags;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.*;
+import net.minecraft.world.phys.Vec2;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
 import net.neoforged.neoforge.event.AnvilUpdateEvent;
 import net.neoforged.neoforge.event.GrindstoneEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -27,6 +36,7 @@ import net.neoforged.neoforge.network.registration.HandlerThread;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.config.RechantmentCommonConfigs;
+import net.tagtart.rechantment.enchantment.ModEnchantments;
 import net.tagtart.rechantment.item.ModItems;
 import net.tagtart.rechantment.networking.data.OpenEnchantTableScreenC2SPayload;
 import net.tagtart.rechantment.networking.data.PlayerPurchaseEnchantedBookC2SPayload;
@@ -66,51 +76,66 @@ public class ModEvents {
         }
 
 
-        // TODO: Reimplement when enchantment system is ported.
-//        @SubscribeEvent
-//        public static void onShieldBlock(LivingShieldBlockEvent event) {
-//            float SHIELD_BASH_KNOCKBACK = 1.15f;
-//            float SHIELD_BASH_KNOCKBACK_Y = 0.4f;
-//            int SHIELD_COURAGE_SPEED_DURATION = 40; // Speed in ticks
-//
-//            Player player = (Player) event.getEntity();
-//            DamageSource source = event.getDamageSource();
-//            Entity attacker = source.getEntity();
-//            ItemStack shield = player.getUseItem();
-//
-//            if(!(shield.getItem() instanceof ShieldItem)) return;
-//
-//            ResourceLocation bashResource = new ResourceLocation("rechantment:bash");
-//            ResourceLocation courageResource = new ResourceLocation("rechantment:courage");
-//            Map<Enchantment, Integer> shieldEnchants = EnchantmentHelper.getEnchantments(shield);
-//            // Handle bash enchantment
-//            if (shieldEnchants.containsKey(ForgeRegistries.ENCHANTMENTS.getValue(bashResource))) {
-//                if (!(source.getDirectEntity() instanceof Projectile)) {
-//                    double d0 = attacker.getX() - player.getX();
-//                    double d1 = attacker.getZ() - player.getZ();
-//                    Vec2 toAttacker = new Vec2((float) d0, (float) d1);
-//                    toAttacker = toAttacker.normalized();
-//                    toAttacker = toAttacker.scale(SHIELD_BASH_KNOCKBACK);
-//
-//
-//                    if (attacker.isPushable()) {
-//                        attacker.push(toAttacker.x, SHIELD_BASH_KNOCKBACK_Y, toAttacker.y);
-//                    }
-//                }
-//            }
-//
-//            // Check for Courage enchantment
-//            if (shieldEnchants.containsKey(BuiltInRegistries.ENCHANTMENTS.getValue(courageResource))) {
-//                  int enchantmentLevel = shieldEnchants.get(ForgeRegistries.ENCHANTMENTS.getValue(courageResource));
-//                  MobEffectInstance speedEffect = new MobEffectInstance(
-//                          MobEffects.MOVEMENT_SPEED,
-//                          SHIELD_COURAGE_SPEED_DURATION,
-//                          enchantmentLevel - 1
-//                  );
-//                  player.addEffect(speedEffect);
-//            }
-//
-//        }
+        @SubscribeEvent
+        public static void onShieldBlock(LivingShieldBlockEvent event) {
+            if (!(event.getEntity() instanceof Player player)) return;
+            
+            DamageSource source = event.getDamageSource();
+            Entity attacker = source.getEntity();
+            ItemStack shield = player.getUseItem();
+
+            if(!(shield.getItem() instanceof ShieldItem)) return;
+
+            HolderLookup.Provider registryAccess = player.level().registryAccess();
+            
+            // Get the bash enchantment level
+            Holder<Enchantment> bashHolder = registryAccess.lookup(Registries.ENCHANTMENT)
+                    .flatMap(registry -> registry.get(ModEnchantments.BASH))
+                    .orElse(null);
+            
+            // Handle bash enchantment
+            if (bashHolder != null) {
+                int bashLevel = shield.getEnchantmentLevel(bashHolder);
+                
+                if (bashLevel > 0 && attacker != null) {
+                    // Don't bash projectiles, only melee attackers
+                    if (!(source.getDirectEntity() instanceof Projectile)) {
+                        // Calculate knockback direction (away from player)
+                        double d0 = attacker.getX() - player.getX();
+                        double d1 = attacker.getZ() - player.getZ();
+                        Vec2 toAttacker = new Vec2((float) d0, (float) d1);
+                        toAttacker = toAttacker.normalized();
+                        toAttacker = toAttacker.scale(1.15f);
+
+                        // Apply knockback
+                        if (attacker.isPushable()) {
+                            attacker.push(toAttacker.x, 0.4f, toAttacker.y);
+                        }
+                    }
+                }
+            }
+
+            // Get the courage enchantment level
+            Holder<Enchantment> courageHolder = registryAccess.lookup(Registries.ENCHANTMENT)
+                    .flatMap(registry -> registry.get(ModEnchantments.COURAGE))
+                    .orElse(null);
+            
+            // Handle courage enchantment
+            if (courageHolder != null) {
+                int courageLevel = shield.getEnchantmentLevel(courageHolder);
+                
+                if (courageLevel > 0) {
+                    int SHIELD_COURAGE_SPEED_DURATION = 40; // Speed in ticks (2 seconds)
+                    MobEffectInstance speedEffect = new MobEffectInstance(
+                            MobEffects.MOVEMENT_SPEED,
+                            SHIELD_COURAGE_SPEED_DURATION,
+                            courageLevel - 1
+                    );
+                    player.addEffect(speedEffect);
+                }
+            }
+
+        }
 
         @SubscribeEvent
         public static void onItemToolTip(ItemTooltipEvent event) {

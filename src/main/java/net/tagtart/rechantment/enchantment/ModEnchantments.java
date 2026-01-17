@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.*;
 import net.minecraft.world.item.enchantment.effects.AddValue;
 import net.tagtart.rechantment.Rechantment;
@@ -31,6 +32,12 @@ public class ModEnchantments {
 
     public static final ResourceKey<Enchantment> INQUISITIVE = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "inquisitive"));
+
+    public static final ResourceKey<Enchantment> BASH = ResourceKey.create(Registries.ENCHANTMENT,
+            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "bash"));
+
+    public static final ResourceKey<Enchantment> COURAGE = ResourceKey.create(Registries.ENCHANTMENT,
+            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "courage"));
 
     public static void bootstrap(BootstrapContext<Enchantment> context) {
         var enchantments = context.lookup(Registries.ENCHANTMENT);
@@ -114,6 +121,30 @@ public class ModEnchantments {
                 2, EquipmentSlotGroup.MAINHAND))
                 .withEffect(EnchantmentEffectComponents.MOB_EXPERIENCE,
                         new InquisitiveEnchantmentEffect()));
+
+        register(context, BASH, Enchantment.enchantment(Enchantment.definition(
+                HolderSet.direct(items.getOrThrow(ResourceKey.create(Registries.ITEM, ResourceLocation.withDefaultNamespace("shield")))),
+                HolderSet.direct(items.getOrThrow(ResourceKey.create(Registries.ITEM, ResourceLocation.withDefaultNamespace("shield")))),
+                5,
+                1,
+                Enchantment.dynamicCost(10, 20),
+                Enchantment.dynamicCost(60, 20),
+                2, EquipmentSlotGroup.OFFHAND))
+                .withEffect(EnchantmentEffectComponents.ITEM_DAMAGE,
+                        new BashEnchantmentEffect()));
+        // Note: Bash knockback effect is triggered via event handler in ModEvents
+
+        register(context, COURAGE, Enchantment.enchantment(Enchantment.definition(
+                HolderSet.direct(items.getOrThrow(ResourceKey.create(Registries.ITEM, ResourceLocation.withDefaultNamespace("shield")))),
+                HolderSet.direct(items.getOrThrow(ResourceKey.create(Registries.ITEM, ResourceLocation.withDefaultNamespace("shield")))),
+                5,
+                2,
+                Enchantment.dynamicCost(10, 20),
+                Enchantment.dynamicCost(60, 20),
+                2, EquipmentSlotGroup.OFFHAND))
+                .withEffect(EnchantmentEffectComponents.ITEM_DAMAGE,
+                        new CourageEnchantmentEffect()));
+        // Note: Courage speed effect is triggered via event handler in ModEvents
 
 
     }
