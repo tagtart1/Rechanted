@@ -29,6 +29,9 @@ public class ModEnchantments {
     public static final ResourceKey<Enchantment> WISDOM = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "wisdom"));
 
+    public static final ResourceKey<Enchantment> INQUISITIVE = ResourceKey.create(Registries.ENCHANTMENT,
+            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "inquisitive"));
+
     public static void bootstrap(BootstrapContext<Enchantment> context) {
         var enchantments = context.lookup(Registries.ENCHANTMENT);
         var items = context.lookup(Registries.ITEM);
@@ -100,6 +103,17 @@ public class ModEnchantments {
                 2, EquipmentSlotGroup.MAINHAND))
                 .withEffect(EnchantmentEffectComponents.BLOCK_EXPERIENCE,
                         new WisdomEnchantmentEffect()));
+
+        register(context, INQUISITIVE, Enchantment.enchantment(Enchantment.definition(
+                items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
+                items.getOrThrow(ItemTags.SWORD_ENCHANTABLE),
+                5,
+                4,
+                Enchantment.dynamicCost(10, 20),
+                Enchantment.dynamicCost(60, 20),
+                2, EquipmentSlotGroup.MAINHAND))
+                .withEffect(EnchantmentEffectComponents.MOB_EXPERIENCE,
+                        new InquisitiveEnchantmentEffect()));
 
 
     }

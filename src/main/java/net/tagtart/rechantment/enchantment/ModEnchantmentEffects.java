@@ -34,6 +34,9 @@ public class ModEnchantmentEffects {
     public static final Supplier<MapCodec<? extends EnchantmentValueEffect>> WISDOM = VALUE_ENCHANTMENT_EFFECTS
             .register("wisdom", () -> WisdomEnchantmentEffect.CODEC);
 
+    public static final Supplier<MapCodec<? extends EnchantmentValueEffect>> INQUISITIVE = VALUE_ENCHANTMENT_EFFECTS
+            .register("inquisitive", () -> InquisitiveEnchantmentEffect.CODEC);
+
     public static void register(IEventBus eventBus) {
         VALUE_ENCHANTMENT_EFFECTS.register(eventBus);
         ENTITY_ENCHANTMENT_EFFECTS.register(eventBus);
