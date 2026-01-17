@@ -261,6 +261,7 @@ public class RechantmentCommonConfigs {
         rarity_3_default_enchantments.add("minecraft:sweeping|1|2-3|2,1");
         rarity_3_default_enchantments.add("minecraft:silk_touch|1|1|1");
         rarity_3_default_enchantments.add("rechantment:ice_aspect|1|1-2|2,1");
+        rarity_3_default_enchantments.add("rechantment:wisdom|1|1-2|2,1");
         rarity_3_default_enchantments.add("minecraft:multishot|1|1|1");
         rarity_3_default_enchantments.add("minecraft:channeling|1|1|1");
         RARITY_3_ENCHANTMENTS = BUILDER.translation("config.rechantment.ultimate.enchantments.title").defineList("enchantments", rarity_3_default_enchantments, () -> "minecraft:sharpness|1|1-4|3,3,2,1", s -> s instanceof String);

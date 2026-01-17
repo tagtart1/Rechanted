@@ -8,15 +8,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlotGroup;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
-import net.minecraft.world.item.enchantment.EnchantmentTarget;
-import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.*;
+import net.minecraft.world.item.enchantment.effects.AddValue;
 import net.tagtart.rechantment.Rechantment;
-import net.tagtart.rechantment.enchantment.custom.HellsFuryEnchantmentEffect;
-import net.tagtart.rechantment.enchantment.custom.IceAspectEnchantmentEffect;
-import net.tagtart.rechantment.enchantment.custom.ThunderStrikeEnchantmentEffect;
-import net.tagtart.rechantment.enchantment.custom.VoidsBaneEnchantmentEffect;
+import net.tagtart.rechantment.enchantment.custom.*;
 
 public class ModEnchantments {
     public static final ResourceKey<Enchantment> THUNDER_STRIKE = ResourceKey.create(Registries.ENCHANTMENT,
@@ -30,6 +25,9 @@ public class ModEnchantments {
 
     public static final ResourceKey<Enchantment> ICE_ASPECT = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "ice_aspect"));
+
+    public static final ResourceKey<Enchantment> WISDOM = ResourceKey.create(Registries.ENCHANTMENT,
+            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "wisdom"));
 
     public static void bootstrap(BootstrapContext<Enchantment> context) {
         var enchantments = context.lookup(Registries.ENCHANTMENT);
@@ -91,6 +89,19 @@ public class ModEnchantments {
                                 30,   // Base duration in ticks (5 seconds = 100 ticks)
                                 10    // Additional duration per level
                         )));
+
+        register(context, WISDOM, Enchantment.enchantment(Enchantment.definition(
+                items.getOrThrow(ItemTags.PICKAXES),
+                        items.getOrThrow(ItemTags.PICKAXES),
+                5,
+                2,
+                Enchantment.dynamicCost(10, 20),
+                Enchantment.dynamicCost(60, 20),
+                2, EquipmentSlotGroup.MAINHAND))
+                .withEffect(EnchantmentEffectComponents.BLOCK_EXPERIENCE,
+                        new WisdomEnchantmentEffect()));
+
+
     }
 
     private static void register(BootstrapContext<Enchantment> registry, ResourceKey<Enchantment> key,
