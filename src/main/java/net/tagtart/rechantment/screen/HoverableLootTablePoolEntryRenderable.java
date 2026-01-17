@@ -125,10 +125,8 @@ public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderabl
     }
 
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        //guiGraphics.blitNineSliced(renderTexture, renderOffsetPosX, renderOffsetPosY - scrollOffset, imageWidth, getEntryLabelBottomY(), 2, imageWidth, imageHeight, 0, 0, imageWidth, imageHeight);
-
-        // IF THERE ARE BUGS WITH RENDERING A POOL ENTRY, CHECK THIS FIRST. NO EQUIVALENT TO ABOVE COMMENTED OUT LINE.
         guiGraphics.blitSprite(renderTexture, imageWidth, imageHeight, 0, 0, renderOffsetPosX, renderOffsetPosY - scrollOffset, imageWidth, imageHeight);
+
         if (gridShader != null) {
             gridShader.safeGetUniform("Time").set(globalTimeElapsed);
             gridShader.safeGetUniform("Resolution").set((float)imageWidth, (float)getEntryLabelBottomY());

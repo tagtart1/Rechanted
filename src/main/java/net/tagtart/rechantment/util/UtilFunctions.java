@@ -349,8 +349,8 @@ public class UtilFunctions {
         };
         ParticleEmitter.emitParticlesOverTime(player, level, 100, 60, particlesArray);
 
-        // TODO: UNCOMMENT WHEN NETWORKING IS RE-IMPLEMENTED.
         //ModPackets.sentToPlayer(new TriggerRebirthItemEffectS2CPacket(itemToActivate), player);
+
 
         level.playSound(null,  player.blockPosition(), ModSounds.REBIRTH_ITEM.get(), SoundSource.PLAYERS, 0.7F, 1.0F);
     }

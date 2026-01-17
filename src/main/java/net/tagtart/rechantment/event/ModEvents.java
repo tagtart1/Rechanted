@@ -1,15 +1,27 @@
 package net.tagtart.rechantment.event;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponentHolder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.*;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.AnvilUpdateEvent;
 import net.neoforged.neoforge.event.GrindstoneEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.HandlerThread;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -100,79 +112,115 @@ public class ModEvents {
 //
 //        }
 
-        // TODO: Reimplement when enchantment system is ported.
-//        @SubscribeEvent
-//        public static void onItemToolTip(ItemTooltipEvent event) {
-//            ItemStack stack = event.getItemStack();
-//            List<Component> tooltip = event.getToolTip();
-//
-//            if (stack.isEnchanted()) {
-//
-//                List<Map.Entry<Enchantment, Integer>> enchantsSorted = new ArrayList<>(EnchantmentHelper.getEnchantments(stack).entrySet());
-//
-//                enchantsSorted.sort((component1, component2) -> {
-//                    String enchantmentRaw1 = ForgeRegistries.ENCHANTMENTS.getKey(component1.getKey()).toString();
-//                    String enchantmentRaw2 = ForgeRegistries.ENCHANTMENTS.getKey(component2.getKey()).toString();
-//
-//                    BookRarityProperties rarity1 = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw1);
-//                    BookRarityProperties rarity2 = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw2);
-//
-//                    float rarityValue1 = 0f;
-//                    float rarityValue2 = 0f;
-//
-//                    if (rarity1 == null && component1.getKey().isCurse()) {
-//                        rarityValue1 = 99.0f;
-//                    } else if (rarity1 == null && component1.getKey() instanceof RebornEnchantment) {
+        @SubscribeEvent
+        public static void onItemToolTip(ItemTooltipEvent event) {
+            ItemStack stack = event.getItemStack();
+            List<Component> tooltip = event.getToolTip();
+
+            if (stack.getItem() instanceof EnchantedBookItem) {
+                tooltip.add(Component.literal("Vanilla books have been disabled.").withStyle(ChatFormatting.RED));
+            }
+
+            else if (stack.isEnchanted()) {
+
+                ItemEnchantments enchantments = stack.get(DataComponents.ENCHANTMENTS);
+                List<Object2IntMap.Entry<Holder<Enchantment>>> enchantsSorted = new ArrayList<>(enchantments.entrySet());
+
+                enchantsSorted.sort((component1, component2) -> {
+                    String enchantmentRaw1 = component1.getKey().unwrapKey().get().location().toString();
+                    String enchantmentRaw2 = component2.getKey().unwrapKey().get().location().toString();
+
+                    BookRarityProperties rarity1 = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw1);
+                    BookRarityProperties rarity2 = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw2);
+
+                    float rarityValue1 = 0f;
+                    float rarityValue2 = 0f;
+
+                    if (rarity1 == null && component1.getKey().is(EnchantmentTags.CURSE)) {
+                        rarityValue1 = 99.0f;
+                    }
+                    // TODO: UNCOMMENT WHEN REBIRTH/REBORN ENCHANTMENTS ARE PORTED!!!
+//                    else if (rarity1 == null && component1.getKey() instanceof RebornEnchantment) {
 //                        rarityValue1 = 100f;
-//                    } else if (rarity1 != null) {
-//                        rarityValue1 = rarity1.rarity;
+//
 //                    }
+                    else if (rarity1 != null) {
+
+                        rarityValue1 = rarity1.rarity;
+                    }
+
+                    if (rarity2 == null && component2.getKey().is(EnchantmentTags.CURSE)) {
+                        rarityValue2 = 99.0f;
+                        // TODO: UNCOMMENT WHEN REBIRTH/REBORN ENCHANTMENTS ARE PORTED!!!
+//                    else if (rarity2 == null && component2.getKey() instanceof RebornEnchantment) {
+//                        rarityValue1 = 100f;
 //
-//                    if (rarity2 == null && component2.getKey().isCurse()) {
-//                        rarityValue2 = 99.0f;
-//                    } else if (rarity2 == null && component2.getKey() instanceof RebornEnchantment) {
-//                        rarityValue2 = 100f;
-//                    } else if (rarity2 != null) {
-//                        rarityValue2 = rarity2.rarity;
 //                    }
-//
-//
-//                    return Float.compare(rarityValue2, rarityValue1);
-//                });
-//
-//                for(int i = 1; i <= enchantsSorted.size(); i++) {
-//
-//                    Map.Entry<Enchantment, Integer> entry = enchantsSorted.get(i - 1);
-//
-//                    String enchantmentRaw = ForgeRegistries.ENCHANTMENTS.getKey(entry.getKey()).toString();
-//
-//                    BookRarityProperties rarityProperties = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw);
-//
-//                    Style style = Style.EMPTY;
-//                    if (entry.getKey().isCurse()) {
-//                        style = Style.EMPTY.withColor(ChatFormatting.RED);
-//                    }
-//
+                    } else if (rarity2 != null) {
+                        rarityValue2 = rarity2.rarity;
+                    }
+
+
+                    return Float.compare(rarityValue2, rarityValue1);
+                });
+
+                // First pass:
+                // Only replace line indices that match an enchantment's translated name.
+                // This is technically a foolproof way of doing this but is very slow and I hate to do it like this.
+                // If there's a better way to accomplish the same thing then this def should be refactored.
+                int enchantmentTooltipsStartIndex = tooltip.size();
+                for(int i = 1; i <= enchantsSorted.size(); i++) {
+
+                    Object2IntMap.Entry<Holder<Enchantment>> entry = enchantsSorted.get(i - 1);
+
+                    Component fullEnchantName = Enchantment.getFullname(entry.getKey(), enchantments.getLevel(entry.getKey()));
+
+
+                    MutableComponent translatedText = Component.translatable(fullEnchantName.getString());
+                    String translatedString = translatedText.getString(); // avoid redundant toString calls below
+                    Optional<Component> replacedComponent = tooltip.stream().filter((text) -> {
+                        String existingTranslated = text.getString();
+                        if (existingTranslated.equalsIgnoreCase(translatedString)) {
+                            return true;
+                        }
+                        return false;
+                    }).findFirst();
+                    if (replacedComponent.isPresent()) {
+                        int replaceIndex = tooltip.indexOf(replacedComponent.get());
+                        enchantmentTooltipsStartIndex = Math.min(replaceIndex, enchantmentTooltipsStartIndex);
+                    }
+                }
+
+                // Second pass:
+                // Now actually replace tooltips of enchantments in our desired order.
+                int replacementIndex = enchantmentTooltipsStartIndex;
+                for(int i = 1; i <= enchantsSorted.size(); i++) {
+
+                    Object2IntMap.Entry<Holder<Enchantment>> entry = enchantsSorted.get(i - 1);
+                    String enchantmentRaw = entry.getKey().unwrapKey().get().location().toString();
+                    BookRarityProperties rarityProperties = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw);
+
+                    Style style = Style.EMPTY;
+                    if (entry.getKey().is(EnchantmentTags.CURSE)) {
+                        style = Style.EMPTY.withColor(ChatFormatting.RED);
+                    }
+
+                    // TODO: UNCOMMENT WHEN REBIRTH/REBORN ENCHANTMENTS ARE PORTED!!!
 //                    else if (entry.getKey() instanceof RebornEnchantment) {
 //                        style = Style.EMPTY.withColor(ChatFormatting.WHITE).withBold(true);
 //                    }
-//
-//                    else if (rarityProperties != null) {
-//                        style = Style.EMPTY.withColor(rarityProperties.color);
-//                    }
-//
-//                    String fullEnchantName = entry.getKey().getFullname(entry.getValue()).getString();
-//
-//                    Component modifiedText = Component.literal(fullEnchantName).withStyle(style);
-//
-//                    tooltip.set(i, modifiedText);
-//                }
-//            }
-//
-//            if (stack.getItem() instanceof EnchantedBookItem) {
-//                tooltip.add(Component.literal("Vanilla books have been disabled.").withStyle(ChatFormatting.RED));
-//            }
-//        }
+
+                    else if (rarityProperties != null) {
+                        style = Style.EMPTY.withColor(rarityProperties.color);
+                    }
+
+                    Component fullEnchantName = Enchantment.getFullname(entry.getKey(), enchantments.getLevel(entry.getKey()));
+                    tooltip.set(replacementIndex++, Component.translatable(fullEnchantName.getString()).withStyle((style)));
+                }
+            }
+
+
+        }
 
         // TODO: Reimplement when enchantment system is ported.
 //        @SubscribeEvent
