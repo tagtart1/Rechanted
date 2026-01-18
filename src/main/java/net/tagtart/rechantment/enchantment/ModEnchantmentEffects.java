@@ -31,6 +31,12 @@ public class ModEnchantmentEffects {
     public static final Supplier<MapCodec<? extends EnchantmentEntityEffect>> ICE_ASPECT = ENTITY_ENCHANTMENT_EFFECTS
             .register("ice_aspect", () -> IceAspectEnchantmentEffect.CODEC);
 
+    public static final Supplier<MapCodec<? extends EnchantmentValueEffect>> BASH = VALUE_ENCHANTMENT_EFFECTS
+            .register("bash", () -> BashEnchantmentEffect.CODEC);
+
+    public static final Supplier<MapCodec<? extends EnchantmentValueEffect>> COURAGE = VALUE_ENCHANTMENT_EFFECTS
+            .register("courage", () -> CourageEnchantmentEffect.CODEC);
+
     public static final Supplier<MapCodec<? extends EnchantmentValueEffect>> WISDOM = VALUE_ENCHANTMENT_EFFECTS
             .register("wisdom", () -> WisdomEnchantmentEffect.CODEC);
 

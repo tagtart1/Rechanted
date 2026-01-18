@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -17,6 +18,19 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.EnchantmentTags;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.MobCategory;
@@ -24,12 +38,15 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.*;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
+import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.AnvilUpdateEvent;
 import net.neoforged.neoforge.event.GrindstoneEvent;
@@ -45,6 +62,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.block.entity.RechantmentTableBlockEntity;
 import net.tagtart.rechantment.config.RechantmentCommonConfigs;
+import net.tagtart.rechantment.enchantment.ModEnchantments;
 import net.tagtart.rechantment.enchantment.ModEnchantments;
 import net.tagtart.rechantment.enchantment.custom.InquisitiveEnchantmentEffect;
 import net.tagtart.rechantment.enchantment.custom.WisdomEnchantmentEffect;
@@ -89,51 +107,66 @@ public class ModEvents {
         }
 
 
-        // TODO: Reimplement when enchantment system is ported.
-//        @SubscribeEvent
-//        public static void onShieldBlock(LivingShieldBlockEvent event) {
-//            float SHIELD_BASH_KNOCKBACK = 1.15f;
-//            float SHIELD_BASH_KNOCKBACK_Y = 0.4f;
-//            int SHIELD_COURAGE_SPEED_DURATION = 40; // Speed in ticks
-//
-//            Player player = (Player) event.getEntity();
-//            DamageSource source = event.getDamageSource();
-//            Entity attacker = source.getEntity();
-//            ItemStack shield = player.getUseItem();
-//
-//            if(!(shield.getItem() instanceof ShieldItem)) return;
-//
-//            ResourceLocation bashResource = new ResourceLocation("rechantment:bash");
-//            ResourceLocation courageResource = new ResourceLocation("rechantment:courage");
-//            Map<Enchantment, Integer> shieldEnchants = EnchantmentHelper.getEnchantments(shield);
-//            // Handle bash enchantment
-//            if (shieldEnchants.containsKey(ForgeRegistries.ENCHANTMENTS.getValue(bashResource))) {
-//                if (!(source.getDirectEntity() instanceof Projectile)) {
-//                    double d0 = attacker.getX() - player.getX();
-//                    double d1 = attacker.getZ() - player.getZ();
-//                    Vec2 toAttacker = new Vec2((float) d0, (float) d1);
-//                    toAttacker = toAttacker.normalized();
-//                    toAttacker = toAttacker.scale(SHIELD_BASH_KNOCKBACK);
-//
-//
-//                    if (attacker.isPushable()) {
-//                        attacker.push(toAttacker.x, SHIELD_BASH_KNOCKBACK_Y, toAttacker.y);
-//                    }
-//                }
-//            }
-//
-//            // Check for Courage enchantment
-//            if (shieldEnchants.containsKey(BuiltInRegistries.ENCHANTMENTS.getValue(courageResource))) {
-//                  int enchantmentLevel = shieldEnchants.get(ForgeRegistries.ENCHANTMENTS.getValue(courageResource));
-//                  MobEffectInstance speedEffect = new MobEffectInstance(
-//                          MobEffects.MOVEMENT_SPEED,
-//                          SHIELD_COURAGE_SPEED_DURATION,
-//                          enchantmentLevel - 1
-//                  );
-//                  player.addEffect(speedEffect);
-//            }
-//
-//        }
+        @SubscribeEvent
+        public static void onShieldBlock(LivingShieldBlockEvent event) {
+            if (!(event.getEntity() instanceof Player player)) return;
+
+            DamageSource source = event.getDamageSource();
+            Entity attacker = source.getEntity();
+            ItemStack shield = player.getUseItem();
+
+            if(!(shield.getItem() instanceof ShieldItem)) return;
+
+            HolderLookup.Provider registryAccess = player.level().registryAccess();
+
+            // Get the bash enchantment level
+            Holder<Enchantment> bashHolder = registryAccess.lookup(Registries.ENCHANTMENT)
+                    .flatMap(registry -> registry.get(ModEnchantments.BASH))
+                    .orElse(null);
+
+            // Handle bash enchantment
+            if (bashHolder != null) {
+                int bashLevel = shield.getEnchantmentLevel(bashHolder);
+
+                if (bashLevel > 0 && attacker != null) {
+                    // Don't bash projectiles, only melee attackers
+                    if (!(source.getDirectEntity() instanceof Projectile)) {
+                        // Calculate knockback direction (away from player)
+                        double d0 = attacker.getX() - player.getX();
+                        double d1 = attacker.getZ() - player.getZ();
+                        Vec2 toAttacker = new Vec2((float) d0, (float) d1);
+                        toAttacker = toAttacker.normalized();
+                        toAttacker = toAttacker.scale(1.15f);
+
+                        // Apply knockback
+                        if (attacker.isPushable()) {
+                            attacker.push(toAttacker.x, 0.4f, toAttacker.y);
+                        }
+                    }
+                }
+            }
+
+            // Get the courage enchantment level
+            Holder<Enchantment> courageHolder = registryAccess.lookup(Registries.ENCHANTMENT)
+                    .flatMap(registry -> registry.get(ModEnchantments.COURAGE))
+                    .orElse(null);
+
+            // Handle courage enchantment
+            if (courageHolder != null) {
+                int courageLevel = shield.getEnchantmentLevel(courageHolder);
+
+                if (courageLevel > 0) {
+                    int SHIELD_COURAGE_SPEED_DURATION = 40; // Speed in ticks (2 seconds)
+                    MobEffectInstance speedEffect = new MobEffectInstance(
+                            MobEffects.MOVEMENT_SPEED,
+                            SHIELD_COURAGE_SPEED_DURATION,
+                            courageLevel - 1
+                    );
+                    player.addEffect(speedEffect);
+                }
+            }
+
+        }
 
         @SubscribeEvent
         public static void onItemToolTip(ItemTooltipEvent event) {
@@ -301,11 +334,6 @@ public class ModEvents {
 //            }
 //        }
 //
-        // TODO JIMMY:
-        // - WISDOM NOT WORKING WITH VEIN MINER... WORKAROUND? AT LEAST USE EnchantmentHelper.processBlockExperience/mobExperience?
-        //          -- Try state.getblock.playerdestroy()
-        // - TELEPATHY NOT TESTED YET; ITEM TAG/TYPE DOESN'T WORK AND IS NOT APPLYING OR SHOWING TOOLTIP ICONS
-        // - DURABILITY NOT BEING REMOVED FROM ITEM.
 
         // Telepathy, Vein Miner, Timber, Wisdom Enchantments - Blocks
         @SubscribeEvent
@@ -458,6 +486,7 @@ public class ModEvents {
             }
         }
 
+        // TODO: Reimplement when enchantment system is ported.
         // Vein miner / timber specific
         private static void destroyBulkBlocks(BlockEvent.BreakEvent event, BlockPos[] blocksToDestroy, ServerLevel level, ItemStack handItem, int telepathyEnchantmentLevel, int fortuneEnchantmentLevel) {
             int destroyedSuccessfully = 0;
@@ -568,69 +597,68 @@ public class ModEvents {
             }
         }
 
-        private static final UUID healthModifierUUID = UUID.fromString("ac527260-8c85-49fc-ab4a-7b7ed7580a18");
+        private static final ResourceLocation OVERLOAD_HEALTH_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "overload_max_health");
+        private static final float OVERLOAD_HEALTH_PER_LEVEL = 2.0f; // +2 HP (1 heart) per level
 
-        // TODO: Reimplement when enchantment system is ported.
+        @SubscribeEvent
+        public static void onArmorEquip(LivingEquipmentChangeEvent event) {
+            // Check if the changed equipment is an armor piece
+            EquipmentSlot slot = event.getSlot();
+            if (slot.getType() != EquipmentSlot.Type.HUMANOID_ARMOR) return;
+            if (!(event.getEntity() instanceof Player player)) return;
 
-//        @SubscribeEvent
-//        public static void onArmorEquip(LivingEquipmentChangeEvent event) {
-//            if (event.getSlot().getType() != EquipmentSlot.Type.ARMOR) return;
-//            if (!(event.getEntity() instanceof Player player)) return;
-//            ItemStack newArmor = event.getTo();
-//            ItemStack oldArmor = event.getFrom();
-//            Pair<OverloadEnchantment, Integer> overloadEnchantmentNewArmor = UtilFunctions.getEnchantmentFromItem(
-//                    "rechantment:overload",
-//                    newArmor,
-//                    OverloadEnchantment.class
-//            );
-//
-//            boolean overloadJustEquipped = overloadEnchantmentNewArmor != null && !ItemStack.isSameItem(newArmor, oldArmor);
-//
-//            float newMaxHealthIncrease = 0f;
-//            for (ItemStack armor : player.getInventory().armor) {
-//                Pair<OverloadEnchantment, Integer> overloadEnchantment = UtilFunctions.getEnchantmentFromItem(
-//                        "rechantment:overload",
-//                        armor,
-//                        OverloadEnchantment.class
-//                );
-//
-//                if (overloadEnchantment != null) {
-//                    newMaxHealthIncrease += overloadEnchantment.getA().getMaxHealthTier(overloadEnchantment.getB());
-//                }
-//            }
-//
-//            // Regardless of determined max health increase, remove modifier each update so that health
-//            // goes back to normal if no overload exists, or can be properly updated with new value relative to base value.
-//            AttributeModifier overloadModifier = new AttributeModifier(
-//                    healthModifierUUID,
-//                    "overload_max_health_increase",
-//                    newMaxHealthIncrease,
-//                    AttributeModifier.Operation.ADD_VALUE
-//            );
-//            AttributeInstance currentMaxHealthAttribute = player.getAttribute(Attributes.MAX_HEALTH);
-//            if (currentMaxHealthAttribute.hasModifier(overloadModifier)) {
-//                currentMaxHealthAttribute.removeModifier(overloadModifier);
-//            }
-//
-//            if (newMaxHealthIncrease > 0f) {
-//                currentMaxHealthAttribute.addPermanentModifier(overloadModifier);
-//            }
-//
-//            // Now apply health increase, and play sound if new max health has left extra hearts.
-//            if (player.getHealth() <= player.getMaxHealth() && newMaxHealthIncrease > 0f && overloadJustEquipped) {
-//
-//                // Make sure this plays
-//                player.level().playSound(null, player.getOnPos(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.15f, 1f);
-//
-//            } else {
-//                // Covers case where overload is unequipped and player would have more health than their max
-//                // (which is retained by default).
-//                if (player.getHealth() > player.getMaxHealth()) {
-//                    player.setHealth(player.getMaxHealth());
-//                    player.level().playSound(null, player.getEyePosition().x, player.getEyePosition().y, player.getEyePosition().z, SoundEvents.PLAYER_HURT, SoundSource.PLAYERS, 1f, 1f);
-//                }
-//            }
-//        }
+            ItemStack newArmor = event.getTo();
+            ItemStack oldArmor = event.getFrom();
+
+            HolderLookup.Provider registryAccess = player.level().registryAccess();
+            Holder<Enchantment> overloadHolder = registryAccess.lookup(Registries.ENCHANTMENT)
+                    .flatMap(registry -> registry.get(ModEnchantments.OVERLOAD))
+                    .orElse(null);
+
+            if (overloadHolder == null) return;
+
+            boolean overloadJustEquipped = newArmor.getEnchantmentLevel(overloadHolder) > 0 && !ItemStack.isSameItem(newArmor, oldArmor);
+
+            // Calculate total health increase from all armor pieces
+            float newMaxHealthIncrease = 0f;
+            for (ItemStack armor : player.getInventory().armor) {
+                int overloadLevel = armor.getEnchantmentLevel(overloadHolder);
+                if (overloadLevel > 0) {
+                    newMaxHealthIncrease += overloadLevel * OVERLOAD_HEALTH_PER_LEVEL;
+                }
+            }
+
+            // Remove old modifier and apply new one with updated value
+            AttributeModifier overloadModifier = new AttributeModifier(
+                    OVERLOAD_HEALTH_MODIFIER_ID,
+                    newMaxHealthIncrease,
+                    AttributeModifier.Operation.ADD_VALUE
+            );
+
+            AttributeInstance currentMaxHealthAttribute = player.getAttribute(Attributes.MAX_HEALTH);
+            if (currentMaxHealthAttribute == null) return;
+
+            // Remove old modifier if present
+            if (currentMaxHealthAttribute.hasModifier(OVERLOAD_HEALTH_MODIFIER_ID)) {
+                currentMaxHealthAttribute.removeModifier(OVERLOAD_HEALTH_MODIFIER_ID);
+            }
+
+            // Add new modifier if health increase > 0
+            if (newMaxHealthIncrease > 0f) {
+                currentMaxHealthAttribute.addPermanentModifier(overloadModifier);
+            }
+
+            // Play sound when equipping armor with overload
+            if (player.getHealth() <= player.getMaxHealth() && newMaxHealthIncrease > 0f && overloadJustEquipped) {
+                player.level().playSound(null, player.getOnPos(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.15f, 1f);
+            } else {
+                // Reduce health if player has more than new max (when unequipping overload)
+                if (player.getHealth() > player.getMaxHealth()) {
+                    player.setHealth(player.getMaxHealth());
+                    player.level().playSound(null, player.getEyePosition().x, player.getEyePosition().y, player.getEyePosition().z, SoundEvents.PLAYER_HURT, SoundSource.PLAYERS, 1f, 1f);
+                }
+            }
+        }
 
 //        @SubscribeEvent
 //        public static void onItemBreak(PlayerDestroyItemEvent event) {

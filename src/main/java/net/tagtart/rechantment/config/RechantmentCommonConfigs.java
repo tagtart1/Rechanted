@@ -232,6 +232,7 @@ public class RechantmentCommonConfigs {
         rarity_2_default_enchantments.add("rechantment:voids_bane|1|4|1");
         rarity_2_default_enchantments.add("minecraft:fire_aspect|1|1-2|2,1");
         rarity_2_default_enchantments.add("minecraft:fortune|1|1-3|2,2,1");
+        rarity_2_default_enchantments.add("rechantment:bash|1|1|1");
         RARITY_2_ENCHANTMENTS = BUILDER.translation("config.rechantment.elite.enchantments.title").defineList("enchantments", rarity_2_default_enchantments, () -> "minecraft:sharpness|1|1-4|3,3,2,1", s -> s instanceof String);
 
         BUILDER.pop();
@@ -263,6 +264,8 @@ public class RechantmentCommonConfigs {
         rarity_3_default_enchantments.add("rechantment:ice_aspect|1|1-2|2,1");
         rarity_3_default_enchantments.add("rechantment:wisdom|1|1-2|2,1");
         rarity_3_default_enchantments.add("minecraft:multishot|1|1|1");
+        rarity_3_default_enchantments.add("rechantment:wisdom|1|1-2|2,1");
+        rarity_3_default_enchantments.add("rechantment:courage|1|1|1");
         rarity_3_default_enchantments.add("minecraft:channeling|1|1|1");
         RARITY_3_ENCHANTMENTS = BUILDER.translation("config.rechantment.ultimate.enchantments.title").defineList("enchantments", rarity_3_default_enchantments, () -> "minecraft:sharpness|1|1-4|3,3,2,1", s -> s instanceof String);
 
@@ -289,6 +292,9 @@ public class RechantmentCommonConfigs {
         RARITY_4_GRINDSTONE_XP_MAX = BUILDER.translation("config.rechantment.legendary.grindstone_xp_max.title").defineInRange("grindstone_xp_max", 150, 0, Integer.MAX_VALUE);
         ArrayList<String> rarity_4_default_enchantments = new ArrayList<>();
         rarity_4_default_enchantments.add("minecraft:infinity|1|1|1");
+        rarity_4_default_enchantments.add("rechantment:inquisitive|1|1-4|4,3,2,1");
+        rarity_4_default_enchantments.add("rechantment:thunder_strike|1|1-2|2,1");
+        rarity_4_default_enchantments.add("rechantment:overload|1|1-3|4,2,1");
         RARITY_4_ENCHANTMENTS = BUILDER.translation("config.rechantment.legendary.enchantments.title").defineList("enchantments", rarity_4_default_enchantments, () -> "minecraft:sharpness|1|1-4|3,3,2,1", s -> s instanceof String);
 
         BUILDER.pop();
