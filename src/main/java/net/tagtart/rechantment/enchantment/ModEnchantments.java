@@ -8,11 +8,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.*;
 import net.minecraft.world.item.enchantment.effects.AddValue;
 import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.enchantment.custom.*;
+import net.tagtart.rechantment.util.ModTags;
+
+import java.util.ArrayList;
 
 public class ModEnchantments {
     public static final ResourceKey<Enchantment> THUNDER_STRIKE = ResourceKey.create(Registries.ENCHANTMENT,
@@ -39,9 +43,15 @@ public class ModEnchantments {
     public static final ResourceKey<Enchantment> COURAGE = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "courage"));
 
+    public static final ResourceKey<Enchantment> OVERLOAD = ResourceKey.create(Registries.ENCHANTMENT,
+            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "overload"));
+
+
+
     public static void bootstrap(BootstrapContext<Enchantment> context) {
         var enchantments = context.lookup(Registries.ENCHANTMENT);
         var items = context.lookup(Registries.ITEM);
+
 
         register(context, THUNDER_STRIKE, Enchantment.enchantment(Enchantment.definition(
                 items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
@@ -146,7 +156,17 @@ public class ModEnchantments {
                         new CourageEnchantmentEffect()));
         // Note: Courage speed effect is triggered via event handler in ModEvents
 
-
+        register(context, OVERLOAD, Enchantment.enchantment(Enchantment.definition(
+                items.getOrThrow(ModTags.Items.OVERLOAD_ENCHANTABLE),
+                items.getOrThrow(ModTags.Items.OVERLOAD_ENCHANTABLE),
+                5,
+                3,
+                Enchantment.dynamicCost(10, 20),
+                Enchantment.dynamicCost(60, 20),
+                2,
+                EquipmentSlotGroup.CHEST)));
+        // Note: Overload max health effect is triggered via event handler in ModEvents
+        // Uses custom tag: includes all chest armor + elytra, supports modded armor
     }
 
     private static void register(BootstrapContext<Enchantment> registry, ResourceKey<Enchantment> key,

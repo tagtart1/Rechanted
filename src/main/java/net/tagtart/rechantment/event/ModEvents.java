@@ -16,16 +16,23 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.*;
 import net.minecraft.world.phys.Vec2;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
 import net.neoforged.neoforge.event.AnvilUpdateEvent;
 import net.neoforged.neoforge.event.GrindstoneEvent;
@@ -610,69 +617,68 @@ public class ModEvents {
             }
         }
 
-        private static final UUID healthModifierUUID = UUID.fromString("ac527260-8c85-49fc-ab4a-7b7ed7580a18");
+        private static final ResourceLocation OVERLOAD_HEALTH_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "overload_max_health");
+        private static final float OVERLOAD_HEALTH_PER_LEVEL = 2.0f; // +2 HP (1 heart) per level
 
-        // TODO: Reimplement when enchantment system is ported.
+        @SubscribeEvent
+        public static void onArmorEquip(LivingEquipmentChangeEvent event) {
+            // Check if the changed equipment is an armor piece
+            EquipmentSlot slot = event.getSlot();
+            if (slot.getType() != EquipmentSlot.Type.HUMANOID_ARMOR) return;
+            if (!(event.getEntity() instanceof Player player)) return;
+            
+            ItemStack newArmor = event.getTo();
+            ItemStack oldArmor = event.getFrom();
+            
+            HolderLookup.Provider registryAccess = player.level().registryAccess();
+            Holder<Enchantment> overloadHolder = registryAccess.lookup(Registries.ENCHANTMENT)
+                    .flatMap(registry -> registry.get(ModEnchantments.OVERLOAD))
+                    .orElse(null);
+            
+            if (overloadHolder == null) return;
 
-//        @SubscribeEvent
-//        public static void onArmorEquip(LivingEquipmentChangeEvent event) {
-//            if (event.getSlot().getType() != EquipmentSlot.Type.ARMOR) return;
-//            if (!(event.getEntity() instanceof Player player)) return;
-//            ItemStack newArmor = event.getTo();
-//            ItemStack oldArmor = event.getFrom();
-//            Pair<OverloadEnchantment, Integer> overloadEnchantmentNewArmor = UtilFunctions.getEnchantmentFromItem(
-//                    "rechantment:overload",
-//                    newArmor,
-//                    OverloadEnchantment.class
-//            );
-//
-//            boolean overloadJustEquipped = overloadEnchantmentNewArmor != null && !ItemStack.isSameItem(newArmor, oldArmor);
-//
-//            float newMaxHealthIncrease = 0f;
-//            for (ItemStack armor : player.getInventory().armor) {
-//                Pair<OverloadEnchantment, Integer> overloadEnchantment = UtilFunctions.getEnchantmentFromItem(
-//                        "rechantment:overload",
-//                        armor,
-//                        OverloadEnchantment.class
-//                );
-//
-//                if (overloadEnchantment != null) {
-//                    newMaxHealthIncrease += overloadEnchantment.getA().getMaxHealthTier(overloadEnchantment.getB());
-//                }
-//            }
-//
-//            // Regardless of determined max health increase, remove modifier each update so that health
-//            // goes back to normal if no overload exists, or can be properly updated with new value relative to base value.
-//            AttributeModifier overloadModifier = new AttributeModifier(
-//                    healthModifierUUID,
-//                    "overload_max_health_increase",
-//                    newMaxHealthIncrease,
-//                    AttributeModifier.Operation.ADD_VALUE
-//            );
-//            AttributeInstance currentMaxHealthAttribute = player.getAttribute(Attributes.MAX_HEALTH);
-//            if (currentMaxHealthAttribute.hasModifier(overloadModifier)) {
-//                currentMaxHealthAttribute.removeModifier(overloadModifier);
-//            }
-//
-//            if (newMaxHealthIncrease > 0f) {
-//                currentMaxHealthAttribute.addPermanentModifier(overloadModifier);
-//            }
-//
-//            // Now apply health increase, and play sound if new max health has left extra hearts.
-//            if (player.getHealth() <= player.getMaxHealth() && newMaxHealthIncrease > 0f && overloadJustEquipped) {
-//
-//                // Make sure this plays
-//                player.level().playSound(null, player.getOnPos(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.15f, 1f);
-//
-//            } else {
-//                // Covers case where overload is unequipped and player would have more health than their max
-//                // (which is retained by default).
-//                if (player.getHealth() > player.getMaxHealth()) {
-//                    player.setHealth(player.getMaxHealth());
-//                    player.level().playSound(null, player.getEyePosition().x, player.getEyePosition().y, player.getEyePosition().z, SoundEvents.PLAYER_HURT, SoundSource.PLAYERS, 1f, 1f);
-//                }
-//            }
-//        }
+            boolean overloadJustEquipped = newArmor.getEnchantmentLevel(overloadHolder) > 0 && !ItemStack.isSameItem(newArmor, oldArmor);
+
+            // Calculate total health increase from all armor pieces
+            float newMaxHealthIncrease = 0f;
+            for (ItemStack armor : player.getInventory().armor) {
+                int overloadLevel = armor.getEnchantmentLevel(overloadHolder);
+                if (overloadLevel > 0) {
+                    newMaxHealthIncrease += overloadLevel * OVERLOAD_HEALTH_PER_LEVEL;
+                }
+            }
+
+            // Remove old modifier and apply new one with updated value
+            AttributeModifier overloadModifier = new AttributeModifier(
+                    OVERLOAD_HEALTH_MODIFIER_ID,
+                    newMaxHealthIncrease,
+                    AttributeModifier.Operation.ADD_VALUE
+            );
+            
+            AttributeInstance currentMaxHealthAttribute = player.getAttribute(Attributes.MAX_HEALTH);
+            if (currentMaxHealthAttribute == null) return;
+            
+            // Remove old modifier if present
+            if (currentMaxHealthAttribute.hasModifier(OVERLOAD_HEALTH_MODIFIER_ID)) {
+                currentMaxHealthAttribute.removeModifier(OVERLOAD_HEALTH_MODIFIER_ID);
+            }
+
+            // Add new modifier if health increase > 0
+            if (newMaxHealthIncrease > 0f) {
+                currentMaxHealthAttribute.addPermanentModifier(overloadModifier);
+            }
+
+            // Play sound when equipping armor with overload
+            if (player.getHealth() <= player.getMaxHealth() && newMaxHealthIncrease > 0f && overloadJustEquipped) {
+                player.level().playSound(null, player.getOnPos(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.15f, 1f);
+            } else {
+                // Reduce health if player has more than new max (when unequipping overload)
+                if (player.getHealth() > player.getMaxHealth()) {
+                    player.setHealth(player.getMaxHealth());
+                    player.level().playSound(null, player.getEyePosition().x, player.getEyePosition().y, player.getEyePosition().z, SoundEvents.PLAYER_HURT, SoundSource.PLAYERS, 1f, 1f);
+                }
+            }
+        }
 
 //        @SubscribeEvent
 //        public static void onItemBreak(PlayerDestroyItemEvent event) {
