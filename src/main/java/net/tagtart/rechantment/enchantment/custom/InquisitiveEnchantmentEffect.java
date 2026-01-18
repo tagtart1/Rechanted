@@ -32,6 +32,11 @@ public record InquisitiveEnchantmentEffect() implements EnchantmentValueEffect {
 
     @Override
     public float process(int enchantmentLevel, RandomSource random, float value) {
+        return trueProcess(enchantmentLevel, random, value);
+    }
+
+    // shit workaround for needing to call same process code outside the effect
+    public static float trueProcess(int enchantmentLevel, RandomSource random, float value) {
         float multi = InquisitiveMultipliers.get(enchantmentLevel - 1);
 
         return value * multi;

@@ -27,11 +27,14 @@ import net.minecraft.world.item.enchantment.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.AnvilUpdateEvent;
 import net.neoforged.neoforge.event.GrindstoneEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.LootTableLoadEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
@@ -43,6 +46,7 @@ import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.block.entity.RechantmentTableBlockEntity;
 import net.tagtart.rechantment.config.RechantmentCommonConfigs;
 import net.tagtart.rechantment.enchantment.ModEnchantments;
+import net.tagtart.rechantment.enchantment.custom.InquisitiveEnchantmentEffect;
 import net.tagtart.rechantment.enchantment.custom.WisdomEnchantmentEffect;
 import net.tagtart.rechantment.item.ModItems;
 import net.tagtart.rechantment.networking.data.OpenEnchantTableScreenC2SPayload;
@@ -526,23 +530,20 @@ public class ModEvents {
             }
         }
 
-        // TODO: Reimplement when enchantment system is ported.
         @SubscribeEvent
         public static void onExpDropFromHostile(LivingExperienceDropEvent event) {
             MobCategory mobCategory = event.getEntity().getType().getCategory();
             if (event.getAttackingPlayer() == null) return;
             ItemStack weapon = event.getAttackingPlayer().getMainHandItem();
-            //Pair<InquisitiveEnchantment, Integer> inquisitiveEnchantment = UtilFunctions.getEnchantmentFromItem("rechantment:inquisitive", weapon, InquisitiveEnchantment.class);
+            int inquisitiveEnchantmentLevel = UtilFunctions.getEnchantmentFromItem("rechantment:inquisitive", weapon, event.getAttackingPlayer().registryAccess());
             int telepathyEnchantment = UtilFunctions.getEnchantmentFromItem("rechantment:telepathy", weapon, event.getAttackingPlayer().registryAccess());
 
 
             int expToDrop = event.getDroppedExperience();
 
-//            if (inquisitiveEnchantment != null && mobCategory == MobCategory.MONSTER) {
-//                InquisitiveEnchantment inquisitiveEnchantInstance = inquisitiveEnchantment.getA();
-//                int enchantLevel = inquisitiveEnchantment.getB();
-//                expToDrop = (int)((float) expToDrop * inquisitiveEnchantInstance.getExpMultiplier(enchantLevel));
-//            }
+            if (inquisitiveEnchantmentLevel != 0 && mobCategory == MobCategory.MONSTER) {
+                expToDrop = (int)InquisitiveEnchantmentEffect.trueProcess(inquisitiveEnchantmentLevel, RandomSource.create(), (float)expToDrop);
+            }
 
             if (telepathyEnchantment != 0) {
                 Player player = event.getAttackingPlayer();
