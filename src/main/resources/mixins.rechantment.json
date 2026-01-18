@@ -5,7 +5,7 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "mixins.rechantment.refmap.json",
   "mixins": [
-    "EnchantmentTableBlockMixin"
+    "FortuneMixin"
   ],
   "injectors": {
     "defaultRequire": 1

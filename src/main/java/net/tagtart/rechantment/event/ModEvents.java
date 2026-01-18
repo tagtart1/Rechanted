@@ -402,8 +402,8 @@ public class ModEvents {
         // Note this has to manually check logic with some synergistic enchantments due to how telepathy
         // changes block breaking logic.
         private static void telepathicallyDestroyBlock(BlockEvent.BreakEvent event, BlockPos blockPos, ServerLevel level, ItemStack handItem, int fortuneEnchantmentLevel) {
-            List<ItemStack> drops = Collections.emptyList();
             BlockState blockState = level.getBlockState(blockPos);
+            List<ItemStack> drops = Block.getDrops(blockState, level, blockPos, null, event.getPlayer(), handItem);
 
             // Prevents block from dropping a resource at this pos
             Block.popResource(level, event.getPos(), ItemStack.EMPTY);
@@ -415,7 +415,6 @@ public class ModEvents {
 //                drops = Block.getDrops(blockState, level, blockPos, null);
 //                applyNerfedFortune(drops, fortuneEnchantmentLevel);
 //            } else {
-//                drops = Block.getDrops(blockState, level, blockPos, null, event.getPlayer(), handItem);
 //            }
 
             // Get wisdom if applied
@@ -503,6 +502,9 @@ public class ModEvents {
             handItem.hurtAndBreak(damage, level, player, (item) -> {
                 // TODO TRY AND APPLY OLD REBIRTH LOGIC HERE BEFORE DOING OLD MIXIN METHOD!!!!!!
             });
+        }
+        @SubscribeEvent
+        public static void onLootTableLoad(LootTableLoadEvent event) {
         }
 
         // TODO: Reimplement when enchantment system is ported.

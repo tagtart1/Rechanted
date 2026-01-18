@@ -18,6 +18,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -374,6 +375,31 @@ public class UtilFunctions {
 
 
         level.playSound(null,  player.blockPosition(), ModSounds.REBIRTH_ITEM.get(), SoundSource.PLAYERS, 0.7F, 1.0F);
+    }
+
+    // For new implementation of fortune nerf.
+    public static int calcluateOreDropsNerfed(RandomSource random, int originalCount, int enchantmentLevel) {
+            double chanceToDouble = 0.0;
+            switch(enchantmentLevel) {
+                case 1: {
+                    chanceToDouble = RechantmentCommonConfigs.FORTUNE_1_CHANCE.get(); // Config later
+                    break;
+                }
+                case 2: {
+                    chanceToDouble = RechantmentCommonConfigs.FORTUNE_2_CHANCE.get(); // Config later
+                    break;
+                }
+                case 3: {
+                    chanceToDouble = RechantmentCommonConfigs.FORTUNE_3_CHANCE.get(); // Config later
+                    break;
+                }
+                default:
+                    break;
+            }
+            if (random.nextDouble() < chanceToDouble) {
+                return originalCount * 2;
+            }
+            return originalCount;
     }
 
     public static double clamp(double value, double min, double max) {
