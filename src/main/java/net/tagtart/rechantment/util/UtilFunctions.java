@@ -6,6 +6,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.core.*;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -22,6 +23,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -214,20 +216,39 @@ public class UtilFunctions {
         return expReqMet && shelvesReqMet && floorReqMet;
     }
 
+    @Nullable
+    public static Holder.Reference<Enchantment> getEnchantmentReferenceIfPresent(RegistryAccess registryAccess, String enchantmentRaw) {
 
-    // TODO: Reimplement when enchantment system is ported.
-//    public static<T extends Enchantment> Pair<T, Integer> getEnchantmentFromItem (String enchantmentToGet, ItemStack enchantedItem, Class<T> enchantmentClass) {
-//
-//        Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(enchantedItem);
-//
-//        ResourceLocation enchantResource = new ResourceLocation(enchantmentToGet);
-//        Enchantment enchantmentBase = ForgeRegistries.ENCHANTMENTS.getValue(enchantResource);
-//
-//        if (enchantments.containsKey(enchantmentBase)) {
-//            return new Pair<>(enchantmentClass.cast(enchantmentBase), enchantments.get(enchantmentBase));
-//        }
-//        return null;
-//    }
+
+        ResourceLocation enchantmentResourceLocation = ResourceLocation.parse(enchantmentRaw);
+
+        HolderLookup.RegistryLookup<Enchantment> enchantmentRegistry = registryAccess.lookupOrThrow(Registries.ENCHANTMENT);
+
+        ResourceKey<Enchantment> key = ResourceKey.create(Registries.ENCHANTMENT, enchantmentResourceLocation);
+        Optional<Holder.Reference<Enchantment>> enchantmentOptional = enchantmentRegistry.get(key);
+
+        return enchantmentOptional.orElse(null);
+    }
+
+    @Nullable
+    public static Holder.Reference<Enchantment> getEnchantmentReferenceIfPresent(RegistryAccess registryAccess, ResourceKey<Enchantment> enchantmentKey) {
+
+        HolderLookup.RegistryLookup<Enchantment> enchantmentRegistry = registryAccess.lookupOrThrow(Registries.ENCHANTMENT);
+        Optional<Holder.Reference<Enchantment>> enchantmentOptional = enchantmentRegistry.get(enchantmentKey);
+
+        return enchantmentOptional.orElse(null);
+    }
+
+
+    public static int getEnchantmentFromItem (String enchantmentRaw, ItemStack enchantedItem, RegistryAccess registryAccess) {
+
+        Holder.Reference<Enchantment> enchantment = getEnchantmentReferenceIfPresent(registryAccess, enchantmentRaw);
+        if (enchantment == null) {
+            return 0;
+        }
+
+        return enchantedItem.getEnchantmentLevel(enchantment);
+    }
 
     // Non-recursive, 3D, Breadth-first-search through the world for a particular block type including matching ones connected to each other
     // Returns the block states and associated block positions from the provided level that match provided block tag key.
@@ -353,20 +374,6 @@ public class UtilFunctions {
 
 
         level.playSound(null,  player.blockPosition(), ModSounds.REBIRTH_ITEM.get(), SoundSource.PLAYERS, 0.7F, 1.0F);
-    }
-
-    @Nullable
-    public static Holder.Reference<Enchantment> getEnchantmentReferenceIfPresent(RegistryAccess registryAccess, String enchantmentRaw) {
-
-
-        ResourceLocation enchantmentResourceLocation = ResourceLocation.parse(enchantmentRaw);
-
-        HolderLookup.RegistryLookup<Enchantment> enchantmentRegistry = registryAccess.lookupOrThrow(Registries.ENCHANTMENT);
-
-        ResourceKey<Enchantment> key = ResourceKey.create(Registries.ENCHANTMENT, enchantmentResourceLocation);
-        Optional<Holder.Reference<Enchantment>> enchantmentOptional = enchantmentRegistry.get(key);
-
-        return enchantmentOptional.orElse(null);
     }
 
     public static double clamp(double value, double min, double max) {

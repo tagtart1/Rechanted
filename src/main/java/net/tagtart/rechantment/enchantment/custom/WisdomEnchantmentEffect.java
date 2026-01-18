@@ -22,7 +22,7 @@ public record WisdomEnchantmentEffect() implements EnchantmentValueEffect {
     public static final MapCodec<WisdomEnchantmentEffect> CODEC = MapCodec
             .unit(WisdomEnchantmentEffect::new);
 
-    private static final List<Float> WisdomMultipliers = Arrays.asList(
+    public static final List<Float> WisdomMultipliers = Arrays.asList(
             2f,     // Level 1
             2.5f    // Level 2
     );
@@ -30,10 +30,16 @@ public record WisdomEnchantmentEffect() implements EnchantmentValueEffect {
 
     @Override
     public float process(int enchantmentLevel, RandomSource random, float value) {
-            float multi = WisdomMultipliers.get(enchantmentLevel - 1);
-
-            return value * multi;
+            return trueProcess(enchantmentLevel, random, value);
     }
+
+    // shit workaround for needing to call same process code outside the effect
+    public static float trueProcess(int enchantmentLevel, RandomSource random, float value) {
+        float multi = WisdomMultipliers.get(enchantmentLevel - 1);
+
+        return value * multi;
+    }
+
 
     @Override
     public MapCodec<? extends EnchantmentValueEffect> codec() {

@@ -6,11 +6,16 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.EnchantmentTags;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.*;
 import net.minecraft.world.item.enchantment.effects.AddValue;
+import net.neoforged.neoforge.common.Tags;
 import net.tagtart.rechantment.Rechantment;
+import net.tagtart.rechantment.datagen.ModItemTagsProvider;
 import net.tagtart.rechantment.enchantment.custom.*;
 
 public class ModEnchantments {
@@ -31,6 +36,15 @@ public class ModEnchantments {
 
     public static final ResourceKey<Enchantment> INQUISITIVE = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "inquisitive"));
+
+    public static final ResourceKey<Enchantment> TIMBER = ResourceKey.create(Registries.ENCHANTMENT,
+            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "timber"));
+
+    public static final ResourceKey<Enchantment> VEIN_MINER = ResourceKey.create(Registries.ENCHANTMENT,
+            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "vein_miner"));
+
+    public static final ResourceKey<Enchantment> TELEPATHY = ResourceKey.create(Registries.ENCHANTMENT,
+            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "telepathy"));
 
     public static void bootstrap(BootstrapContext<Enchantment> context) {
         var enchantments = context.lookup(Registries.ENCHANTMENT);
@@ -115,7 +129,31 @@ public class ModEnchantments {
                 .withEffect(EnchantmentEffectComponents.MOB_EXPERIENCE,
                         new InquisitiveEnchantmentEffect()));
 
+        register(context, TIMBER, Enchantment.enchantment(Enchantment.definition(
+            items.getOrThrow(ItemTags.AXES),
+                5,
+                1,
+                Enchantment.dynamicCost(10, 20),
+                Enchantment.dynamicCost(60, 20),
+                2, EquipmentSlotGroup.MAINHAND)));
 
+        register(context, VEIN_MINER, Enchantment.enchantment(Enchantment.definition(
+                items.getOrThrow(ItemTags.PICKAXES),
+                items.getOrThrow(ItemTags.PICKAXES),
+                5,
+                1,
+                Enchantment.dynamicCost(10, 20),
+                Enchantment.dynamicCost(60, 20),
+                2, EquipmentSlotGroup.MAINHAND)));
+
+        register(context, TELEPATHY, Enchantment.enchantment(Enchantment.definition(
+                items.getOrThrow(ModItemTagsProvider.DIGGER_ITEM),
+                items.getOrThrow(ModItemTagsProvider.DIGGER_ITEM),
+                5,
+                1,
+                Enchantment.dynamicCost(10, 20),
+                Enchantment.dynamicCost(60, 20),
+                2, EquipmentSlotGroup.MAINHAND)));
     }
 
     private static void register(BootstrapContext<Enchantment> registry, ResourceKey<Enchantment> key,
