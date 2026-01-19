@@ -154,15 +154,15 @@ public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderabl
             extraNameOffset = 2;
         }
         guiGraphics.drawString(renderFont, enchantmentName, (renderOffsetPosX + 3) * invScaleFac, (getEntryLabelOffsetY() + extraNameOffset) * invScaleFac, 0xFFFFFF, true);
-        renderFont.drawInBatch(enchantmentName, (renderOffsetPosX + 3) * invScaleFac, (getEntryLabelOffsetY() + extraNameOffset) * invScaleFac, 0xFFFFFF, true, guiGraphics.pose().last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
+        renderFont.drawInBatch(enchantmentName, (renderOffsetPosX + 3) * invScaleFac, (getEntryLabelOffsetY() + extraNameOffset) * invScaleFac, 0xFFFFFF, true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
 
-        renderFont.drawInBatch(enchantmentDropRate, (renderOffsetPosX + 114) * invScaleFac, (getEntryLabelOffsetY() + extraNameOffset) * invScaleFac, 0xFFFFFF, true, guiGraphics.pose().last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
+        renderFont.drawInBatch(enchantmentDropRate, (renderOffsetPosX + 114) * invScaleFac, (getEntryLabelOffsetY() + extraNameOffset) * invScaleFac, 0xFFFFFF, true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
         if (!displayShortenedVersion()) {
-            renderFont.drawInBatch("______________________________", (renderOffsetPosX + 3) * invScaleFac, (getEntryLabelOffsetY() + 2) * invScaleFac, 0xFFFFFF, true, guiGraphics.pose().last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
-            renderFont.drawInBatch("______________________________", (renderOffsetPosX + 4) * invScaleFac, (getEntryLabelOffsetY() + 2) * invScaleFac, 0xFFFFFF, true, guiGraphics.pose().last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
+            renderFont.drawInBatch("______________________________", (renderOffsetPosX + 3) * invScaleFac, (getEntryLabelOffsetY() + 2) * invScaleFac, 0xFFFFFF, true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
+            renderFont.drawInBatch("______________________________", (renderOffsetPosX + 4) * invScaleFac, (getEntryLabelOffsetY() + 2) * invScaleFac, 0xFFFFFF, true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
         }
-        renderFont.drawInBatch(iconList, (renderOffsetPosX + 2.7f) * invScaleFac, (getEntryLabelOffsetY() - 8) * invScaleFac, 0x222222, false, guiGraphics.pose().last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
-        renderFont.drawInBatch(iconList, (renderOffsetPosX + 2.2f) * invScaleFac, (getEntryLabelOffsetY() - 9) * invScaleFac, 0xFFFFFF, false, guiGraphics.pose().last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
+        renderFont.drawInBatch(iconList, (renderOffsetPosX + 2.7f) * invScaleFac, (getEntryLabelOffsetY() - 8) * invScaleFac, 0x222222, false, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
+        renderFont.drawInBatch(iconList, (renderOffsetPosX + 2.2f) * invScaleFac, (getEntryLabelOffsetY() - 9) * invScaleFac, 0xFFFFFF, false, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
         guiGraphics.pose().popPose();
 
 
@@ -175,8 +175,8 @@ public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderabl
             for (int i = 0; i < levelDropRates.size(); ++i) {
 
                 String roman = UtilFunctions.intToRoman(poolEntry.potentialLevels.get(i)) + ":";
-                renderFont.drawInBatch(roman, (renderOffsetPosX + 5) * invScaleFac, (getEntryLabelOffsetY() + ((i + 2) * 5)) * invScaleFac, 0xFFFFFF, true, guiGraphics.pose().last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
-                renderFont.drawInBatch(levelDropRates.get(i), (renderOffsetPosX + 121) * invScaleFac, (getEntryLabelOffsetY() + ((i  + 2) * 5)) * invScaleFac, 0xFFFFFF, true, guiGraphics.pose().last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
+                renderFont.drawInBatch(roman, (renderOffsetPosX + 5) * invScaleFac, (getEntryLabelOffsetY() + ((i + 2) * 5)) * invScaleFac, 0xFFFFFF, true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
+                renderFont.drawInBatch(levelDropRates.get(i), (renderOffsetPosX + 121) * invScaleFac, (getEntryLabelOffsetY() + ((i  + 2) * 5)) * invScaleFac, 0xFFFFFF, true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
             }
             guiGraphics.pose().popPose();
         }

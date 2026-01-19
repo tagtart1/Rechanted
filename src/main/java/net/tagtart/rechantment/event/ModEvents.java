@@ -21,6 +21,7 @@ import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -55,6 +56,7 @@ import net.neoforged.neoforge.event.LootTableLoadEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerDestroyItemEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.HandlerThread;
@@ -181,6 +183,7 @@ public class ModEvents {
 
                 ItemEnchantments enchantments = stack.get(DataComponents.ENCHANTMENTS);
                 List<Object2IntMap.Entry<Holder<Enchantment>>> enchantsSorted = new ArrayList<>(enchantments.entrySet());
+                Holder<Enchantment> rebornEnchantment = UtilFunctions.getEnchantmentReferenceIfPresent(event.getEntity().registryAccess(), ModEnchantments.REBORN);
 
                 enchantsSorted.sort((component1, component2) -> {
                     String enchantmentRaw1 = component1.getKey().unwrapKey().get().location().toString();
@@ -189,17 +192,17 @@ public class ModEvents {
                     BookRarityProperties rarity1 = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw1);
                     BookRarityProperties rarity2 = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw2);
 
+
                     float rarityValue1 = 0f;
                     float rarityValue2 = 0f;
 
                     if (rarity1 == null && component1.getKey().is(EnchantmentTags.CURSE)) {
                         rarityValue1 = 99.0f;
                     }
-                    // TODO: UNCOMMENT WHEN REBIRTH/REBORN ENCHANTMENTS ARE PORTED!!!
-//                    else if (rarity1 == null && component1.getKey() instanceof RebornEnchantment) {
-//                        rarityValue1 = 100f;
-//
-//                    }
+                    else if (rarity1 == null && component1.getKey() == rebornEnchantment) {
+                        rarityValue1 = 100f;
+
+                    }
                     else if (rarity1 != null) {
 
                         rarityValue1 = rarity1.rarity;
@@ -207,12 +210,12 @@ public class ModEvents {
 
                     if (rarity2 == null && component2.getKey().is(EnchantmentTags.CURSE)) {
                         rarityValue2 = 99.0f;
-                        // TODO: UNCOMMENT WHEN REBIRTH/REBORN ENCHANTMENTS ARE PORTED!!!
-//                    else if (rarity2 == null && component2.getKey() instanceof RebornEnchantment) {
-//                        rarityValue1 = 100f;
-//
-//                    }
-                    } else if (rarity2 != null) {
+                    }
+                    else if (rarity2 == null && component2.getKey() == rebornEnchantment) {
+                        rarityValue1 = 100f;
+
+                    }
+                    else if (rarity2 != null) {
                         rarityValue2 = rarity2.rarity;
                     }
 
@@ -261,10 +264,9 @@ public class ModEvents {
                         style = Style.EMPTY.withColor(ChatFormatting.RED);
                     }
 
-                    // TODO: UNCOMMENT WHEN REBIRTH/REBORN ENCHANTMENTS ARE PORTED!!!
-//                    else if (entry.getKey() instanceof RebornEnchantment) {
-//                        style = Style.EMPTY.withColor(ChatFormatting.WHITE).withBold(true);
-//                    }
+                    else if (entry.getKey() == rebornEnchantment) {
+                        style = Style.EMPTY.withColor(ChatFormatting.WHITE).withBold(true);
+                    }
 
                     else if (rarityProperties != null) {
                         style = Style.EMPTY.withColor(rarityProperties.color);
@@ -335,6 +337,12 @@ public class ModEvents {
 //        }
 //
 
+        private static final List<Integer> TIMBER_BLOCKS_PER_LEVEL = Arrays.asList(
+                10,
+                20,
+                30
+        );
+
         // Telepathy, Vein Miner, Timber, Wisdom Enchantments - Blocks
         @SubscribeEvent
         public static void onBlockBreak(BlockEvent.BreakEvent event) {
@@ -362,7 +370,9 @@ public class ModEvents {
             }
 
             else if (timberEnchantmentLevel != 0 && event.getState().is(BlockTags.LOGS)) {
-                BlockPos[] woodToDestroy = UtilFunctions.BFSLevelForBlocks(level, BlockTags.LOGS, event.getPos(), 10, true);
+                int searchLimit = TIMBER_BLOCKS_PER_LEVEL.get(timberEnchantmentLevel - 1);
+
+                BlockPos[] woodToDestroy = UtilFunctions.BFSLevelForBlocks(level, BlockTags.LOGS, event.getPos(), searchLimit, true);
                 destroyBulkBlocks(event, woodToDestroy, level, handItem, telepathyEnchantmentLevel, fortuneEnchantmentLevel);
             }
 
@@ -371,8 +381,8 @@ public class ModEvents {
 
                 telepathicallyDestroyBlock(event, event.getPos(), level, handItem, fortuneEnchantmentLevel);
 
-                if (event.getState().getDestroySpeed(level, event.getPos()) != 0)
-                    hurtAndBreakWithRebirthLogic(1, level, (ServerPlayer)event.getPlayer(), handItem);
+//                if (event.getState().getDestroySpeed(level, event.getPos()) != 0)
+//                    handItem.hurtAndBreak(1, level, (ServerPlayer)event.getPlayer(), (item) -> {});
             }
 
             // Fortune by itself with vanilla enchants without other breakevent enchant
@@ -520,20 +530,58 @@ public class ModEvents {
                 }
             }
 
-            hurtAndBreakWithRebirthLogic(destroyedSuccessfully - 1, level, (ServerPlayer)event.getPlayer(), handItem);
+            handItem.hurtAndBreak(destroyedSuccessfully - 1, level, (ServerPlayer)event.getPlayer(), (item) -> {});
         }
 
         private static float manuallyApplyWisdom(int wisdomEnchantmentLevel, float originalExp) {
             return WisdomEnchantmentEffect.trueProcess(wisdomEnchantmentLevel, RandomSource.create(), originalExp);
         }
-
-        private static void hurtAndBreakWithRebirthLogic(int damage, ServerLevel level, ServerPlayer player, ItemStack handItem) {
-            handItem.hurtAndBreak(damage, level, player, (item) -> {
-                // TODO TRY AND APPLY OLD REBIRTH LOGIC HERE BEFORE DOING OLD MIXIN METHOD!!!!!!
-            });
-        }
         @SubscribeEvent
-        public static void onLootTableLoad(LootTableLoadEvent event) {
+        public static void onItemBreak(PlayerDestroyItemEvent event) {
+            ItemStack itemStack = event.getOriginal();
+            ServerPlayer player = (ServerPlayer)event.getEntity();
+
+            int rebirthEnchantmentLevel = UtilFunctions.getEnchantmentFromItem("rechantment:rebirth", itemStack, event.getEntity().registryAccess());
+            if (rebirthEnchantmentLevel != 0) {
+                if (shouldBeReborn(rebirthEnchantmentLevel)){
+
+                    ItemStack newItemStack = itemStack.copy();
+                    newItemStack.update(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY, (itemEnchantments) -> {
+
+                        ItemEnchantments.Mutable mutableCopy = new ItemEnchantments.Mutable(itemEnchantments);
+                        mutableCopy.removeIf((enchantment) -> enchantment.getKey() == ModEnchantments.REBIRTH);
+
+                        Holder<Enchantment> rebornEnchantment = UtilFunctions.getEnchantmentReferenceIfPresent(event.getEntity().registryAccess(), ModEnchantments.REBORN);
+                        if (rebornEnchantment != null) {
+                            mutableCopy.set(rebornEnchantment, 1);
+                        }
+
+                    return mutableCopy.toImmutable();
+                    });
+                    newItemStack.setDamageValue(0);
+                    newItemStack.remove(DataComponents.REPAIR_COST);
+
+                    int freeSlot = player.getInventory().selected;
+                    boolean isOffhand = event.getHand() == InteractionHand.OFF_HAND;
+
+                    ScheduledRebirthTasks.EnqueueItemForRebirth(player, newItemStack, freeSlot, isOffhand);
+
+                } else {
+                    player.sendSystemMessage(Component.literal("Your item failed to be reborn!").withStyle(ChatFormatting.RED));
+                }
+            }
+
+        }
+
+        private static final List<Float> REBIRTH_SUCCESS_RATES = Arrays.asList(
+                0.01f,
+                0.75f,
+                1.00f
+        );
+        private static boolean shouldBeReborn(int rebirthEnchantmentLevel) {
+            float successRate =  REBIRTH_SUCCESS_RATES.get(rebirthEnchantmentLevel - 1);
+            Random random = new Random();
+            return random.nextFloat() < successRate;
         }
 
         // TODO: Reimplement when enchantment system is ported.

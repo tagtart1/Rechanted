@@ -1,16 +1,24 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "item": "minecraft:obsidian"
+    },
+    "B": {
+      "item": "minecraft:book"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    }
+  },
   "pattern": [
     " B ",
     "D#D",
     "###"
   ],
-  "key": {
-    "B": { "item": "minecraft:book" },
-    "D": { "item": "minecraft:diamond" },
-    "#": { "item": "minecraft:obsidian" }
-  },
   "result": {
-    "item": "rechantment:rechantment_table"
+    "count": 1,
+    "id": "rechantment:rechantment_enchanting_table"
   }
 }

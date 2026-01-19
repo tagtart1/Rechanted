@@ -7,6 +7,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -38,5 +40,11 @@ public class ModBlocks {
 
     public static final String RECHANTMENT_TABLE_BLOCK_ITEM_NAME = "rechantment_enchanting_table";
     public static final DeferredBlock<Block> RECHANTMENT_TABLE_BLOCK = registerBlock(RECHANTMENT_TABLE_BLOCK_ITEM_NAME,
-            () -> new RechantmentTableBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.ENCHANTING_TABLE)));
+            () -> new RechantmentTableBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_RED)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .requiresCorrectToolForDrops()
+                    .lightLevel(state -> 7)
+                    .strength(5.0F, 1200.0F)
+            ));
 }

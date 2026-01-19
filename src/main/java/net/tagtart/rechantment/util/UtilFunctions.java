@@ -29,8 +29,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.tagtart.rechantment.config.RechantmentCommonConfigs;
 import net.tagtart.rechantment.event.ParticleEmitter;
+import net.tagtart.rechantment.networking.data.TriggerRebirthItemEffectS2CPayload;
 import net.tagtart.rechantment.sound.CustomClientSoundInstanceHandler;
 import net.tagtart.rechantment.sound.ModSounds;
 import org.joml.Matrix4f;
@@ -371,8 +373,7 @@ public class UtilFunctions {
         };
         ParticleEmitter.emitParticlesOverTime(player, level, 100, 60, particlesArray);
 
-        //ModPackets.sentToPlayer(new TriggerRebirthItemEffectS2CPacket(itemToActivate), player);
-
+        PacketDistributor.sendToPlayer(player, new TriggerRebirthItemEffectS2CPayload(itemToActivate));
 
         level.playSound(null,  player.blockPosition(), ModSounds.REBIRTH_ITEM.get(), SoundSource.PLAYERS, 0.7F, 1.0F);
     }

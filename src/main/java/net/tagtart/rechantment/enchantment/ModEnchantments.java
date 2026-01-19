@@ -62,6 +62,12 @@ public class ModEnchantments {
     public static final ResourceKey<Enchantment> TELEPATHY = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "telepathy"));
 
+    public static final ResourceKey<Enchantment> REBIRTH =ResourceKey.create(Registries.ENCHANTMENT,
+            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "rebirth"));
+
+    public static final ResourceKey<Enchantment> REBORN =ResourceKey.create(Registries.ENCHANTMENT,
+            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "reborn"));
+
     public static void bootstrap(BootstrapContext<Enchantment> context) {
         var enchantments = context.lookup(Registries.ENCHANTMENT);
         var items = context.lookup(Registries.ITEM);
@@ -160,7 +166,7 @@ public class ModEnchantments {
         register(context, TIMBER, Enchantment.enchantment(Enchantment.definition(
             items.getOrThrow(ItemTags.AXES),
                 5,
-                1,
+                3,
                 Enchantment.dynamicCost(10, 20),
                 Enchantment.dynamicCost(60, 20),
                 2, EquipmentSlotGroup.MAINHAND)));
@@ -200,6 +206,23 @@ public class ModEnchantments {
         register(context, TELEPATHY, Enchantment.enchantment(Enchantment.definition(
                 items.getOrThrow(ModItemTagsProvider.DIGGER_ITEM),
                 items.getOrThrow(ModItemTagsProvider.DIGGER_ITEM),
+                5,
+                1,
+                Enchantment.dynamicCost(10, 20),
+                Enchantment.dynamicCost(60, 20),
+                2, EquipmentSlotGroup.MAINHAND)));
+
+        register(context, REBIRTH, Enchantment.enchantment(Enchantment.definition(
+                items.getOrThrow(Tags.Items.TOOLS),
+                items.getOrThrow(Tags.Items.TOOLS),
+                5,
+                3,
+                Enchantment.dynamicCost(10, 20),
+                Enchantment.dynamicCost(60, 20),
+                2, EquipmentSlotGroup.MAINHAND)));
+
+        register(context, REBORN, Enchantment.enchantment(Enchantment.definition(
+                items.getOrThrow(Tags.Items.TOOLS),
                 5,
                 1,
                 Enchantment.dynamicCost(10, 20),
