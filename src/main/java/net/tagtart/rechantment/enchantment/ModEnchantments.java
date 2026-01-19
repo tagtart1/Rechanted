@@ -51,7 +51,8 @@ public class ModEnchantments {
     public static final ResourceKey<Enchantment> OVERLOAD = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "overload"));
 
-
+    public static final ResourceKey<Enchantment> BERSERK = ResourceKey.create(Registries.ENCHANTMENT,
+            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "berserk"));
 
     public static final ResourceKey<Enchantment> TIMBER = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "timber"));
@@ -92,7 +93,7 @@ public class ModEnchantments {
                 .exclusiveWith(enchantments.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
                 .exclusiveWith(HolderSet.direct(enchantments.getOrThrow(VOIDS_BANE)))
                 .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER,
-                        EnchantmentTarget.VICTIM, new HellsFuryEnchantmentEffect(2, 1)));
+                        EnchantmentTarget.VICTIM, new HellsFuryEnchantmentEffect(1, 1)));
 
         register(context, VOIDS_BANE, Enchantment.enchantment(Enchantment.definition(
                 items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
@@ -106,7 +107,7 @@ public class ModEnchantments {
                 .exclusiveWith(enchantments.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
                 .exclusiveWith(HolderSet.direct(enchantments.getOrThrow(HELLS_FURY)))
                 .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER,
-                        EnchantmentTarget.VICTIM, new VoidsBaneEnchantmentEffect(2, 1)));
+                        EnchantmentTarget.VICTIM, new VoidsBaneEnchantmentEffect(1, 1)));
 
         register(context, ICE_ASPECT, Enchantment.enchantment(Enchantment.definition(
                 items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
@@ -188,6 +189,19 @@ public class ModEnchantments {
                 EquipmentSlotGroup.CHEST)));
         // Note: Overload max health effect is triggered via event handler in ModEvents
         // Uses custom tag: includes all chest armor + elytra, supports modded armor
+
+        register(context, BERSERK, Enchantment.enchantment(Enchantment.definition(
+                items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
+                items.getOrThrow(ItemTags.SWORD_ENCHANTABLE),
+                5,
+                4,
+                Enchantment.dynamicCost(10, 20),
+                Enchantment.dynamicCost(60, 20),
+                3,
+                EquipmentSlotGroup.MAINHAND))
+                .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER,
+                        EnchantmentTarget.VICTIM, new BerserkEnchantmentEffect()));
+
         register(context, VEIN_MINER, Enchantment.enchantment(Enchantment.definition(
                 items.getOrThrow(ItemTags.PICKAXES),
                 items.getOrThrow(ItemTags.PICKAXES),

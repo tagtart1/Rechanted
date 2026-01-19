@@ -13,6 +13,7 @@ import net.tagtart.rechantment.block.ModBlocks;
 import net.tagtart.rechantment.block.entity.ModBlockEntities;
 import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.config.RechantmentCommonConfigs;
+import net.tagtart.rechantment.effect.ModEffects;
 import net.tagtart.rechantment.enchantment.ModEnchantmentEffects;
 import net.tagtart.rechantment.enchantment.ModEnchantments;
 import net.tagtart.rechantment.item.ModCreativeModeTabs;
@@ -65,6 +66,7 @@ public class Rechantment {
         ModAttachments.register(modEventBus);
         ModDataComponents.register(modEventBus);
         ModSounds.register(modEventBus);
+        ModEffects.register(modEventBus);
 
         ModCreativeModeTabs.register(modEventBus);
         ModEnchantmentEffects.register(modEventBus);
