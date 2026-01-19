@@ -6,22 +6,12 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.EnchantmentTags;
-import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlotGroup;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.*;
-import net.minecraft.world.item.enchantment.effects.AddValue;
-import net.neoforged.neoforge.common.Tags;
 import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.datagen.ModItemTagsProvider;
 import net.tagtart.rechantment.enchantment.custom.*;
-import net.tagtart.rechantment.util.ModTags;
-
-import java.util.ArrayList;
 
 public class ModEnchantments {
     public static final ResourceKey<Enchantment> THUNDER_STRIKE = ResourceKey.create(Registries.ENCHANTMENT,
@@ -179,8 +169,8 @@ public class ModEnchantments {
         // Note: Courage speed effect is triggered via event handler in ModEvents
 
         register(context, OVERLOAD, Enchantment.enchantment(Enchantment.definition(
-                items.getOrThrow(ModTags.Items.OVERLOAD_ENCHANTABLE),
-                items.getOrThrow(ModTags.Items.OVERLOAD_ENCHANTABLE),
+                items.getOrThrow(ModItemTagsProvider.OVERLOAD_ENCHANTABLE),
+                items.getOrThrow(ModItemTagsProvider.OVERLOAD_ENCHANTABLE),
                 5,
                 3,
                 Enchantment.dynamicCost(10, 20),
