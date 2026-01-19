@@ -11,6 +11,7 @@ import net.minecraft.world.item.enchantment.EnchantedItemInUse;
 import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.tagtart.rechantment.Rechantment;
 
 public record HellsFuryEnchantmentEffect(float baseDamage, float damagePerLevel) implements EnchantmentEntityEffect {
 
@@ -23,6 +24,9 @@ public record HellsFuryEnchantmentEffect(float baseDamage, float damagePerLevel)
     @Override
     public void apply(ServerLevel level, int enchantmentLevel, EnchantedItemInUse item, Entity entity, Vec3 origin) {
 
+        Rechantment.LOGGER.info("Hell's Fury triggered! Current dimension: {}, Is Nether: {}", 
+            level.dimension().location(), level.dimension() == Level.NETHER);
+
         // Enchantment only works in the nether dimension
         if (level.dimension() != Level.NETHER) {
             return;
@@ -33,9 +37,15 @@ public record HellsFuryEnchantmentEffect(float baseDamage, float damagePerLevel)
             Entity attacker = item.owner();
             float bonusDamage = damagePerLevel * enchantmentLevel + baseDamage;
 
+            Rechantment.LOGGER.info("Hell's Fury applying {} damage (level {})", bonusDamage, enchantmentLevel);
+
             // Apply damage attributed to attacker (for looting)
             if (attacker instanceof Player player) {
+                // Temporarily disable invulnerability to apply bonus damage
+                int invulnerableTime = target.invulnerableTime;
+                target.invulnerableTime = 0;
                 target.hurt(level.damageSources().playerAttack(player), bonusDamage);
+                target.invulnerableTime = invulnerableTime;
             }
         }
     }

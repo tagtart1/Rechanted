@@ -55,7 +55,11 @@ public record BerserkEnchantmentEffect() implements EnchantmentEntityEffect {
             float damageToApply = DAMAGER_PER_LEVEL.get(enchantmentLevel - 1);
 
             if (entity instanceof LivingEntity target) {
+                // Temporarily disable invulnerability to apply bonus damage
+                int invulnerableTime = target.invulnerableTime;
+                target.invulnerableTime = 0;
                 target.hurt(level.damageSources().playerAttack(player), damageToApply);
+                target.invulnerableTime = invulnerableTime;
             }
         }
     }
