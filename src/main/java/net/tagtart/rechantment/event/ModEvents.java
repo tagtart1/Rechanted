@@ -109,6 +109,7 @@ public class ModEvents {
         }
 
 
+
         @SubscribeEvent
         public static void onShieldBlock(LivingShieldBlockEvent event) {
             if (!(event.getEntity() instanceof Player player)) return;

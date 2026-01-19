@@ -23,7 +23,7 @@ public record VoidsBaneEnchantmentEffect(float baseDamage, float damagePerLevel)
     @Override
     public void apply(ServerLevel level, int enchantmentLevel, EnchantedItemInUse item, Entity entity, Vec3 origin) {
 
-        // Enchantment only works in the nether dimension
+        // Enchantment only works in the End dimension
         if (level.dimension() != Level.END) {
             return;
         }
@@ -35,7 +35,11 @@ public record VoidsBaneEnchantmentEffect(float baseDamage, float damagePerLevel)
 
             // Apply damage attributed to attacker (for looting)
             if (attacker instanceof Player player) {
+                // Temporarily disable invulnerability to apply bonus damage
+                int invulnerableTime = target.invulnerableTime;
+                target.invulnerableTime = 0;
                 target.hurt(level.damageSources().playerAttack(player), bonusDamage);
+                target.invulnerableTime = invulnerableTime;
             }
         }
     }

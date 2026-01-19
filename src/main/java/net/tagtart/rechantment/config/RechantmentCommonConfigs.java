@@ -232,6 +232,7 @@ public class RechantmentCommonConfigs {
         rarity_2_default_enchantments.add("rechantment:voids_bane|1|4|1");
         rarity_2_default_enchantments.add("minecraft:fire_aspect|1|1-2|2,1");
         rarity_2_default_enchantments.add("minecraft:fortune|1|1-3|2,2,1");
+        rarity_2_default_enchantments.add("rechantment:berserk|1|3|1");
         rarity_2_default_enchantments.add("rechantment:bash|1|1|1");
         RARITY_2_ENCHANTMENTS = BUILDER.translation("config.rechantment.elite.enchantments.title").defineList("enchantments", rarity_2_default_enchantments, () -> "minecraft:sharpness|1|1-4|3,3,2,1", s -> s instanceof String);
 

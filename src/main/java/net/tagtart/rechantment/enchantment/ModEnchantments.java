@@ -6,22 +6,12 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.EnchantmentTags;
-import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlotGroup;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.*;
-import net.minecraft.world.item.enchantment.effects.AddValue;
-import net.neoforged.neoforge.common.Tags;
 import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.datagen.ModItemTagsProvider;
 import net.tagtart.rechantment.enchantment.custom.*;
-import net.tagtart.rechantment.util.ModTags;
-
-import java.util.ArrayList;
 
 public class ModEnchantments {
     public static final ResourceKey<Enchantment> THUNDER_STRIKE = ResourceKey.create(Registries.ENCHANTMENT,
@@ -51,7 +41,11 @@ public class ModEnchantments {
     public static final ResourceKey<Enchantment> OVERLOAD = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "overload"));
 
+    public static final ResourceKey<Enchantment> BERSERK = ResourceKey.create(Registries.ENCHANTMENT,
+            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "berserk"));
 
+    public static final ResourceKey<Enchantment> BLITZ = ResourceKey.create(Registries.ENCHANTMENT,
+            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "blitz"));
 
     public static final ResourceKey<Enchantment> TIMBER = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "timber"));
@@ -98,7 +92,7 @@ public class ModEnchantments {
                 .exclusiveWith(enchantments.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
                 .exclusiveWith(HolderSet.direct(enchantments.getOrThrow(VOIDS_BANE)))
                 .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER,
-                        EnchantmentTarget.VICTIM, new HellsFuryEnchantmentEffect(2, 1)));
+                        EnchantmentTarget.VICTIM, new HellsFuryEnchantmentEffect(1, 1)));
 
         register(context, VOIDS_BANE, Enchantment.enchantment(Enchantment.definition(
                 items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
@@ -112,7 +106,7 @@ public class ModEnchantments {
                 .exclusiveWith(enchantments.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
                 .exclusiveWith(HolderSet.direct(enchantments.getOrThrow(HELLS_FURY)))
                 .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER,
-                        EnchantmentTarget.VICTIM, new VoidsBaneEnchantmentEffect(2, 1)));
+                        EnchantmentTarget.VICTIM, new VoidsBaneEnchantmentEffect(1, 1)));
 
         register(context, ICE_ASPECT, Enchantment.enchantment(Enchantment.definition(
                 items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
@@ -184,8 +178,8 @@ public class ModEnchantments {
         // Note: Courage speed effect is triggered via event handler in ModEvents
 
         register(context, OVERLOAD, Enchantment.enchantment(Enchantment.definition(
-                items.getOrThrow(ModTags.Items.OVERLOAD_ENCHANTABLE),
-                items.getOrThrow(ModTags.Items.OVERLOAD_ENCHANTABLE),
+                items.getOrThrow(ModItemTagsProvider.OVERLOAD_ENCHANTABLE),
+                items.getOrThrow(ModItemTagsProvider.OVERLOAD_ENCHANTABLE),
                 5,
                 3,
                 Enchantment.dynamicCost(10, 20),
@@ -194,6 +188,33 @@ public class ModEnchantments {
                 EquipmentSlotGroup.CHEST)));
         // Note: Overload max health effect is triggered via event handler in ModEvents
         // Uses custom tag: includes all chest armor + elytra, supports modded armor
+
+        register(context, BERSERK, Enchantment.enchantment(Enchantment.definition(
+                items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
+                items.getOrThrow(ItemTags.SWORD_ENCHANTABLE),
+                5,
+                4,
+                Enchantment.dynamicCost(10, 20),
+                Enchantment.dynamicCost(60, 20),
+                3,
+                EquipmentSlotGroup.MAINHAND))
+                .exclusiveWith(HolderSet.direct(enchantments.getOrThrow(BLITZ)))
+                .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER,
+                        EnchantmentTarget.VICTIM, new BerserkEnchantmentEffect()));
+
+        register(context, BLITZ, Enchantment.enchantment(Enchantment.definition(
+                items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
+                items.getOrThrow(ItemTags.SWORD_ENCHANTABLE),
+                5,
+                4,
+                Enchantment.dynamicCost(10, 20),
+                Enchantment.dynamicCost(60, 20),
+                3,
+                EquipmentSlotGroup.MAINHAND))
+                .exclusiveWith(HolderSet.direct(enchantments.getOrThrow(BERSERK)))
+                .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER,
+                        EnchantmentTarget.VICTIM, new BlitzEnchantmentEffect()));
+
         register(context, VEIN_MINER, Enchantment.enchantment(Enchantment.definition(
                 items.getOrThrow(ItemTags.PICKAXES),
                 items.getOrThrow(ItemTags.PICKAXES),

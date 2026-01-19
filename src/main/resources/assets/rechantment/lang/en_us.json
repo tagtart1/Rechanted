@@ -365,5 +365,9 @@
   "config.rechantment.fortune_2_chance.title": "Fortune II Chance",
   "config.rechantment.fortune_2_chance.tooltip": "Chance for Fortune II to double drops",
   "config.rechantment.fortune_3_chance.title": "Fortune III Chance",
-  "config.rechantment.fortune_3_chance.tooltip": "Chance for Fortune III to double drops"
+  "config.rechantment.fortune_3_chance.tooltip": "Chance for Fortune III to double drops",
+
+  "effect.rechantment.berserk": "Berserk",
+  "effect.renchantment.berserk_cooldown": "Berserk Cooldown"
+
 }
