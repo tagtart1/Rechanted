@@ -21,9 +21,14 @@ public class ModEffects {
     public static final Holder<MobEffect> BERSERK_EFFECT = MOB_EFFECTS.register("berserk",
             () -> new BerserkEffect(MobEffectCategory.NEUTRAL, 0xFF0000, ParticleTypes.FIREWORK));
 
-
     public static final Holder<MobEffect> BERSERK_COOLDOWN_EFFECT = MOB_EFFECTS.register("berserk_cooldown",
             () -> new BerserkCooldownEffect(MobEffectCategory.NEUTRAL, 0x808080));
+
+    public static final Holder<MobEffect> BLITZ_EFFECT = MOB_EFFECTS.register("blitz",
+            () -> new BlitzEffect(MobEffectCategory.NEUTRAL, 0x00FFFF));
+
+    public static final Holder<MobEffect> BLITZ_COOLDOWN_EFFECT = MOB_EFFECTS.register("blitz_cooldown",
+            () -> new BlitzCooldownEffect(MobEffectCategory.NEUTRAL, 0x404040));
 
     public static void register(IEventBus bus) {
         MOB_EFFECTS.register(bus);

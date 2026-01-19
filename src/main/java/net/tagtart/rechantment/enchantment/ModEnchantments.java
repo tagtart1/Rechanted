@@ -44,6 +44,9 @@ public class ModEnchantments {
     public static final ResourceKey<Enchantment> BERSERK = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "berserk"));
 
+    public static final ResourceKey<Enchantment> BLITZ = ResourceKey.create(Registries.ENCHANTMENT,
+            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "blitz"));
+
     public static final ResourceKey<Enchantment> TIMBER = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "timber"));
 
@@ -189,8 +192,22 @@ public class ModEnchantments {
                 Enchantment.dynamicCost(60, 20),
                 3,
                 EquipmentSlotGroup.MAINHAND))
+                .exclusiveWith(HolderSet.direct(enchantments.getOrThrow(BLITZ)))
                 .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER,
                         EnchantmentTarget.VICTIM, new BerserkEnchantmentEffect()));
+
+        register(context, BLITZ, Enchantment.enchantment(Enchantment.definition(
+                items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
+                items.getOrThrow(ItemTags.SWORD_ENCHANTABLE),
+                5,
+                4,
+                Enchantment.dynamicCost(10, 20),
+                Enchantment.dynamicCost(60, 20),
+                3,
+                EquipmentSlotGroup.MAINHAND))
+                .exclusiveWith(HolderSet.direct(enchantments.getOrThrow(BERSERK)))
+                .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER,
+                        EnchantmentTarget.VICTIM, new BlitzEnchantmentEffect()));
 
         register(context, VEIN_MINER, Enchantment.enchantment(Enchantment.definition(
                 items.getOrThrow(ItemTags.PICKAXES),
