@@ -77,6 +77,9 @@
   "enchantment.rechantment.berserk": "Berserk",
   "enchantment.rechantment.berserk.description": "When reaching low health, will cause the weapon to deal increased damage for a duration.",
 
+  "enchantment.rechantment.blitz": "Blitz",
+  "enchantment.rechantment.blitz.description": "Blitz in the matt way! (temp).",
+
   "enchantment.rechantment.overload": "Overload",
   "enchantment.rechantment.overload.description": "Increases maximum health.",
 
