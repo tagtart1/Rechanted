@@ -9,6 +9,7 @@ import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.item.enchantment.*;
+import net.neoforged.neoforge.common.Tags;
 import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.datagen.ModItemTagsProvider;
 import net.tagtart.rechantment.enchantment.custom.*;

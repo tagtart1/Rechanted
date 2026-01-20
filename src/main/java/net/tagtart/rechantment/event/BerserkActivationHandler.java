@@ -55,7 +55,7 @@ public class BerserkActivationHandler {
         player.addEffect(berserkEffect);
 
         // Display action bar message
-        player.displayClientMessage(Component.literal("Berserk has activated!"), true);
+        player.displayClientMessage(Component.literal("Berserk!"), true);
 
         Rechantment.LOGGER.info("Berserk activated for {} (missing {} health)", 
                 player.getName().getString(), missingHealth);

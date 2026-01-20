@@ -75,7 +75,7 @@
   "enchantment.rechantment.inquisitive.description": "Increased EXP drops from killed mobs.",
 
   "enchantment.rechantment.berserk": "Berserk",
-  "enchantment.rechantment.berserk.description": "Increases damage dealt proportion to missing health.",
+  "enchantment.rechantment.berserk.description": "When reaching low health, will cause the weapon to deal increased damage for a duration.",
 
   "enchantment.rechantment.overload": "Overload",
   "enchantment.rechantment.overload.description": "Increases maximum health.",

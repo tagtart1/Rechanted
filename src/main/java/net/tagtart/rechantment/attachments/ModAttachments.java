@@ -20,10 +20,17 @@ public class ModAttachments {
             Instant::toEpochMilli   // Convert Instant to long
     );
 
-    // Stores the last time a player attacked (used for cooldown calculations)
+    // Stores the last time a player attacked (used for Blitz combo timing)
     public static final Supplier<AttachmentType<Instant>> LAST_BLITZ_ATTACK_AT = ATTACHMENT_TYPES.register(
             "last_blitz_attack_at", () -> AttachmentType.builder(() -> Instant.EPOCH)
                     .serialize(INSTANT_CODEC)
+                    .build()
+    );
+
+    // Stores the current Blitz combo count (0-5)
+    public static final Supplier<AttachmentType<Integer>> BLITZ_COMBO = ATTACHMENT_TYPES.register(
+            "blitz_combo", () -> AttachmentType.builder(() -> 0)
+                    .serialize(Codec.INT)
                     .build()
     );
 
