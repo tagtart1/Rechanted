@@ -41,6 +41,11 @@ public record HellsFuryEnchantmentEffect(float baseDamage, float damagePerLevel)
 
             // Apply damage attributed to attacker (for looting)
             if (attacker instanceof Player player) {
+                // Log attack strength (0.0 = no charge, 1.0 = fully charged)
+                // TODO: use this to only apply when we are at 85% or higher for BLITZ, and every damage enchantment! remove this comment when implemented
+                float attackStrength = player.getAttackStrengthScale(0.5F);
+                Rechantment.LOGGER.info("Hell's Fury attack strength: {} (0.0=spam, 1.0=full charge)", attackStrength);
+                
                 // Temporarily disable invulnerability to apply bonus damage
                 int invulnerableTime = target.invulnerableTime;
                 target.invulnerableTime = 0;

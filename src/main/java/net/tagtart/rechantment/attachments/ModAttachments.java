@@ -14,7 +14,7 @@ public class ModAttachments {
     private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES =
             DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Rechantment.MOD_ID);
 
-    // Codec for serializing Instant as epoch milliseconds (long)
+    // Codec for serializing Instant as epoch milliseconds
     private static final Codec<Instant> INSTANT_CODEC = Codec.LONG.xmap(
             Instant::ofEpochMilli,  // Convert long to Instant
             Instant::toEpochMilli   // Convert Instant to long

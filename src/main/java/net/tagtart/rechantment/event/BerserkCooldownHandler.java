@@ -11,16 +11,18 @@ import net.tagtart.rechantment.effect.ModEffects;
 @EventBusSubscriber(modid = Rechantment.MOD_ID)
 public class BerserkCooldownHandler {
 
+    private static final int BERSERK_COOLDOWN_DURATION = 20 * 20; // 20 seconds in ticks
+
     @SubscribeEvent
     public static void onEffectExpired(MobEffectEvent.Expired event) {
         LivingEntity entity = event.getEntity();
         
         // Check if the expired effect is berserk
         if (event.getEffectInstance().getEffect().equals(ModEffects.BERSERK_EFFECT)) {
-            // Apply 20 second cooldown
+            // Apply cooldown
             MobEffectInstance cooldownEffect = new MobEffectInstance(
                     ModEffects.BERSERK_COOLDOWN_EFFECT,
-                    20 * 20, // 20 seconds (20 ticks per second)
+                    BERSERK_COOLDOWN_DURATION,
                     0,
                     false, // ambient
                     false, // visible particles
