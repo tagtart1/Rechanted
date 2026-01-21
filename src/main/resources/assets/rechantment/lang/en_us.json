@@ -371,6 +371,9 @@
   "config.rechantment.fortune_3_chance.tooltip": "Chance for Fortune III to double drops",
 
   "effect.rechantment.berserk": "Berserk",
-  "effect.renchantment.berserk_cooldown": "Berserk Cooldown"
+  "effect.rechantment.berserk_cooldown": "Berserk Cooldown",
+
+  "effect.rechantment.blitz": "Blitz",
+  "effect.rechantment.blitz_cooldown": "Blitz Cooldown"
 
 }

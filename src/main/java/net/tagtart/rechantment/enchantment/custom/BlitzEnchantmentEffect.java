@@ -1,6 +1,7 @@
 package net.tagtart.rechantment.enchantment.custom;
 
 import com.mojang.serialization.MapCodec;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,11 +20,12 @@ import java.time.Instant;
 // TODO: understand and opitmize this code, cleanup comments and add logs!
 public record BlitzEnchantmentEffect() implements EnchantmentEntityEffect {
 
-    private static final float ATTACK_STRENGTH_THRESHOLD = 0.85f; // 85% charge required
+    private static final float ATTACK_STRENGTH_THRESHOLD = 0.50f; // 50% charge required
     private static final long COMBO_WINDOW_MILLIS = 1000; // 1 second between hits
-    private static final long ACTIVE_COMBO_WINDOW_MILLIS = 330; // 0.33 seconds when Blitz is active
-    private static final int COMBO_REQUIRED = 5; // Hits needed to activate
+    private static final long ACTIVE_COMBO_WINDOW_MILLIS = 1500; // 1.5 seconds when Blitz is active
+    private static final int COMBO_REQUIRED = 6; // Hits needed to activate
     private static final int BLITZ_DURATION = 10 * 20; // 10 seconds in ticks
+    private static final int MAX_BLITZ_STACKS = 3;
 
     public static final MapCodec<BlitzEnchantmentEffect> CODEC = MapCodec
             .unit(BlitzEnchantmentEffect::new);
@@ -51,49 +53,41 @@ public record BlitzEnchantmentEffect() implements EnchantmentEntityEffect {
         Duration timeSinceLastHit = Duration.between(lastAttack, now);
         boolean withinComboWindow = timeSinceLastHit.toMillis() <= comboWindow;
 
+        // Check if on cooldown
+        if (player.hasEffect(ModEffects.BLITZ_COOLDOWN_EFFECT)) {
+            player.setData(ModAttachments.LAST_BLITZ_ATTACK_AT, now);
+            return;
+        }
+
         // Update combo count
-        if (!hasBlitzActive) {
-            // Building combo (not active yet)
-            if (withinComboWindow && currentCombo < COMBO_REQUIRED) {
-                currentCombo++;
-                player.setData(ModAttachments.BLITZ_COMBO, currentCombo);
-                
-                // Show combo progress
-                player.displayClientMessage(
-                    Component.literal("Blitz Combo: " + currentCombo + "/" + COMBO_REQUIRED), 
-                    true
-                );
 
-                Rechantment.LOGGER.info("Blitz combo for {}: {}/{}", 
-                        player.getName().getString(), currentCombo, COMBO_REQUIRED);
-            } else if (!withinComboWindow) {
-                // Reset combo if too slow
-                currentCombo = 1;
-                player.setData(ModAttachments.BLITZ_COMBO, currentCombo);
-                
-                player.displayClientMessage(
-                    Component.literal("Blitz Combo: " + currentCombo + "/" + COMBO_REQUIRED), 
-                    true
-                );
-            }
+        // Building combo (not active yet)
+        if (withinComboWindow && currentCombo <= COMBO_REQUIRED) {
+            currentCombo++;
+            player.setData(ModAttachments.BLITZ_COMBO, currentCombo);
 
-            // Activate Blitz when combo reaches required hits
-            if (currentCombo >= COMBO_REQUIRED) {
-                // Check if on cooldown
-                if (player.hasEffect(ModEffects.BLITZ_COOLDOWN_EFFECT)) {
-                    player.displayClientMessage(
-                        Component.literal("Blitz is on cooldown!"), 
-                        true
-                    );
-                    player.setData(ModAttachments.LAST_BLITZ_ATTACK_AT, now);
-                    return;
-                }
 
+            Rechantment.LOGGER.info("Blitz combo for {}: {}/{}",
+                    player.getName().getString(), currentCombo, COMBO_REQUIRED);
+        } else if (!withinComboWindow) {
+            // Reset combo if too slow
+            currentCombo = 1;
+            player.setData(ModAttachments.BLITZ_COMBO, currentCombo);
+
+        }
+
+        // Proc Blitz stack when combo reaches required hits
+        if (currentCombo >= COMBO_REQUIRED) {
+
+            MobEffectInstance currentBlitz = player.getEffect(ModEffects.BLITZ_EFFECT);
+            int amplifierToApply = currentBlitz != null ? currentBlitz.getAmplifier() + 1: 0;
+
+            if (amplifierToApply < MAX_BLITZ_STACKS) {
                 // Activate Blitz
                 MobEffectInstance blitzEffect = new MobEffectInstance(
                         ModEffects.BLITZ_EFFECT,
                         BLITZ_DURATION,
-                        0, // Start at stack 0 (will display as Blitz I)
+                        amplifierToApply, // will display as Blitz I, II, III
                         false, // ambient
                         true,  // visible particles
                         true   // show icon
@@ -104,11 +98,12 @@ public record BlitzEnchantmentEffect() implements EnchantmentEntityEffect {
                 player.setData(ModAttachments.BLITZ_COMBO, 0);
 
                 // Display activation message with stack level
-                player.displayClientMessage(Component.literal("Blitz! x1"), true);
+                player.displayClientMessage(Component.literal(String.format("Blitz! x%d", amplifierToApply + 1)).withStyle(ChatFormatting.GREEN), true);
 
                 Rechantment.LOGGER.info("Blitz activated for {}", player.getName().getString());
             }
         }
+
 
         // Update last attack time
         player.setData(ModAttachments.LAST_BLITZ_ATTACK_AT, now);
@@ -122,8 +117,8 @@ public record BlitzEnchantmentEffect() implements EnchantmentEntityEffect {
             // Stack level is amplifier + 1 (amplifier 0 = stack 1)
             int stackLevel = blitzEffect.getAmplifier() + 1;
 
-            // Calculate damage: baseDamage = 3 + (stack - 1) + (enchantLevel - 1) * 0.5
-            float baseDamage = 3.0f + (stackLevel - 1) + (enchantmentLevel - 1) * 0.5f;
+            // Level 4 has a bigger boost from level 3
+            float baseDamage = enchantmentLevel == 4 ? stackLevel + 4 : stackLevel + 2 + .5f * (enchantmentLevel - 1);
 
             Rechantment.LOGGER.info("Blitz damage: level={}, stack={}, damage={}", 
                     enchantmentLevel, stackLevel, baseDamage);
@@ -133,27 +128,6 @@ public record BlitzEnchantmentEffect() implements EnchantmentEntityEffect {
             target.invulnerableTime = 0;
             target.hurt(level.damageSources().playerAttack(player), baseDamage);
             target.invulnerableTime = invulnerableTime;
-
-            // Increment stack level (max 3 stacks)
-            if (stackLevel < 3) {
-                int newAmplifier = stackLevel; // Current stack becomes new amplifier
-                int newStackLevel = newAmplifier + 1; // Display stack level
-                
-                MobEffectInstance newBlitzEffect = new MobEffectInstance(
-                        ModEffects.BLITZ_EFFECT,
-                        blitzEffect.getDuration(), // Keep remaining duration
-                        newAmplifier,
-                        false, // ambient
-                        true,  // visible particles
-                        true   // show icon
-                );
-                player.addEffect(newBlitzEffect); // This will replace the old effect
-
-                // Display stack increase message
-                player.displayClientMessage(Component.literal("Blitz! x" + newStackLevel), true);
-
-                Rechantment.LOGGER.info("Blitz stack increased to {}", newStackLevel);
-            }
         }
     }
 

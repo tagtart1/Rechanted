@@ -15,7 +15,7 @@ import java.time.Instant;
 @EventBusSubscriber(modid = Rechantment.MOD_ID)
 public class BlitzCooldownHandler {
 
-    private static final int BLITZ_COOLDOWN_DURATION = 15 * 20; // 15 seconds in ticks
+    private static final int BLITZ_COOLDOWN_DURATION = 10 * 20; // 10 seconds in ticks
 
     @SubscribeEvent
     public static void onEffectExpired(MobEffectEvent.Expired event) {
@@ -46,5 +46,7 @@ public class BlitzCooldownHandler {
             }
         }
     }
+
+
 }
 
