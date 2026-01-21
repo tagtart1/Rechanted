@@ -5,6 +5,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -39,6 +40,8 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.*;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -58,10 +61,12 @@ import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerDestroyItemEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.HandlerThread;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.tagtart.rechantment.Rechantment;
+import net.tagtart.rechantment.block.ModBlocks;
 import net.tagtart.rechantment.block.entity.RechantmentTableBlockEntity;
 import net.tagtart.rechantment.config.RechantmentCommonConfigs;
 import net.tagtart.rechantment.enchantment.ModEnchantments;
@@ -176,6 +181,11 @@ public class ModEvents {
             ItemStack stack = event.getItemStack();
             List<Component> tooltip = event.getToolTip();
 
+            if (event.getEntity() == null)
+                return;
+
+            RegistryAccess registryAccess = event.getEntity().registryAccess();
+
             if (stack.getItem() instanceof EnchantedBookItem) {
                 tooltip.add(Component.literal("Vanilla books have been disabled.").withStyle(ChatFormatting.RED));
             }
@@ -184,7 +194,7 @@ public class ModEvents {
 
                 ItemEnchantments enchantments = stack.get(DataComponents.ENCHANTMENTS);
                 List<Object2IntMap.Entry<Holder<Enchantment>>> enchantsSorted = new ArrayList<>(enchantments.entrySet());
-                Holder<Enchantment> rebornEnchantment = UtilFunctions.getEnchantmentReferenceIfPresent(event.getEntity().registryAccess(), ModEnchantments.REBORN);
+                Holder<Enchantment> rebornEnchantment = UtilFunctions.getEnchantmentReferenceIfPresent(registryAccess, ModEnchantments.REBORN);
 
                 enchantsSorted.sort((component1, component2) -> {
                     String enchantmentRaw1 = component1.getKey().unwrapKey().get().location().toString();
@@ -343,7 +353,7 @@ public class ModEvents {
                 20,
                 30
         );
-
+        
         // Telepathy, Vein Miner, Timber, Wisdom Enchantments - Blocks
         @SubscribeEvent
         public static void onBlockBreak(BlockEvent.BreakEvent event) {
@@ -819,6 +829,15 @@ public class ModEvents {
                 event.setOutput(new ItemStack(BuiltInRegistries.ITEM.get(itemLocation)));
             }
 
+        }
+
+        @SubscribeEvent
+        public static void onChunkLoad(ChunkEvent.Load event) {
+            if (event.isNewChunk()) {
+                event.getChunk().findBlocks((blockState -> blockState.is(Blocks.ENCHANTING_TABLE)), ((blockPos, blockState) -> {
+                    event.getChunk().setBlockState(blockPos, ModBlocks.RECHANTMENT_TABLE_BLOCK.get().defaultBlockState(), false);
+                }));
+            }
         }
     }
 }
