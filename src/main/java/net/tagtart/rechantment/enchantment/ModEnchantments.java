@@ -13,6 +13,7 @@ import net.neoforged.neoforge.common.Tags;
 import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.datagen.ModItemTagsProvider;
 import net.tagtart.rechantment.enchantment.custom.*;
+import net.tagtart.rechantment.util.UtilFunctions;
 
 public class ModEnchantments {
     public static final ResourceKey<Enchantment> THUNDER_STRIKE = ResourceKey.create(Registries.ENCHANTMENT,
@@ -244,7 +245,7 @@ public class ModEnchantments {
                 3,
                 Enchantment.dynamicCost(10, 20),
                 Enchantment.dynamicCost(60, 20),
-                2, EquipmentSlotGroup.MAINHAND)));
+                2, EquipmentSlotGroup.MAINHAND)).exclusiveWith(HolderSet.direct(enchantments.getOrThrow(REBORN))));
 
         register(context, REBORN, Enchantment.enchantment(Enchantment.definition(
                 items.getOrThrow(Tags.Items.TOOLS),
@@ -252,7 +253,7 @@ public class ModEnchantments {
                 1,
                 Enchantment.dynamicCost(10, 20),
                 Enchantment.dynamicCost(60, 20),
-                2, EquipmentSlotGroup.MAINHAND)));
+                2, EquipmentSlotGroup.MAINHAND)).exclusiveWith(HolderSet.direct(enchantments.getOrThrow(REBIRTH))));
 
         register(context, VOLLEY, Enchantment.enchantment(Enchantment.definition(
                 items.getOrThrow(ItemTags.BOW_ENCHANTABLE),

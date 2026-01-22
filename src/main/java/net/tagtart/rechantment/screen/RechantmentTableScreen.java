@@ -167,12 +167,22 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
 
         super.render(guiGraphics, mouseX, mouseY, delta);
 
-        // Render all hoverables. They will handle tooltip rendering as well.
-        for (HoverableGuiRenderable hoverable : hoverables) {
+        // Render all hoverables. Defer rendering the tooltip due to overlap that can occur.
+        HoverableWithTooltipGuiRenderable deferredTooltipToRender = null;
+        for (HoverableWithTooltipGuiRenderable hoverable : hoverables) {
             hoverable.render(guiGraphics, mouseX, mouseY, delta);
+
+            if (hoverable.tooltipShouldRenderThisFrame) {
+                deferredTooltipToRender = hoverable;
+            }
         }
 
-        renderTooltip(guiGraphics, mouseX, mouseY);
+        if (deferredTooltipToRender != null) {
+            deferredTooltipToRender.renderCustomTooltip(guiGraphics, mouseX, mouseY);
+        }
+        else {
+            renderTooltip(guiGraphics, mouseX, mouseY);
+        }
     }
 
     @Override
@@ -260,7 +270,7 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
 
         // Tooltip "title", with rarity icon and generic book name.
         Component rarityIcon = Component.translatable("enchantment.rarity." + properties.key);
-        Component bookTitle = Component.translatable("item.rechantment.enchanted_book").withStyle(properties.colorAsStyle());
+        Component bookTitle = Component.translatable("item.rechantment.rechantment_book").withStyle(properties.colorAsStyle());
         tooltipLines.add(Component.literal(rarityIcon.getString()).append(" ").append(bookTitle));
         tooltipLines.add(Component.literal(" "));
 

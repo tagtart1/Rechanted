@@ -13,6 +13,7 @@ public class HoverableWithTooltipGuiRenderable extends HoverableGuiRenderable {
 
     public Supplier<ArrayList<Component>> tooltipSupplier; // So that a screen can supply a custom tooltip and change how it does that.
     public boolean tooltipEnabled = true;
+    public boolean tooltipShouldRenderThisFrame = false;
 
     public HoverableWithTooltipGuiRenderable(Supplier<ArrayList<Component>> pTooltipSupplier, ResourceLocation pResourceLocation, int posX, int posY) {
         super(pResourceLocation, posX, posY);
@@ -22,9 +23,10 @@ public class HoverableWithTooltipGuiRenderable extends HoverableGuiRenderable {
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
         super.render(guiGraphics, mouseX, mouseY, delta);
+        tooltipShouldRenderThisFrame = false;
 
         if (hoveredThisFrame && tooltipEnabled) {
-            renderCustomTooltip(guiGraphics, mouseX, mouseY);
+            tooltipShouldRenderThisFrame = true;
         }
     }
 

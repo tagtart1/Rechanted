@@ -31,6 +31,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.RECHANTMENT_TABLE_BLOCK);
 
                         output.accept(ModItems.CHANCE_GEM.get());
+                        output.accept(ModItems.RETURN_GEM.get());
 
                         BookRarityProperties[] bookRarityProperties = BookRarityProperties.getAllProperties();
                         for(BookRarityProperties bookRarityProperty : bookRarityProperties) {

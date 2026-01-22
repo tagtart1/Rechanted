@@ -305,7 +305,7 @@ public class RechantmentTablePoolDisplayScreen extends AbstractContainerScreen<R
 
         // Tooltip "title", with rarity icon and generic book name.
         Component rarityIcon = Component.translatable("enchantment.rarity." + properties.key);
-        Component bookTitle = Component.translatable("item.rechantment.enchanted_book").withStyle(properties.colorAsStyle());
+        Component bookTitle = Component.translatable("item.rechantment.rechantment_book").withStyle(properties.colorAsStyle());
         tooltipLines.add(Component.literal(rarityIcon.getString()).append(" ").append(bookTitle));
         tooltipLines.add(Component.literal(" "));
 
