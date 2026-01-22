@@ -16,6 +16,7 @@ import net.tagtart.rechantment.util.UtilFunctions;
 import java.util.HashSet;
 
 // There are a lot of weird edge cases when items break in different scenarios.
+// All this does is makes an item rebirth occur one tick after the item breaks.
 @EventBusSubscriber(modid = Rechantment.MOD_ID)
 public class ScheduledRebirthTasks {
 
