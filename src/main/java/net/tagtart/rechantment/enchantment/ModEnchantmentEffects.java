@@ -49,6 +49,12 @@ public class ModEnchantmentEffects {
     public static final Supplier<MapCodec<? extends EnchantmentValueEffect>> INQUISITIVE = VALUE_ENCHANTMENT_EFFECTS
             .register("inquisitive", () -> InquisitiveEnchantmentEffect.CODEC);
 
+    public static final Supplier<MapCodec<? extends EnchantmentValueEffect>> VOLLEY_COUNT = VALUE_ENCHANTMENT_EFFECTS
+            .register("volley_count", () -> VolleyCountEnchantmentEffect.CODEC);
+
+    public static final Supplier<MapCodec<? extends EnchantmentValueEffect>> VOLLEY_SPREAD = VALUE_ENCHANTMENT_EFFECTS
+            .register("volley_spread", () -> VolleySpreadEnchantmentEffect.CODEC);
+
     public static void register(IEventBus eventBus) {
         VALUE_ENCHANTMENT_EFFECTS.register(eventBus);
         ENTITY_ENCHANTMENT_EFFECTS.register(eventBus);
