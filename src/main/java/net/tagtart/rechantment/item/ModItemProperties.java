@@ -20,6 +20,7 @@ public class ModItemProperties {
                     float book_rarity = 0f;
 
                     if (itemEnchants == null) return book_rarity;
+                    if (itemEnchants.entrySet().isEmpty()) return book_rarity;
 
                     // We only care about the books first enchant as they should only have one anyway
                     Object2IntMap.Entry<Holder<Enchantment>> bookEnchant = itemEnchants.entrySet().iterator().next();

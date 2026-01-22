@@ -2,20 +2,17 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "#": {
-      "item": "minecraft:obsidian"
+    "T": {
+      "item": "minecraft:enchanting_table"
     },
-    "B": {
-      "item": "minecraft:book"
-    },
-    "D": {
-      "item": "minecraft:diamond"
+    "E": {
+      "item": "minecraft:emerald"
     }
   },
   "pattern": [
-    " B ",
-    "D#D",
-    "###"
+    "   ",
+    " E ",
+    " T "
   ],
   "result": {
     "count": 1,

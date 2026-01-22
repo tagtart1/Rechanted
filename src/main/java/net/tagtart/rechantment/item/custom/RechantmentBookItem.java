@@ -55,9 +55,11 @@ public class RechantmentBookItem extends Item {
 
         ItemEnchantments enchants  = pStack.get(DataComponents.STORED_ENCHANTMENTS);
         if (enchants == null) return Component.literal("Empty book!");
+        if (enchants.entrySet().isEmpty()) return Component.literal("Invalid enchantment!");
+
 
         Holder<Enchantment> enchantmentHolder =  enchants.entrySet().iterator().next().getKey();
-        if (enchantmentHolder == null) return Component.literal("Invalid enchantment!");
+        if (enchantmentHolder == null || enchants.entrySet().isEmpty()) return Component.literal("Invalid enchantment!");
 
         Enchantment enchantment = enchantmentHolder.value();
 
