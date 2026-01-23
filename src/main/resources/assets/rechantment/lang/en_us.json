@@ -81,7 +81,7 @@
   "enchantment.rechantment.berserk.description": "When reaching low health, will cause the weapon to deal increased damage for a duration.",
 
   "enchantment.rechantment.blitz": "Blitz",
-  "enchantment.rechantment.blitz.description": "Blitz in the matt way! (temp).",
+  "enchantment.rechantment.blitz.description": "Land many rapid hits to build an escalating combo of increased damage.",
 
   "enchantment.rechantment.overload": "Overload",
   "enchantment.rechantment.overload.description": "Increases maximum health.",
@@ -100,6 +100,9 @@
 
   "enchantment.rechantment.reborn": "Reborn",
   "enchantment.rechantment.reborn.description": "Prevents an item from being reborn again.",
+
+  "enchantment.rechantment.spring": "Spring",
+  "enchantment.rechantment.spring.description": "Sneak for a short time to charge a powerful jump.",
 
   "enchantment.rechantment.volley": "Volley",
   "enchantment.rechantment.volley.description": "Chance to shoot multiple arrows with each shot.",

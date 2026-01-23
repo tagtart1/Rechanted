@@ -34,6 +34,24 @@ public class ModAttachments {
                     .build()
     );
 
+    public static final Supplier<AttachmentType<Integer>> SPRING_CHARGE_TICKS = ATTACHMENT_TYPES.register(
+            "spring_charge_ticks", () -> AttachmentType.builder(() -> 0)
+                    .serialize(Codec.INT)
+                    .build()
+    );
+
+    public static final Supplier<AttachmentType<Boolean>> SPRING_JUMP_ACTIVE = ATTACHMENT_TYPES.register(
+            "spring_jump_active", () -> AttachmentType.builder(() -> false)
+                    .serialize(Codec.BOOL)
+                    .build()
+    );
+
+    public static final Supplier<AttachmentType<Double>> SPRING_JUMP_START_Y = ATTACHMENT_TYPES.register(
+            "spring_jump_start_y", () -> AttachmentType.builder(() -> 0.0)
+                    .serialize(Codec.DOUBLE)
+                    .build()
+    );
+
     public static void register(IEventBus eventBus) {
         ATTACHMENT_TYPES.register(eventBus);
     }

@@ -267,6 +267,7 @@ public class RechantmentCommonConfigs {
         rarity_3_default_enchantments.add("minecraft:multishot|1|1|1");
         rarity_3_default_enchantments.add("rechantment:wisdom|1|1-2|2,1");
         rarity_3_default_enchantments.add("rechantment:courage|1|1|1");
+        rarity_3_default_enchantments.add("rechantment:spring|1|1-3|3,2,1");
         rarity_3_default_enchantments.add("minecraft:channeling|1|1|1");
         RARITY_3_ENCHANTMENTS = BUILDER.translation("config.rechantment.ultimate.enchantments.title").defineList("enchantments", rarity_3_default_enchantments, () -> "minecraft:sharpness|1|1-4|3,3,2,1", s -> s instanceof String);
 
@@ -298,6 +299,7 @@ public class RechantmentCommonConfigs {
         rarity_4_default_enchantments.add("rechantment:overload|1|1-3|4,2,1");
         rarity_4_default_enchantments.add("rechantment:blitz|1|3|1");
         rarity_4_default_enchantments.add("rechantment:volley|1|1-2|2,1");
+        rarity_4_default_enchantments.add("rechantment:rebirth|1|1-3|1,1,1");
         RARITY_4_ENCHANTMENTS = BUILDER.translation("config.rechantment.legendary.enchantments.title").defineList("enchantments", rarity_4_default_enchantments, () -> "minecraft:sharpness|1|1-4|3,3,2,1", s -> s instanceof String);
 
         BUILDER.pop();

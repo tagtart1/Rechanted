@@ -10,7 +10,17 @@ import net.minecraft.world.item.enchantment.effects.EnchantmentValueEffect;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.tagtart.rechantment.Rechantment;
-import net.tagtart.rechantment.enchantment.custom.*;
+import net.tagtart.rechantment.enchantment.custom.BashEnchantmentEffect;
+import net.tagtart.rechantment.enchantment.custom.BerserkEnchantmentEffect;
+import net.tagtart.rechantment.enchantment.custom.BlitzEnchantmentEffect;
+import net.tagtart.rechantment.enchantment.custom.CourageEnchantmentEffect;
+import net.tagtart.rechantment.enchantment.custom.HellsFuryEnchantmentEffect;
+import net.tagtart.rechantment.enchantment.custom.IceAspectEnchantmentEffect;
+import net.tagtart.rechantment.enchantment.custom.InquisitiveEnchantmentEffect;
+import net.tagtart.rechantment.enchantment.custom.ThunderStrikeEnchantmentEffect;
+import net.tagtart.rechantment.enchantment.custom.VoidsBaneEnchantmentEffect;
+import net.tagtart.rechantment.enchantment.custom.VolleySpawnArrowEnchantmentEffect;
+import net.tagtart.rechantment.enchantment.custom.WisdomEnchantmentEffect;
 
 public class ModEnchantmentEffects {
     public static final DeferredRegister<MapCodec<? extends EnchantmentEntityEffect>> ENTITY_ENCHANTMENT_EFFECTS = DeferredRegister
@@ -49,11 +59,8 @@ public class ModEnchantmentEffects {
     public static final Supplier<MapCodec<? extends EnchantmentValueEffect>> INQUISITIVE = VALUE_ENCHANTMENT_EFFECTS
             .register("inquisitive", () -> InquisitiveEnchantmentEffect.CODEC);
 
-    public static final Supplier<MapCodec<? extends EnchantmentValueEffect>> VOLLEY_COUNT = VALUE_ENCHANTMENT_EFFECTS
-            .register("volley_count", () -> VolleyCountEnchantmentEffect.CODEC);
-
-    public static final Supplier<MapCodec<? extends EnchantmentValueEffect>> VOLLEY_SPREAD = VALUE_ENCHANTMENT_EFFECTS
-            .register("volley_spread", () -> VolleySpreadEnchantmentEffect.CODEC);
+    public static final Supplier<MapCodec<? extends EnchantmentEntityEffect>> VOLLEY_EXTRA_ARROW_COUNT = ENTITY_ENCHANTMENT_EFFECTS
+            .register("volley_extra_arrow_count", () -> VolleySpawnArrowEnchantmentEffect.CODEC);
 
     public static void register(IEventBus eventBus) {
         VALUE_ENCHANTMENT_EFFECTS.register(eventBus);

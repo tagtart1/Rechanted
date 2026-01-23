@@ -64,6 +64,9 @@ public class ModEnchantments {
     public static final ResourceKey<Enchantment> REBORN =ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "reborn"));
 
+    public static final ResourceKey<Enchantment> SPRING = ResourceKey.create(Registries.ENCHANTMENT,
+            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "spring"));
+
     public static final ResourceKey<Enchantment> VOLLEY = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "volley"));
 
@@ -203,7 +206,6 @@ public class ModEnchantments {
                 Enchantment.dynamicCost(60, 20),
                 3,
                 EquipmentSlotGroup.MAINHAND))
-                .exclusiveWith(HolderSet.direct(enchantments.getOrThrow(BLITZ)))
                 .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER,
                         EnchantmentTarget.VICTIM, new BerserkEnchantmentEffect()));
 
@@ -216,7 +218,6 @@ public class ModEnchantments {
                 Enchantment.dynamicCost(60, 20),
                 3,
                 EquipmentSlotGroup.MAINHAND))
-                .exclusiveWith(HolderSet.direct(enchantments.getOrThrow(BERSERK)))
                 .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER,
                         EnchantmentTarget.VICTIM, new BlitzEnchantmentEffect()));
 
@@ -255,6 +256,15 @@ public class ModEnchantments {
                 Enchantment.dynamicCost(60, 20),
                 2, EquipmentSlotGroup.MAINHAND)).exclusiveWith(HolderSet.direct(enchantments.getOrThrow(REBIRTH))));
 
+        register(context, SPRING, Enchantment.enchantment(Enchantment.definition(
+                items.getOrThrow(ItemTags.LEG_ARMOR_ENCHANTABLE),
+                items.getOrThrow(ItemTags.LEG_ARMOR_ENCHANTABLE),
+                5,
+                3,
+                Enchantment.dynamicCost(10, 20),
+                Enchantment.dynamicCost(60, 20),
+                2, EquipmentSlotGroup.LEGS)));
+
         register(context, VOLLEY, Enchantment.enchantment(Enchantment.definition(
                 items.getOrThrow(ItemTags.BOW_ENCHANTABLE),
                 items.getOrThrow(ItemTags.BOW_ENCHANTABLE),
@@ -263,8 +273,8 @@ public class ModEnchantments {
                 Enchantment.dynamicCost(10, 20),
                 Enchantment.dynamicCost(60, 20),
                 2, EquipmentSlotGroup.MAINHAND))
-                .withEffect(EnchantmentEffectComponents.PROJECTILE_COUNT, new VolleyCountEnchantmentEffect())
-                .withEffect(EnchantmentEffectComponents.PROJECTILE_SPREAD, new VolleySpreadEnchantmentEffect()));
+                .withEffect(EnchantmentEffectComponents.PROJECTILE_SPAWNED, new VolleySpawnArrowEnchantmentEffect()));
+
     }
 
     private static void register(BootstrapContext<Enchantment> registry, ResourceKey<Enchantment> key,

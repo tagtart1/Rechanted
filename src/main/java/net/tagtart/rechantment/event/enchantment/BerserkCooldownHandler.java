@@ -11,7 +11,7 @@ import net.tagtart.rechantment.effect.ModEffects;
 @EventBusSubscriber(modid = Rechantment.MOD_ID)
 public class BerserkCooldownHandler {
 
-    private static final int BERSERK_COOLDOWN_DURATION = 20 * 20; // 20 seconds in ticks
+    private static final int BERSERK_COOLDOWN_DURATION = 10 * 20; // 10 seconds in ticks
 
     @SubscribeEvent
     public static void onEffectExpired(MobEffectEvent.Expired event) {
