@@ -39,7 +39,10 @@ public class RebirthEnchantmentHandler {
     @SubscribeEvent
     public static void onItemBreak(PlayerDestroyItemEvent event) {
         ItemStack itemStack = event.getOriginal();
-        ServerPlayer player = (ServerPlayer)event.getEntity();
+
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
+            return;
+        }
 
         int rebirthEnchantmentLevel = UtilFunctions.getEnchantmentFromItem("rechantment:rebirth", itemStack, event.getEntity().registryAccess());
         if (rebirthEnchantmentLevel != 0) {
