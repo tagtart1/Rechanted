@@ -7,6 +7,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -18,6 +19,8 @@ import net.tagtart.rechantment.config.RechantmentCommonConfigs;
 import net.tagtart.rechantment.effect.ModEffects;
 import net.tagtart.rechantment.enchantment.ModEnchantmentEffects;
 import net.tagtart.rechantment.enchantment.ModEnchantments;
+import net.tagtart.rechantment.entity.ModEntities;
+import net.tagtart.rechantment.entity.renderer.ReturnGemBeamEntityRenderer;
 import net.tagtart.rechantment.item.ModCreativeModeTabs;
 import net.tagtart.rechantment.item.ModItemProperties;
 import net.tagtart.rechantment.item.ModItems;
@@ -65,6 +68,7 @@ public class Rechantment {
         ModMenuTypes.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModBlockEntities.register(modEventBus);
+        ModEntities.register(modEventBus);
         ModAttachments.register(modEventBus);
         ModDataComponents.register(modEventBus);
         ModSounds.register(modEventBus);
@@ -106,6 +110,11 @@ public class Rechantment {
         public static void registerScreens(RegisterMenuScreensEvent event) {
             event.register(ModMenuTypes.RECHANTMENT_TABLE_MENU.get(), RechantmentTableScreen::new);
             event.register(ModMenuTypes.RECHANTMENT_TABLE_POOL_DISPLAY_MENU.get(), RechantmentTablePoolDisplayScreen::new);
+        }
+
+        @SubscribeEvent
+        public static void registerRenderer(EntityRenderersEvent.RegisterRenderers event) {
+            event.registerEntityRenderer(ModEntities.RETURN_GEM_BEAM_ENTITY.get(), ReturnGemBeamEntityRenderer::new);
         }
 
     }

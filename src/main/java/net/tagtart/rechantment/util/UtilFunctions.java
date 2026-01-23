@@ -18,7 +18,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -327,6 +329,25 @@ public class UtilFunctions {
         bufferbuilder.addVertex(matrix4f, (float)pX2, (float)pY1, (float)pBlitOffset).setUv(pMaxU, pMinV);
         BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
     }
+
+    public static void translatePoseByInterpolatedPlayerPos(PoseStack poseStack, Player player, Entity entity, float partialTick) {
+
+        double px = Mth.lerp(partialTick, player.xOld, player.getX());
+        double py = Mth.lerp(partialTick, player.yOld, player.getY());
+        double pz = Mth.lerp(partialTick, player.zOld, player.getZ());
+
+        double ex = Mth.lerp(partialTick, entity.xOld, entity.getX());
+        double ey = Mth.lerp(partialTick, entity.yOld, entity.getY());
+        double ez = Mth.lerp(partialTick, entity.zOld, entity.getZ());
+
+        double dx = px - ex;
+        double dy = py - ey;
+        double dz = pz - ez;
+
+        poseStack.pushPose();
+        poseStack.translate(dx, dy, dz);
+    }
+
 
     // Derived from inverse equations for total EXP level from here:
     // https://minecraft.fandom.com/wiki/Experience#Formulas_and_Tables
