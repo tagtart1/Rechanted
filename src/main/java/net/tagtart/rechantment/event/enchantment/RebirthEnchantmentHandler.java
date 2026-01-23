@@ -1,4 +1,4 @@
-package net.tagtart.rechantment.event;
+package net.tagtart.rechantment.event.enchantment;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
@@ -14,6 +14,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerDestroyItemEvent;
 import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.enchantment.ModEnchantments;
+import net.tagtart.rechantment.event.ScheduledRebirthTasks;
 import net.tagtart.rechantment.util.UtilFunctions;
 
 import java.util.Arrays;

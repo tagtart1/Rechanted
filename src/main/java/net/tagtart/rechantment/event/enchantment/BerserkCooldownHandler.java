@@ -1,4 +1,4 @@
-package net.tagtart.rechantment.event;
+package net.tagtart.rechantment.event.enchantment;
 
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;

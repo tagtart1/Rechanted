@@ -1,4 +1,4 @@
-  package net.tagtart.rechantment.event;
+  package net.tagtart.rechantment.event.enchantment;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;

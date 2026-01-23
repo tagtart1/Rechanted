@@ -2,6 +2,7 @@ package net.tagtart.rechantment.event;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
@@ -12,7 +13,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.EnchantmentTags;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -25,7 +29,11 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.*;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.EnchantingTableBlockEntity;
 import net.minecraft.world.phys.Vec2;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
@@ -35,6 +43,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.HandlerThread;
@@ -80,6 +89,27 @@ public class ModGenericEvents {
         );
     }
 
+    @SubscribeEvent
+    public static void onItemUsedOnBlock(UseItemOnBlockEvent event) {
+        Level level = event.getUseOnContext().getLevel();
+        BlockPos useOnPos = event.getUseOnContext().getClickedPos();
+
+        if (!level.isClientSide()) {
+
+            ItemStack usedItem = event.getItemStack();
+            boolean isVanillaEnchantingTable = level.getBlockState(useOnPos).is(Blocks.ENCHANTING_TABLE);
+
+            if (usedItem.is(Items.EMERALD) && isVanillaEnchantingTable) {
+
+                //level.destroyBlock(useOnPos, false);
+                usedItem.setCount(usedItem.getCount() - 1);
+                level.setBlock(useOnPos, ModBlocks.RECHANTMENT_TABLE_BLOCK.get().defaultBlockState(), 3);
+                level.playSound(null, useOnPos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS,1.5f, 1.0f);
+                level.playSound(null, useOnPos, SoundEvents.ANVIL_LAND, SoundSource.BLOCKS,0.4f, 2.5f);
+                event.cancelWithResult(ItemInteractionResult.CONSUME);
+            }
+        }
+    }
 
 
     @SubscribeEvent
