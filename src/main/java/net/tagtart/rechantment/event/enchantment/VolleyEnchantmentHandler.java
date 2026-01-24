@@ -18,9 +18,9 @@ import net.tagtart.rechantment.util.UtilFunctions;
 public class VolleyEnchantmentHandler {
     private static final float FAN_ANGLE_DEG = 10.0f;
     private static final double[][] CHANCES = {
-            {0.33, 0.15, 0.0050}, // Level 1
-            {0.50, 0.20, 0.0100}, // Level 2
-            {0.60, 0.25, 0.0200}  // Level 3
+            {0.25, 0.15, 0.10, 0.10, 0.02, 0.005}, // Level 1
+            {0.30, 0.20, 0.15, 0.15, 0.03, 0.01}, // Level 2
+            {0.40, 0.30, 0.20, 0.20, 0.04, 0.02}  // Level 3
     };
 
     @SubscribeEvent
@@ -69,15 +69,13 @@ public class VolleyEnchantmentHandler {
         if (enchLevel <= 0) return;
 
         int levelIndex = Math.min(enchLevel, CHANCES.length) - 1;
-        if (levelIndex < 0) return;
+
         double[] odds = CHANCES[levelIndex];
 
         int extraArrowsToFire = 0;
         for (double odd : odds) {
             if (level.random.nextDouble() < odd) {
                 extraArrowsToFire += 1;
-            } else {
-                break;
             }
         }
 
@@ -94,6 +92,7 @@ public class VolleyEnchantmentHandler {
 
         Vec3 dir = baseVel.normalize();
 
+        boolean mirrorFan = (extraArrowsToFire % 2 == 1) && level.random.nextBoolean();
         for (int i = 0; i < extraArrowsToFire; i++) {
             AbstractArrow extra = (AbstractArrow) baseArrow.getType().create(level);
             if (extra == null) continue;
@@ -110,13 +109,11 @@ public class VolleyEnchantmentHandler {
             extra.setCritArrow(baseArrow.isCritArrow());
             extra.pickup = AbstractArrow.Pickup.DISALLOWED;
 
-            float angleDeg;
-            if (extraArrowsToFire == 1) {
-                angleDeg = (level.random.nextBoolean() ? 1.0f : -1.0f) * FAN_ANGLE_DEG;
-            } else {
-                float fanIndex = (i + 1) - (extraArrowsToFire + 1) / 2f;
-                angleDeg = fanIndex * FAN_ANGLE_DEG;
+            int fanIndex = getVolleyFanIndex(i, extraArrowsToFire);
+            if (mirrorFan) {
+                fanIndex = -fanIndex;
             }
+            float angleDeg = fanIndex * FAN_ANGLE_DEG;
             float angleRad = (float) Math.toRadians(angleDeg);
 
             Vec3 newDir = dir.yRot(angleRad);
@@ -124,5 +121,16 @@ public class VolleyEnchantmentHandler {
 
             level.addFreshEntity(extra);
         }
+    }
+
+    private static int getVolleyFanIndex(int arrowIndex, int extraArrowsToFire) {
+        if (extraArrowsToFire % 2 == 1) {
+            int step = arrowIndex + 1;
+            int magnitude = (step + 1) / 2;
+            return (step % 2 == 1) ? magnitude : -magnitude;
+        }
+        int step = arrowIndex + 1;
+        int magnitude = (step + 1) / 2;
+        return (step % 2 == 1) ? -magnitude : magnitude;
     }
 }
