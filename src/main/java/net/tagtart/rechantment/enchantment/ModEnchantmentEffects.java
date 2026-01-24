@@ -19,7 +19,6 @@ import net.tagtart.rechantment.enchantment.custom.IceAspectEnchantmentEffect;
 import net.tagtart.rechantment.enchantment.custom.InquisitiveEnchantmentEffect;
 import net.tagtart.rechantment.enchantment.custom.ThunderStrikeEnchantmentEffect;
 import net.tagtart.rechantment.enchantment.custom.VoidsBaneEnchantmentEffect;
-import net.tagtart.rechantment.enchantment.custom.VolleySpawnArrowEnchantmentEffect;
 import net.tagtart.rechantment.enchantment.custom.WisdomEnchantmentEffect;
 
 public class ModEnchantmentEffects {
@@ -58,9 +57,6 @@ public class ModEnchantmentEffects {
 
     public static final Supplier<MapCodec<? extends EnchantmentValueEffect>> INQUISITIVE = VALUE_ENCHANTMENT_EFFECTS
             .register("inquisitive", () -> InquisitiveEnchantmentEffect.CODEC);
-
-    public static final Supplier<MapCodec<? extends EnchantmentEntityEffect>> VOLLEY_EXTRA_ARROW_COUNT = ENTITY_ENCHANTMENT_EFFECTS
-            .register("volley_extra_arrow_count", () -> VolleySpawnArrowEnchantmentEffect.CODEC);
 
     public static void register(IEventBus eventBus) {
         VALUE_ENCHANTMENT_EFFECTS.register(eventBus);

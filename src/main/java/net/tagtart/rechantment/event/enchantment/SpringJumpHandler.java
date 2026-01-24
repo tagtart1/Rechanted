@@ -1,4 +1,4 @@
-package net.tagtart.rechantment.event;
+package net.tagtart.rechantment.event.enchantment;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -18,6 +18,7 @@ import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.attachments.ModAttachments;
+import net.tagtart.rechantment.event.ParticleEmitter;
 import net.tagtart.rechantment.util.UtilFunctions;
 
 @EventBusSubscriber(modid = Rechantment.MOD_ID)
@@ -101,9 +102,20 @@ public class SpringJumpHandler {
         Vec3 movement = player.getDeltaMovement();
         Vec3 jumpVec = new Vec3(movement.x, movement.y + boost, movement.z);
         player.setDeltaMovement(jumpVec);
+
+        // Calculate food cost on jump
         if (!player.level().isClientSide()) {
             var foodData = player.getFoodData();
-            foodData.setFoodLevel(Math.max(foodData.getFoodLevel() - 4, 0));
+            float cost = 4.0F;
+            float saturation = foodData.getSaturationLevel();
+            float saturationUsed = Math.min(saturation, cost);
+            if (saturationUsed > 0.0F) {
+                foodData.setSaturation(saturation - saturationUsed);
+                cost -= saturationUsed;
+            }
+            if (cost > 0.0F) {
+                foodData.setFoodLevel(Math.max(foodData.getFoodLevel() - (int) cost, 0));
+            }
         }
         player.setData(ModAttachments.SPRING_CHARGE_TICKS, 0);
         player.setData(ModAttachments.SPRING_JUMP_ACTIVE, true);

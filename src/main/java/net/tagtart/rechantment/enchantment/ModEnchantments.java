@@ -272,8 +272,7 @@ public class ModEnchantments {
                 3,
                 Enchantment.dynamicCost(10, 20),
                 Enchantment.dynamicCost(60, 20),
-                2, EquipmentSlotGroup.MAINHAND))
-                .withEffect(EnchantmentEffectComponents.PROJECTILE_SPAWNED, new VolleySpawnArrowEnchantmentEffect()));
+                2, EquipmentSlotGroup.MAINHAND)));
 
     }
 
