@@ -9,6 +9,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.tagtart.rechantment.item.custom.ReturnGemItem;
 
@@ -41,6 +42,8 @@ public class ReturnGemBeamEntity extends Entity {
 
     }
 
+
+
     @Override
     public void tick() {
         super.tick();
@@ -66,6 +69,21 @@ public class ReturnGemBeamEntity extends Entity {
 
     @Override
     public boolean shouldRenderAtSqrDistance(double distance) {
+        return true;
+    }
+
+    @Override
+    public AABB getBoundingBoxForCulling() {
+        double maxBeamRadius = 3.0f;
+        double beamHeight = 100.0f;
+        return new AABB(
+                getX() - maxBeamRadius, getY() - beamHeight, getZ() - maxBeamRadius,
+                getX() + maxBeamRadius, getY() + beamHeight, getZ() + maxBeamRadius
+        );
+    }
+
+    @Override
+    public boolean shouldRender(double x, double y, double z) {
         return true;
     }
 

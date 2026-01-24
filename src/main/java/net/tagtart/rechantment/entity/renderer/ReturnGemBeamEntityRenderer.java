@@ -1,16 +1,21 @@
 package net.tagtart.rechantment.entity.renderer;
 
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BeaconRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ColorRGBA;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -19,8 +24,27 @@ import net.tagtart.rechantment.entity.ReturnGemBeamEntity;
 import net.tagtart.rechantment.util.UtilFunctions;
 
 import javax.annotation.Nullable;
+import java.util.function.BiFunction;
+
+import static net.minecraft.client.renderer.RenderStateShard.*;
 
 public class ReturnGemBeamEntityRenderer extends EntityRenderer<ReturnGemBeamEntity> {
+
+    // Default beacon beam render type culls the back face of the beam, so this is just that but with culling disabled.
+    // Easier to just use this than trying to render two quads with flipped normals or some shit.
+    public static final BiFunction<ResourceLocation, Boolean, RenderType> BEACON_BEAM_NO_CULL = Util.memoize(
+            (location, colorFlag) -> {
+                RenderType.CompositeState rendertype$compositestate = RenderType.CompositeState.builder()
+                        .setShaderState(RENDERTYPE_BEACON_BEAM_SHADER)
+                        .setTextureState(new RenderStateShard.TextureStateShard(location, false, false))
+                        .setTransparencyState(colorFlag ? TRANSLUCENT_TRANSPARENCY : NO_TRANSPARENCY)
+                        .setWriteMaskState(COLOR_DEPTH_WRITE)
+                        .setCullState(NO_CULL)
+                        .createCompositeState(false);
+                return RenderType.create("beacon_beam_no_cull", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 1536, false, true, rendertype$compositestate);
+            }
+    );
+
     public ReturnGemBeamEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
     }
@@ -33,11 +57,17 @@ public class ReturnGemBeamEntityRenderer extends EntityRenderer<ReturnGemBeamEnt
     @Override
     public void render(ReturnGemBeamEntity p_entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
 
-        p_entity.glowRadius += 0.002f;
-        p_entity.beamRadius += 0.002f;
+        p_entity.glowRadius += 0.004f;
+        p_entity.beamRadius += 0.004f;
 
-        renderBeaconBeam(poseStack, bufferSource, p_entity,partialTick, p_entity.beamRadius, p_entity.glowRadius, p_entity.level().getGameTime(), 0, 100, 0xffffff);
+        int color1 = 0xccccff;
+        int color2 = 0xffffff;
+
+        int color = FastColor.ARGB32.lerp(((float)Math.sin(p_entity.tickCount / 10.0f) + 1.0f) * 0.5f, color1, color2);
+
+        renderBeaconBeam(poseStack, bufferSource, p_entity,partialTick, p_entity.beamRadius, p_entity.glowRadius, p_entity.level().getGameTime(), 0, 100, color);
     }
+
 
     private void renderBeaconBeam(
             PoseStack poseStack, MultiBufferSource bufferSource, ReturnGemBeamEntity entity, float partialTick, float beamRadius, float glowRadius, long gameTime, int yOffset, int height, int color
@@ -45,6 +75,10 @@ public class ReturnGemBeamEntityRenderer extends EntityRenderer<ReturnGemBeamEnt
         renderBeaconBeam(poseStack, bufferSource, BeaconRenderer.BEAM_LOCATION, entity, Minecraft.getInstance().player, partialTick, 1.0F, gameTime, yOffset, height, color, beamRadius, glowRadius);
     }
 
+    /*
+        ALL THE STUFF BELOW IS COPIED STRAIGHT FROM BeaconBeamRenderer BUT WITH VERY MINOR CHANGES SO THAT
+        MIXINS WEREN'T NEEDED. BLAME MOJANG FOR IT LOOKING MESSY.
+     */
     public static void renderBeaconBeam(
             PoseStack poseStack,
             MultiBufferSource bufferSource,
@@ -61,7 +95,7 @@ public class ReturnGemBeamEntityRenderer extends EntityRenderer<ReturnGemBeamEnt
             float glowRadius
     ) {
 
-        UtilFunctions.translatePoseByInterpolatedPlayerPos(poseStack, player, entity, partialTick);
+        //UtilFunctions.translatePoseByInterpolatedPlayerPos(poseStack, player, entity, partialTick);
         poseStack.pushPose();
 
         int i = yOffset + height;
@@ -82,8 +116,8 @@ public class ReturnGemBeamEntityRenderer extends EntityRenderer<ReturnGemBeamEnt
         float f13 = (float)height * textureScale * (0.5F / beamRadius) + f12;
         renderPart(
                 poseStack,
-                bufferSource.getBuffer(RenderType.entityTranslucentEmissive(beamLocation, true)),
-                FastColor.ARGB32.color(240, color),
+                bufferSource.getBuffer(BEACON_BEAM_NO_CULL.apply(beamLocation, true)),
+                FastColor.ARGB32.color(230, color),
                 yOffset,
                 i,
                 0.0F,
@@ -110,7 +144,7 @@ public class ReturnGemBeamEntityRenderer extends EntityRenderer<ReturnGemBeamEnt
         f13 = (float)height * textureScale + f12;
         renderPart(
                 poseStack,
-                bufferSource.getBuffer(RenderType.entityTranslucentEmissive(beamLocation, true)),
+                bufferSource.getBuffer(BEACON_BEAM_NO_CULL.apply(beamLocation, true)),
                 FastColor.ARGB32.color(32, color),
                 yOffset,
                 i,
@@ -128,7 +162,7 @@ public class ReturnGemBeamEntityRenderer extends EntityRenderer<ReturnGemBeamEnt
                 f12
         );
         poseStack.popPose();
-        poseStack.popPose();
+        //poseStack.popPose();
     }
 
     private static void renderPart(
@@ -151,18 +185,10 @@ public class ReturnGemBeamEntityRenderer extends EntityRenderer<ReturnGemBeamEnt
             float maxV
     ) {
         PoseStack.Pose pose = poseStack.last();
-        renderQuad(
-                pose, consumer, color, minY, maxY, x1, z1, x2, z2, minU, maxU, minV, maxV
-        );
-        renderQuad(
-                pose, consumer, color, minY, maxY, x4, z4, x3, z3, minU, maxU, minV, maxV
-        );
-        renderQuad(
-                pose, consumer, color, minY, maxY, x2, z2, x4, z4, minU, maxU, minV, maxV
-        );
-        renderQuad(
-                pose, consumer, color, minY, maxY, x3, z3, x1, z1, minU, maxU, minV, maxV
-        );
+        renderQuad(pose, consumer, color, minY, maxY, x1, z1, x2, z2, minU, maxU, minV, maxV);
+        renderQuad(pose, consumer, color, minY, maxY, x4, z4, x3, z3, minU, maxU, minV, maxV);
+        renderQuad(pose, consumer, color, minY, maxY, x2, z2, x4, z4, minU, maxU, minV, maxV);
+        renderQuad(pose, consumer, color, minY, maxY, x3, z3, x1, z1, minU, maxU, minV, maxV);
     }
 
     private static void renderQuad(

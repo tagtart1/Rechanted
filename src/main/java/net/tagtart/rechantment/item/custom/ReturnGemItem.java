@@ -155,7 +155,7 @@ public class ReturnGemItem extends Item {
     public static void spawnReturnEntity(ServerPlayer player, DimensionTransition transition) {
         ReturnGemBeamEntity newEntity = new ReturnGemBeamEntity(ModEntities.RETURN_GEM_BEAM_ENTITY.get(), player.level());
         newEntity.setPlayer(player);
-        newEntity.setPos(new Vec3(player.getX(), player.getY(), player.getZ()));
+        newEntity.setPos(new Vec3(player.getX(), player.getY() - 10.0, player.getZ()));
 
         player.level().addFreshEntity(newEntity);
         aliveTransitions.put(player.getUUID(), new ReturnGemTransition(newEntity, transition));
