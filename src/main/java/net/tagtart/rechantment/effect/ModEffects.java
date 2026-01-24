@@ -11,6 +11,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.tagtart.rechantment.Rechantment;
+import net.tagtart.rechantment.sound.ModSounds;
 
 public class ModEffects {
 
@@ -29,6 +30,9 @@ public class ModEffects {
 
     public static final Holder<MobEffect> BLITZ_COOLDOWN_EFFECT = MOB_EFFECTS.register("blitz_cooldown",
             () -> new BlitzCooldownEffect(MobEffectCategory.NEUTRAL, 0x404040));
+
+    public static final Holder<MobEffect> SATIATED_EFFECT = MOB_EFFECTS.register("satiated",
+            () -> new SatiatedEffect(MobEffectCategory.BENEFICIAL, 0xAA330).withSoundOnAdded(ModSounds.SUPER_BURP.get()));
 
     public static void register(IEventBus bus) {
         MOB_EFFECTS.register(bus);

@@ -1,5 +1,6 @@
 package net.tagtart.rechantment.item;
 
+import net.minecraft.world.food.Foods;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -8,6 +9,7 @@ import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.item.custom.ChanceGemItem;
 import net.tagtart.rechantment.item.custom.RechantmentBookItem;
 import net.tagtart.rechantment.item.custom.ReturnGemItem;
+import net.tagtart.rechantment.item.custom.TastyGemItem;
 
 public class  ModItems {
      public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Rechantment.MOD_ID);
@@ -17,6 +19,9 @@ public class  ModItems {
 
      public static final DeferredItem<Item> RETURN_GEM = ITEMS.register("return_gem",
              () -> new ReturnGemItem(new Item.Properties()));
+
+     public static final DeferredItem<Item> TASTY_GEM = ITEMS.register("tasty_gem",
+             () -> new TastyGemItem(new Item.Properties().food(Foods.PUMPKIN_PIE)));
 
      public static final DeferredItem<Item> RECHANTMENT_BOOK = ITEMS.register("rechantment_book", () -> new RechantmentBookItem(new Item.Properties()));
 

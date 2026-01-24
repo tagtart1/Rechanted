@@ -70,5 +70,13 @@
         "name": "rechantment:enchant_table_close4"
       }
     ]
+  },
+  "super_burp": {
+    "subtitles": "sounds.rechantment.super_burp",
+    "sounds": [
+      {
+        "name": "rechantment:super_burp"
+      }
+    ]
   }
 }

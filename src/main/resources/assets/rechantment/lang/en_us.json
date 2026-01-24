@@ -53,6 +53,9 @@
   "item.rechantment.return_gem": "Return Gem",
   "item.rechantment.return_gem.description": "Safely teleport to your current respawn point.",
 
+  "item.rechantment.tasty_gem": "Tasty Gem",
+  "item.rechantment.tasty_gem.description": "Become satiated for 30 minutes, losing hunger only when healing.",
+
   "enchantment.rechantment.thunder_strike": "Thunder Strike",
   "enchantment.rechantment.thunder_strike.description": "Chance to summon lightning to strike your targets.",
 
@@ -383,6 +386,7 @@
   "effect.rechantment.berserk_cooldown": "Berserk Cooldown",
 
   "effect.rechantment.blitz": "Blitz",
-  "effect.rechantment.blitz_cooldown": "Blitz Cooldown"
+  "effect.rechantment.blitz_cooldown": "Blitz Cooldown",
 
+  "effect.rechantment.satiated": "Satiated"
 }

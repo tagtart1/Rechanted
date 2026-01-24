@@ -19,6 +19,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         rechantmentBookItem();
         basicItem(ModItems.CHANCE_GEM.get());
         basicItem(ModItems.RETURN_GEM.get());
+        basicItem(ModItems.TASTY_GEM.get());
     }
 
     private void rechantmentBookItem() {

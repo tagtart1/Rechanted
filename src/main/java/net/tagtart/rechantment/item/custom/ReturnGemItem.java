@@ -53,7 +53,6 @@ public class ReturnGemItem extends Item {
 
         tooltipComponents.add(Component.literal(" "));
 
-        // Prevents the description text from making the tooltip go across the entire screen like a chump
         List<String> splitText = UtilFunctions.wrapText(itemDescriptionString, MAX_TOOLTIP_WIDTH);
         for (String s : splitText) {
             tooltipComponents.add(Component.literal(s.trim()));
