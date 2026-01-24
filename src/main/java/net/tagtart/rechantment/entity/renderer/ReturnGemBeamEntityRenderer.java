@@ -95,7 +95,7 @@ public class ReturnGemBeamEntityRenderer extends EntityRenderer<ReturnGemBeamEnt
             float glowRadius
     ) {
 
-        //UtilFunctions.translatePoseByInterpolatedPlayerPos(poseStack, player, entity, partialTick);
+        UtilFunctions.translatePoseByInterpolatedPlayerPos(poseStack, player, entity, partialTick);
         poseStack.pushPose();
 
         int i = yOffset + height;
@@ -162,7 +162,7 @@ public class ReturnGemBeamEntityRenderer extends EntityRenderer<ReturnGemBeamEnt
                 f12
         );
         poseStack.popPose();
-        //poseStack.popPose();
+        poseStack.popPose();
     }
 
     private static void renderPart(
