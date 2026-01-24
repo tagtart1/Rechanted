@@ -70,6 +70,9 @@ public class ModEnchantments {
     public static final ResourceKey<Enchantment> VOLLEY = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "volley"));
 
+    public static final ResourceKey<Enchantment> REACH = ResourceKey.create(Registries.ENCHANTMENT,
+            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "reach"));
+
     public static void bootstrap(BootstrapContext<Enchantment> context) {
         var enchantments = context.lookup(Registries.ENCHANTMENT);
         var items = context.lookup(Registries.ITEM);
@@ -270,6 +273,15 @@ public class ModEnchantments {
                 items.getOrThrow(ItemTags.BOW_ENCHANTABLE),
                 5,
                 3,
+                Enchantment.dynamicCost(10, 20),
+                Enchantment.dynamicCost(60, 20),
+                2, EquipmentSlotGroup.MAINHAND)));
+
+        register(context, REACH, Enchantment.enchantment(Enchantment.definition(
+                items.getOrThrow(ModItemTagsProvider.REACH_TOOLS),
+                items.getOrThrow(ModItemTagsProvider.REACH_TOOLS),
+                5,
+                4,
                 Enchantment.dynamicCost(10, 20),
                 Enchantment.dynamicCost(60, 20),
                 2, EquipmentSlotGroup.MAINHAND)));

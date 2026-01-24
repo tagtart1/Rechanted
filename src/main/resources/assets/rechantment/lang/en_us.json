@@ -110,6 +110,9 @@
   "enchantment.rechantment.volley": "Volley",
   "enchantment.rechantment.volley.description": "Chance to shoot multiple arrows with each shot.",
 
+  "enchantment.rechantment.reach": "Reach",
+  "enchantment.rechantment.reach.description": "Increases block interaction reach while holding the tool.",
+
   "enchantment.minecraft.protection.description": "Reduces most types of damage by increasing amounts.",
   "enchantment.minecraft.fire_protection.description": "Reduces damage and burn time when lit on fire.",
   "enchantment.minecraft.feather_falling.description": "Reduces the damage dealt from falling.",
@@ -137,7 +140,7 @@
   "enchantment.minecraft.power.description": "Increases the damage dealt from arrows.",
   "enchantment.minecraft.punch.description": "Increases the knockback power of arrows.",
   "enchantment.minecraft.flame.description": "Arrows set light a target on fire when hit.",
-  "enchantment.minecraft.infinity.description": "Shooting with projectiles does not consume arrows.",
+  "enchantment.minecraft.infinity.description": "Firing.",
   "enchantment.minecraft.luck_of_the_sea.description": "Increases the rate of rare loot from fishing.",
   "enchantment.minecraft.lure.description": "Decreases the wait time until fish bites.",
   "enchantment.minecraft.loyalty.description": "Trident returns after being thrown.",
