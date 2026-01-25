@@ -15,6 +15,11 @@ public class ModEntities {
     public static DeferredHolder<EntityType<?> ,EntityType<ReturnGemBeamEntity>> RETURN_GEM_BEAM_ENTITY = ENTITY_TYPES.register("return_gem_beam", () ->
         EntityType.Builder.of(ReturnGemBeamEntity::new, MobCategory.MISC).build("return_gem_beam"));
 
+    public static DeferredHolder<EntityType<?>, EntityType<ThrownWarpGemEntity>> THROWN_WARP_GEM_ENTITY = ENTITY_TYPES.register(
+        "thrown_warp_gem",
+        () -> EntityType.Builder.<ThrownWarpGemEntity>of(ThrownWarpGemEntity::new, MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10).build("thrown_warp_gem")
+    );
+
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
     }

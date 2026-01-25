@@ -3,6 +3,7 @@ package net.tagtart.rechantment;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.blockentity.EnchantTableRenderer;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -115,6 +116,7 @@ public class Rechantment {
         @SubscribeEvent
         public static void registerRenderer(EntityRenderersEvent.RegisterRenderers event) {
             event.registerEntityRenderer(ModEntities.RETURN_GEM_BEAM_ENTITY.get(), ReturnGemBeamEntityRenderer::new);
+            event.registerEntityRenderer(ModEntities.THROWN_WARP_GEM_ENTITY.get(), ThrownItemRenderer::new);
         }
 
     }
