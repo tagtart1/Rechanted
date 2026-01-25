@@ -7,8 +7,10 @@ import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -16,11 +18,13 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
 import net.tagtart.rechantment.entity.ModEntities;
 import net.tagtart.rechantment.entity.ReturnGemBeamEntity;
+import net.tagtart.rechantment.event.TickDelayedTasks;
 import net.tagtart.rechantment.util.UtilFunctions;
 import org.jetbrains.annotations.NotNull;
 
@@ -117,7 +121,25 @@ public class ReturnGemItem extends Item {
             }
 
             DimensionTransition transition = player.findRespawnPositionAndUseSpawnBlock(true, (entity) -> {
-                // Idk if this is needed but this will get called after the transition occurs.
+
+                ServerLevel serverLevel = (ServerLevel)player.level();
+                Vec3 pos = player.position();
+
+                TickDelayedTasks.enqueuedTasks.add(new TickDelayedTasks.TickDelayedTask(4) {
+                       @Override
+                       public void onTicksDelayElapsed() {
+                           Random rand = new Random();
+                           for (int i = 0; i < 50; i++) {
+
+                               double xOffset = rand.nextDouble(-1, 1) * 2.0;
+                               double zOffset = rand.nextDouble(-1, 1) * 2.0;
+
+                               serverLevel.sendParticles(ParticleTypes.DUST_PLUME, pos.x + xOffset, pos.y + 0.5, pos.z + zOffset, 2, 0, 0.02, 0, 0.1);
+                           }
+                       }
+                   });
+
+                serverLevel.playSound(null, player.blockPosition(), SoundEvents.ELDER_GUARDIAN_CURSE, SoundSource.PLAYERS);
             });
 
             if (transition.missingRespawnBlock()) {
@@ -126,7 +148,6 @@ public class ReturnGemItem extends Item {
 
             spawnReturnEntity(player, transition);
 
-            // Safe to teleport player now.
             player.getCooldowns().addCooldown(this, 40);
             stack.setCount(0);
         }
@@ -175,21 +196,14 @@ public class ReturnGemItem extends Item {
             DimensionTransition transition = remTransition.transition;
 
             if (player instanceof ServerPlayer serverPlayer) {
-                serverPlayer.teleportTo(transition.newLevel(), transition.pos().x, transition.pos().y, transition.pos().z, transition.yRot(), transition.xRot());
-
-                ServerLevel level = (ServerLevel)player.level();
-                Vec3 pos = player.position();
-
-                Random rand = new Random();
-                for (int i = 0; i < 50; i++) {
-
-                    double xOffset = rand.nextDouble(-1, 1) * 2.0;
-                    double zOffset = rand.nextDouble(-1, 1) * 2.0;
-
-                    level.sendParticles(ParticleTypes.DUST_PLUME, pos.x + xOffset, pos.y + 0.5, pos.z + zOffset, 4,0, 0.02, 0, 0.1);
-                }
-
-                level.playSound(null, player.blockPosition(), SoundEvents.ELDER_GUARDIAN_CURSE, SoundSource.PLAYERS);
+                //serverPlayer.teleportTo(transition.newLevel(), transition.pos().x, transition.pos().y, transition.pos().z, transition.yRot(), transition.xRot());
+                serverPlayer.serverLevel().getChunkSource().addRegionTicket(
+                        TicketType.POST_TELEPORT,
+                        new ChunkPos(new BlockPos((int)transition.pos().x, (int)transition.pos().y, (int)transition.pos().z)),
+                        1,
+                        player.getId()
+                );
+                player.changeDimension(transition);
             }
         }
     }

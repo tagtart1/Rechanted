@@ -74,6 +74,8 @@ public class TastyGemItem extends Item {
             );
             player.addEffect(satiatedEffect);
             player.addEffect(regenEffect);
+
+            player.getFoodData().setFoodLevel(20);
         }
 
         stack.setCount(0);

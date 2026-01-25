@@ -57,13 +57,15 @@ public class ReturnGemBeamEntityRenderer extends EntityRenderer<ReturnGemBeamEnt
     @Override
     public void render(ReturnGemBeamEntity p_entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
 
-        p_entity.glowRadius += 0.004f;
-        p_entity.beamRadius += 0.004f;
+        if (!Minecraft.getInstance().isPaused()) {
+            p_entity.glowRadius += 0.004f;
+            p_entity.beamRadius += 0.004f;
+        }
 
         int color1 = 0xccccff;
         int color2 = 0xffffff;
 
-        int color = FastColor.ARGB32.lerp(((float)Math.sin(p_entity.tickCount / 10.0f) + 1.0f) * 0.5f, color1, color2);
+        int color = FastColor.ARGB32.lerp(((float)Math.sin(p_entity.tickCount / 5.0f) + 1.0f) * 0.5f, color1, color2);
 
         renderBeaconBeam(poseStack, bufferSource, p_entity,partialTick, p_entity.beamRadius, p_entity.glowRadius, p_entity.level().getGameTime(), 0, 100, color);
     }

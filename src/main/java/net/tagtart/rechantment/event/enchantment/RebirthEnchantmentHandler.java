@@ -14,7 +14,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerDestroyItemEvent;
 import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.enchantment.ModEnchantments;
-import net.tagtart.rechantment.event.ScheduledRebirthTasks;
+import net.tagtart.rechantment.event.TickDelayedTasks;
 import net.tagtart.rechantment.util.UtilFunctions;
 
 import java.util.Arrays;
@@ -67,7 +67,7 @@ public class RebirthEnchantmentHandler {
                 int freeSlot = player.getInventory().selected;
                 boolean isOffhand = event.getHand() == InteractionHand.OFF_HAND;
 
-                ScheduledRebirthTasks.EnqueueItemForRebirth(player, newItemStack, freeSlot, isOffhand);
+                TickDelayedTasks.EnqueueItemForRebirth(player, newItemStack, freeSlot, isOffhand);
 
             } else {
                 player.sendSystemMessage(Component.literal("Your item failed to be reborn!").withStyle(ChatFormatting.RED));
