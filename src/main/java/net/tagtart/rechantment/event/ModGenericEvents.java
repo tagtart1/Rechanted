@@ -13,12 +13,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.util.RandomSource;
@@ -43,11 +45,13 @@ import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.HandlerThread;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.block.ModBlocks;
+import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.config.RechantmentCommonConfigs;
 import net.tagtart.rechantment.enchantment.ModEnchantments;
 import net.tagtart.rechantment.enchantment.custom.InquisitiveEnchantmentEffect;
@@ -363,5 +367,83 @@ public class ModGenericEvents {
                 event.getChunk().setBlockState(blockPos, ModBlocks.RECHANTMENT_TABLE_BLOCK.get().defaultBlockState(), false);
             }));
         }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
+        Player player = event.getEntity();
+        if (player.level().isClientSide()) {
+            return;
+        }
+
+        if (player.tickCount % 20 != 0) {
+            return;
+        }
+
+        Inventory inventory = player.getInventory();
+        for (ItemStack stack : inventory.items) {
+            announceFoundBook(player, stack);
+        }
+        for (ItemStack stack : inventory.offhand) {
+            announceFoundBook(player, stack);
+        }
+    }
+
+    private static void announceFoundBook(Player player, ItemStack stack) {
+        if (stack.isEmpty()) {
+            return;
+        }
+
+        if (!stack.getOrDefault(ModDataComponents.ANNOUNCE_ON_FOUND, false)) {
+            return;
+        }
+
+        ItemEnchantments enchantments = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
+        if (enchantments.isEmpty()) {
+            enchantments = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+        }
+
+        if (enchantments.isEmpty()) {
+            stack.remove(ModDataComponents.ANNOUNCE_ON_FOUND);
+            return;
+        }
+
+        Object2IntMap.Entry<Holder<Enchantment>> entry = enchantments.entrySet().iterator().next();
+        Holder<Enchantment> enchantmentHolder = entry.getKey();
+        int enchantmentLevel = enchantments.getLevel(enchantmentHolder);
+        String enchantmentRaw = enchantmentHolder.unwrapKey().map(key -> key.location().toString()).orElse("");
+
+        BookRarityProperties bookProps = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw);
+        Style enchantStyle = Style.EMPTY;
+        if (bookProps != null) {
+            enchantStyle = enchantStyle.withColor(bookProps.color).withUnderlined(true);
+        }
+
+        Component enchantName = Enchantment.getFullname(enchantmentHolder, enchantmentLevel).copy().withStyle(enchantStyle);
+        Component playerName = player.getDisplayName();
+
+        MutableComponent message = Component.empty()
+                .append(playerName)
+                .append(Component.literal(" found "))
+                .append(enchantName);
+
+        if (stack.has(ModDataComponents.SUCCESS_RATE)) {
+            int successRate = stack.getOrDefault(ModDataComponents.SUCCESS_RATE, 0);
+            message = message
+                    .append(Component.literal(" at "))
+                    .append(Component.literal(successRate + "%").withStyle(enchantStyle));
+        }
+
+        message = message.append(Component.literal("!"));
+
+        if (player.level() instanceof ServerLevel level) {
+            for (Player otherPlayer : level.players()) {
+                otherPlayer.sendSystemMessage(message);
+            }
+
+            level.playSound(null, player.getOnPos(), SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.PLAYERS, 1f, 1f);
+        }
+
+        stack.remove(ModDataComponents.ANNOUNCE_ON_FOUND);
     }
 }
