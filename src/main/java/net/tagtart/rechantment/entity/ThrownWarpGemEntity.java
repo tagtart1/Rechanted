@@ -1,6 +1,7 @@
 package net.tagtart.rechantment.entity;
 
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -22,8 +23,11 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.EventHooks;
 import net.tagtart.rechantment.Rechantment;
+import net.tagtart.rechantment.event.TickDelayedTasks;
 import net.tagtart.rechantment.item.ModItems;
 import org.joml.Vector3f;
+
+import java.util.Random;
 
 public class ThrownWarpGemEntity extends ThrownEnderpearl {
     private static final double TRAIL_BACK_OFFSET = 0.25;
@@ -31,9 +35,9 @@ public class ThrownWarpGemEntity extends ThrownEnderpearl {
     private static final int TRAIL_SEGMENTS = 3;
     private static final double TRAIL_SEGMENT_SPACING = 0.2;
     private static final DustParticleOptions TRAIL_COLOR = new DustParticleOptions(new Vector3f(0.7F, 0.1F, 0.9F), 0.7F);
-    private static final int LANDING_RING_POINTS = 32;
+    private static final int LANDING_RING_POINTS = 64;
     private static final double LANDING_RING_RADIUS = 1.25;
-    private static final double LANDING_RING_SPEED = 5.35;
+    private static final double LANDING_RING_SPEED = 10.35;
     private static final double LANDING_RING_Y_SPEED = 0.02;
 
     public ThrownWarpGemEntity(EntityType<ThrownWarpGemEntity> entityType, Level level) {
@@ -64,7 +68,15 @@ public class ThrownWarpGemEntity extends ThrownEnderpearl {
     protected void onHit(HitResult hitResult) {
         if (this.level() instanceof ServerLevel serverlevel) {
             Entity entity = this.getOwner();
-            spawnLandingRing(serverlevel, entity);
+            Vec3 center = this.position();
+            TickDelayedTasks.enqueuedTasks.add(new TickDelayedTasks.TickDelayedTask(4) {
+                final Vec3 spawnPos = center;
+                @Override
+                public void onTicksDelayElapsed() {
+
+                   spawnLandingRing(serverlevel, spawnPos);
+                }
+            });
 
             if (entity != null && isAllowedToTeleportOwner(entity, serverlevel)) {
                 if (entity.isPassenger()) {
@@ -135,26 +147,25 @@ public class ThrownWarpGemEntity extends ThrownEnderpearl {
         }
     }
 
-    // TODO: fucking figure out how to animate the ring away from the player
-    private void spawnLandingRing(ServerLevel serverlevel, Entity owner) {
-        Vec3 center = this.position();
-        Vec3 speedBias = owner != null ? owner.getDeltaMovement() : Vec3.ZERO;
-        double baseY = center.y + 0.1;
+    private void spawnLandingRing(ServerLevel serverlevel, Vec3 spawnPos) {
+
+
+        double baseY = spawnPos.y + 0.1;
         for (int i = 0; i < LANDING_RING_POINTS; i++) {
             double angle = (Math.PI * 2.0) * (i / (double) LANDING_RING_POINTS);
             double xOffset = Math.cos(angle) * LANDING_RING_RADIUS;
             double zOffset = Math.sin(angle) * LANDING_RING_RADIUS;
-            double xSpeed = Math.cos(angle) * LANDING_RING_SPEED + speedBias.x;
-            double zSpeed = Math.sin(angle) * LANDING_RING_SPEED + speedBias.z;
+            double xSpeed = Math.cos(angle) * LANDING_RING_SPEED ;
+            double zSpeed = Math.sin(angle) * LANDING_RING_SPEED;
 
             serverlevel.sendParticles(
                 TRAIL_COLOR,
-                center.x + xOffset,
+                    spawnPos.x + xOffset,
                 baseY,
-                center.z + zOffset,
+                    spawnPos.z + zOffset,
                 0,
                 xSpeed,
-                LANDING_RING_Y_SPEED + speedBias.y,
+                LANDING_RING_Y_SPEED,
                 zSpeed,
                 0.0
             );

@@ -25,6 +25,7 @@ import net.tagtart.rechantment.entity.renderer.ReturnGemBeamEntityRenderer;
 import net.tagtart.rechantment.item.ModCreativeModeTabs;
 import net.tagtart.rechantment.item.ModItemProperties;
 import net.tagtart.rechantment.item.ModItems;
+import net.tagtart.rechantment.loot.ModLootModifiers;
 import net.tagtart.rechantment.screen.ModMenuTypes;
 import net.tagtart.rechantment.screen.RechantmentTablePoolDisplayScreen;
 import net.tagtart.rechantment.screen.RechantmentTableScreen;
@@ -77,7 +78,7 @@ public class Rechantment {
 
         ModCreativeModeTabs.register(modEventBus);
         ModEnchantmentEffects.register(modEventBus);
-
+        ModLootModifiers.register(modEventBus);
         // Register our mod's ModConfigSpec so that FML can create and load the config
         // file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, RechantmentCommonConfigs.SPEC);
