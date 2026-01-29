@@ -310,15 +310,7 @@ public class UtilFunctions {
         return dx * dx + dy * dy + dz * dz;
     }
 
-    @Nullable
-    public static ShaderInstance loadShader(ResourceLocation shaderLocation) {
-        try {
-            return new ShaderInstance(Minecraft.getInstance().getResourceManager(), shaderLocation, DefaultVertexFormat.POSITION_TEX);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+
 
     public static void fakeInnerBlit(GuiGraphics guiGraphics, int pX1, int pX2, int pY1, int pY2, int pBlitOffset, float pMinU, float pMaxU, float pMinV, float pMaxV) {
         Matrix4f matrix4f = guiGraphics.pose().last().pose();

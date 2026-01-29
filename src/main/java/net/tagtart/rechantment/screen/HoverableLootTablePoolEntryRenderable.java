@@ -28,7 +28,6 @@ public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderabl
     private static final ResourceLocation TABLE_ENTRY_BOX_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "textures/gui/enchant_table_loot_pool_entry_box.png");
     private static final ResourceLocation INFO_ICON_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "textures/gui/info_button.png");
 
-    private static final ResourceLocation GRID_SHADER_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "shaders/program/ench_table_grid_shader");
     private ShaderInstance gridShader;
 
     private final int enchantmentInfoOffsetY = 13;
@@ -72,7 +71,7 @@ public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderabl
         nestedInfoHoverable.imageViewHeight = 9;
         nestedInfoHoverable.tooltipEnabled = false;  // Manually rendering tooltip later due to scissoring conflicts.
 
-        this.gridShader = UtilFunctions.loadShader(GRID_SHADER_LOCATION);
+        this.gridShader = ModShaders.ENCHANT_TABLE_LOOT_POOL_GRID_SHADER;
 
         levelDropRates = new ArrayList<>();
         generatePoolEntryInfo();

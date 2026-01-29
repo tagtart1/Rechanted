@@ -15,8 +15,6 @@ public class ModDataComponents {
     public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPES =
             DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, Rechantment.MOD_ID);
 
-
-
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> SUCCESS_RATE = register("success_rate",
             builder -> builder.persistent(Codec.INT));
 
@@ -24,6 +22,14 @@ public class ModDataComponents {
             builder -> builder.persistent(Codec.BOOL));
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> ANNOUNCE_ON_FOUND = register("announce_on_found",
+            builder -> builder.persistent(Codec.BOOL));
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> IS_CLONE = register("is_clone",
+            builder -> builder.persistent(Codec.BOOL));
+
+    // Distinct from IS_CLONE in that it represents items that have been used to create clone already,
+    // which will not have a special shader effect unlike items that ARE clones.
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> HAS_BEEN_CLONED = register("is_clone_visually",
             builder -> builder.persistent(Codec.BOOL));
 
     private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register (String name, UnaryOperator<DataComponentType.Builder<T>> builderOperator) {

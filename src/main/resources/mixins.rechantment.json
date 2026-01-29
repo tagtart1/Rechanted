@@ -6,7 +6,8 @@
   "refmap": "mixins.rechantment.refmap.json",
   "mixins": [
     "FortuneMixin",
-    "EnchantmentTableBlockMixin"
+    "EnchantmentTableBlockMixin",
+    "ItemRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

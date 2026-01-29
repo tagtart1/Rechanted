@@ -21,6 +21,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.tagtart.rechantment.entity.ReturnGemBeamEntity;
+import net.tagtart.rechantment.screen.ModRenderTypes;
 import net.tagtart.rechantment.util.UtilFunctions;
 
 import javax.annotation.Nullable;
@@ -29,21 +30,6 @@ import java.util.function.BiFunction;
 import static net.minecraft.client.renderer.RenderStateShard.*;
 
 public class ReturnGemBeamEntityRenderer extends EntityRenderer<ReturnGemBeamEntity> {
-
-    // Default beacon beam render type culls the back face of the beam, so this is just that but with culling disabled.
-    // Easier to just use this than trying to render two quads with flipped normals or some shit.
-    public static final BiFunction<ResourceLocation, Boolean, RenderType> BEACON_BEAM_NO_CULL = Util.memoize(
-            (location, colorFlag) -> {
-                RenderType.CompositeState rendertype$compositestate = RenderType.CompositeState.builder()
-                        .setShaderState(RENDERTYPE_BEACON_BEAM_SHADER)
-                        .setTextureState(new RenderStateShard.TextureStateShard(location, false, false))
-                        .setTransparencyState(colorFlag ? TRANSLUCENT_TRANSPARENCY : NO_TRANSPARENCY)
-                        .setWriteMaskState(COLOR_DEPTH_WRITE)
-                        .setCullState(NO_CULL)
-                        .createCompositeState(false);
-                return RenderType.create("beacon_beam_no_cull", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 1536, false, true, rendertype$compositestate);
-            }
-    );
 
     public ReturnGemBeamEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -118,7 +104,7 @@ public class ReturnGemBeamEntityRenderer extends EntityRenderer<ReturnGemBeamEnt
         float f13 = (float)height * textureScale * (0.5F / beamRadius) + f12;
         renderPart(
                 poseStack,
-                bufferSource.getBuffer(BEACON_BEAM_NO_CULL.apply(beamLocation, true)),
+                bufferSource.getBuffer(ModRenderTypes.BEACON_BEAM_NO_CULL.apply(beamLocation, true)),
                 FastColor.ARGB32.color(230, color),
                 yOffset,
                 i,
@@ -146,7 +132,7 @@ public class ReturnGemBeamEntityRenderer extends EntityRenderer<ReturnGemBeamEnt
         f13 = (float)height * textureScale + f12;
         renderPart(
                 poseStack,
-                bufferSource.getBuffer(BEACON_BEAM_NO_CULL.apply(beamLocation, true)),
+                bufferSource.getBuffer(ModRenderTypes.BEACON_BEAM_NO_CULL.apply(beamLocation, true)),
                 FastColor.ARGB32.color(32, color),
                 yOffset,
                 i,

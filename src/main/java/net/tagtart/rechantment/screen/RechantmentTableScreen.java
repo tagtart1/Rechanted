@@ -29,7 +29,6 @@ import java.util.List;
 
 public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentTableMenu> {
 
-    private static final ResourceLocation LINE_SHADER_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "shaders/program/ench_table_line_shader");
     private static final ResourceLocation SIMPLE_LINE_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "textures/gui/enchant_table_effect_simple.png");
     private static final ResourceLocation UNIQUE_LINE_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "textures/gui/enchant_table_effect_unique.png");
     private static final ResourceLocation ELITE_LINE_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "textures/gui/enchant_table_effect_elite.png");
@@ -102,7 +101,7 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
         this.shaderEffectsByBookID[4] = ULTIMATE_LINE_LOCATION;
         this.shaderEffectsByBookID[5] = LEGENDARY_LINE_LOCATION;
 
-        this.lineShader = UtilFunctions.loadShader(LINE_SHADER_LOCATION);
+        this.lineShader = ModShaders.ENCHANT_TABLE_FBM_LINE_SHADER;
     }
 
     @Override

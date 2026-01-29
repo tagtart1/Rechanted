@@ -32,7 +32,6 @@ public class RechantmentTablePoolDisplayScreen extends AbstractContainerScreen<R
     private static final ResourceLocation BACK_ARROW_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "textures/gui/arrow_button_back.png");
     private static final ResourceLocation SCROLL_BAR_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "textures/gui/scrollbar_rect.png");
 
-    private static final ResourceLocation LINE_SHADER_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "shaders/program/ench_table_line_shader");
     private static final ResourceLocation SIMPLE_LINE_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "textures/gui/enchant_table_loot_pool_effect_simple.png");
     private static final ResourceLocation UNIQUE_LINE_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "textures/gui/enchant_table_loot_pool_effect_unique.png");
     private static final ResourceLocation ELITE_LINE_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "textures/gui/enchant_table_loot_pool_effect_elite.png");
@@ -126,7 +125,7 @@ public class RechantmentTablePoolDisplayScreen extends AbstractContainerScreen<R
         this.shaderEffectsByBookID[3] = ULTIMATE_LINE_LOCATION;
         this.shaderEffectsByBookID[4] = LEGENDARY_LINE_LOCATION;
 
-        this.lineShader = UtilFunctions.loadShader(LINE_SHADER_LOCATION);
+        this.lineShader = ModShaders.ENCHANT_TABLE_FBM_LINE_SHADER;
     }
 
     protected void generateTableEntries() {
