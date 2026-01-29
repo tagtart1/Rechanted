@@ -56,6 +56,9 @@
   "item.rechantment.tasty_gem": "Tasty Gem",
   "item.rechantment.tasty_gem.description": "Become satiated for 30 minutes, losing hunger only when healing.",
 
+  "item.rechantment.warp_gem": "Warp Gem",
+  "item.rechantment.warp_gem.description": "Can be thrown for safe teleportation.",
+
   "item.rechantment.clone_gem": "Clone Gem",
   "item.rechantment.clone_gem.description": "Becomes a clone of ANY enchanted book that has not been cloned before and is not itself a clone.",
 

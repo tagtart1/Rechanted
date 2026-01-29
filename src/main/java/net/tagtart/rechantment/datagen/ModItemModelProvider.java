@@ -20,6 +20,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.CHANCE_GEM.get());
         basicItem(ModItems.RETURN_GEM.get());
         basicItem(ModItems.TASTY_GEM.get());
+        basicItem(ModItems.WARP_GEM.get());
         basicItem(ModItems.CLONE_GEM.get());
     }
 

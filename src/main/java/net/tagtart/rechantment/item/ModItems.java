@@ -20,6 +20,9 @@ public class  ModItems {
      public static final DeferredItem<Item> TASTY_GEM = ITEMS.register("tasty_gem",
              () -> new TastyGemItem(new Item.Properties().food(Foods.PUMPKIN_PIE)));
 
+     public static final DeferredItem<Item> WARP_GEM = ITEMS.register("warp_gem",
+             () -> new WarpGemItem(new Item.Properties().durability(64)));
+
      public static final DeferredItem<Item> CLONE_GEM = ITEMS.register("clone_gem",
              () -> new CloneGemItem(new Item.Properties()));
 

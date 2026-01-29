@@ -3,6 +3,7 @@ package net.tagtart.rechantment;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.blockentity.EnchantTableRenderer;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -24,6 +25,7 @@ import net.tagtart.rechantment.entity.renderer.ReturnGemBeamEntityRenderer;
 import net.tagtart.rechantment.item.ModCreativeModeTabs;
 import net.tagtart.rechantment.item.ModItemProperties;
 import net.tagtart.rechantment.item.ModItems;
+import net.tagtart.rechantment.loot.ModLootModifiers;
 import net.tagtart.rechantment.screen.ModMenuTypes;
 import net.tagtart.rechantment.screen.RechantmentTablePoolDisplayScreen;
 import net.tagtart.rechantment.screen.RechantmentTableScreen;
@@ -76,7 +78,7 @@ public class Rechantment {
 
         ModCreativeModeTabs.register(modEventBus);
         ModEnchantmentEffects.register(modEventBus);
-
+        ModLootModifiers.register(modEventBus);
         // Register our mod's ModConfigSpec so that FML can create and load the config
         // file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, RechantmentCommonConfigs.SPEC);
@@ -115,6 +117,7 @@ public class Rechantment {
         @SubscribeEvent
         public static void registerRenderer(EntityRenderersEvent.RegisterRenderers event) {
             event.registerEntityRenderer(ModEntities.RETURN_GEM_BEAM_ENTITY.get(), ReturnGemBeamEntityRenderer::new);
+            event.registerEntityRenderer(ModEntities.THROWN_WARP_GEM_ENTITY.get(), ThrownItemRenderer::new);
         }
 
     }
