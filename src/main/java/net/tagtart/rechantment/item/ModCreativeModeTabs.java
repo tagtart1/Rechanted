@@ -34,6 +34,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.RETURN_GEM.get());
                         output.accept(ModItems.TASTY_GEM.get());
                         output.accept(ModItems.CLONE_GEM.get());
+                        output.accept(ModItems.WARP_GEM.get());
 
                         BookRarityProperties[] bookRarityProperties = BookRarityProperties.getAllProperties();
                         for(BookRarityProperties bookRarityProperty : bookRarityProperties) {

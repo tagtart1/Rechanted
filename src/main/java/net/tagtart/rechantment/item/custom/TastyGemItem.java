@@ -72,10 +72,12 @@ public class TastyGemItem extends Item {
                     true,
                     true
             );
+
             player.addEffect(satiatedEffect);
             player.addEffect(regenEffect);
 
             player.getFoodData().setFoodLevel(20);
+            player.getFoodData().setSaturation(20);
         }
 
         stack.setCount(0);
