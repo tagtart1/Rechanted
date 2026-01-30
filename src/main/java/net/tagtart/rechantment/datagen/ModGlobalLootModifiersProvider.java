@@ -20,8 +20,8 @@ public class ModGlobalLootModifiersProvider extends GlobalLootModifierProvider {
     @Override
     protected void start() {
         add("replace_vanilla_enchanted_books", new ReplaceVanillaEnchantedBookModifier(new LootItemCondition[]{}));
-        add("replace_enchanted_loot", new ReplaceEnchantedLootModifier(new LootItemCondition[]{}));
         add("fishing_nerf_loot", new FishingNerfLootModifier(new LootItemCondition[]{}));
+        add("replace_enchanted_loot", new ReplaceEnchantedLootModifier(new LootItemCondition[]{}));
         add("remove_mending_loot", new RemoveMendingLootModifier(new LootItemCondition[]{}));
     }
 }

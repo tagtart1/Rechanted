@@ -371,8 +371,6 @@
   "config.rechantment.announce_enchantments.tooltip": "Enchantments that will be announced when found in loot",
 
 
-  "config.rechantment.clear_enchanted_loot.title": "Clear Enchanted Loot",
-  "config.rechantment.clear_enchanted_loot.tooltip": "Remove enchantments from generated loot, leaving blank items",
   "config.rechantment.replace_enchanted_loot.title": "Replace Enchanted Loot",
   "config.rechantment.replace_enchanted_loot.tooltip": "Replace enchanted items with Rechantment books",
   "config.rechantment.remove_mending.title": "Remove Mending",

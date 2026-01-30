@@ -111,7 +111,6 @@ public class RechantmentCommonConfigs {
 
     public static final ModConfigSpec.ConfigValue<? extends Boolean>      REMOVE_MENDING_ENABLED;
 
-    public static final ModConfigSpec.ConfigValue<? extends Boolean>      CLEAR_ENCHANTED_LOOT;
     public static final ModConfigSpec.ConfigValue<? extends Boolean>      REPLACE_ENCHANTED_LOOT;
     public static final ModConfigSpec.ConfigValue<? extends Boolean>      EXCLUDE_LOWER_TIER_LOOT;
     public static final ModConfigSpec.ConfigValue<? extends Boolean>      NERF_FISHING_LOOT;
@@ -323,28 +322,22 @@ public class RechantmentCommonConfigs {
 
         BUILDER.translation("config.rechantment.loot_table_enhancements.name").comment("Configurations for all things related to generated loot drops. Ex: end_city_treasure").push("Loot Table Enhancements");
 
-        BUILDER.comment("Clears enchantments from found generated loot resulting in blank pieces of gear");
-        BUILDER.comment("Example: A chest plate found with enchants in the end city loot will be blank with no enchants");
-        BUILDER.comment("Note: Having this and REPLACE_ENCHANTED_LOOT both set to true may cause issues!");
-        CLEAR_ENCHANTED_LOOT = BUILDER.translation("config.rechantment.clear_enchanted_loot.title").define("clear_enchanted_loot", false);
-
         BUILDER.comment("Replace all enchanted loot into Rechantment books based on world_spawn_weight config from each rarity section");
         BUILDER.comment("Example: A chest plate found with enchants will be replaced entirely with a rolled enchanted book based on the rarity configs");
-        BUILDER.comment("Note: Having this and CLEAR_ENCHANTED_LOOT both set to true may cause issues!");
         REPLACE_ENCHANTED_LOOT = BUILDER.translation("config.rechantment.replace_enchanted_loot.title").define("replace_enchanted_loot", false);
 
         BUILDER.comment("Removes mending enchantment from found enchanted loot from generated world loot. Ex: end_city_treasure");
         BUILDER.comment("Mending books can be found only in book form as long as you have minecraft:mending set in a rarity pool.");
-        BUILDER.comment("Having CLEAR_ENCHANTED_LOOT or REPLACE_ENCHANTED_LOOT set to true defaults this to true.");
+        BUILDER.comment("Having REPLACE_ENCHANTED_LOOT set to true defaults this to true.");
         REMOVE_MENDING_ENABLED = BUILDER.translation("config.rechantment.remove_mending.title").define("remove_mending", true);
 
-        BUILDER.comment("Excludes gold, leather, stone, wood enchanted drops from being affected by the REPLACE_ENCHANTED_LOOT and CLEAR_ENCHANTED_LOOT configurations");
+        BUILDER.comment("Excludes gold, leather, stone, wood enchanted drops from being affected by the REPLACE_ENCHANTED_LOOT configuration");
         BUILDER.comment("Example: Gold tools and armor from nether portal ruins will remain and not be replaced by Rechantment books");
         EXCLUDE_LOWER_TIER_LOOT = BUILDER.translation("config.rechantment.exclude_lower_tier_loot.title").define("exclude_lower_tier_loot", false);
 
         BUILDER.comment("Makes enchanted fished treasure have weaker enchants (level 5 enchants) and excludes it from REPLACE_ENCHANTED_LOOT");
-        BUILDER.comment("Example: Enchanted bows and fishing rods will commonly have Power I or Lure I respectively unless CLEAR_ENCHANTED_LOOT is enabled");
-        BUILDER.comment("This setting is applied logically before CLEAR_ENCHANTED_LOOT");
+        BUILDER.comment("Example: Enchanted bows and fishing rods will commonly have Power I or Lure I respectively");
+        BUILDER.comment("This setting is applied before REPLACE_ENCHANTED_LOOT");
         BUILDER.comment("Without this enabled, fishing loot becomes an overpowered source for enchanted books with REPLACE_ENCHANTED_LOOT");
         NERF_FISHING_LOOT = BUILDER.translation("config.rechantment.nerf_fishing_loot.title").define("nerf_fishing_loot", false);
 
