@@ -42,9 +42,9 @@ void main() {
     }
 
     // Quick chromatic abberation; not physically accurate at all just basic version and cool
-    vec4 rSample = texture2D(Sampler0, texCoord - chromatic_aberation_uv_offset);
-    vec4 gSample = texture2D(Sampler0, texCoord);
-    vec4 bSample = texture2D(Sampler0, texCoord + chromatic_aberation_uv_offset);
+    vec4 rSample = texture(Sampler0, texCoord - chromatic_aberation_uv_offset);
+    vec4 gSample = texture(Sampler0, texCoord);
+    vec4 bSample = texture(Sampler0, texCoord + chromatic_aberation_uv_offset);
     vec3 chroma_color;
     chroma_color.r = rSample.r;
     chroma_color.g = gSample.g;
