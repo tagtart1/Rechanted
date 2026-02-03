@@ -90,9 +90,7 @@ public class CloneGemItem extends Item {
 
             stack.setCount(0);
 
-            if (player instanceof ServerPlayer serverPlayer) {
-                serverPlayer.containerMenu.setCarried(clonedBookStack);
-            }
+            player.containerMenu.setCarried(clonedBookStack);
         }
 
         return true;
