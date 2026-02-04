@@ -26,6 +26,9 @@ public class  ModItems {
      public static final DeferredItem<Item> CLONE_GEM = ITEMS.register("clone_gem",
              () -> new CloneGemItem(new Item.Properties()));
 
+     public static final DeferredItem<Item> SMITHING_GEM = ITEMS.register("smithing_gem",
+             SmithingGemItem::new);
+
      public static final DeferredItem<Item> RECHANTMENT_BOOK = ITEMS.register("rechantment_book", () -> new RechantmentBookItem(new Item.Properties()));
 
      public static void register(IEventBus eventBus) {
