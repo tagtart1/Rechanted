@@ -259,7 +259,7 @@ public class RechantmentCommonConfigs {
         ArrayList<String> rarity_3_default_enchantments = new ArrayList<>();
         rarity_3_default_enchantments.add("minecraft:swift_sneak|1|1-3|3,2,1");
         rarity_3_default_enchantments.add("minecraft:luck_of_the_sea|1|2-3|2,1");
-        rarity_3_default_enchantments.add("minecraft:sweeping|1|2-3|2,1");
+        rarity_3_default_enchantments.add("minecraft:sweeping_edge|1|2-3|2,1");
         rarity_3_default_enchantments.add("minecraft:silk_touch|1|1|1");
         rarity_3_default_enchantments.add("rechantment:ice_aspect|1|1-2|2,1");
         rarity_3_default_enchantments.add("rechantment:wisdom|1|1-2|2,1");
@@ -324,7 +324,7 @@ public class RechantmentCommonConfigs {
 
         BUILDER.comment("Replace all enchanted loot into Rechantment books based on world_spawn_weight config from each rarity section");
         BUILDER.comment("Example: A chest plate found with enchants will be replaced entirely with a rolled enchanted book based on the rarity configs");
-        REPLACE_ENCHANTED_LOOT = BUILDER.translation("config.rechantment.replace_enchanted_loot.title").define("replace_enchanted_loot", false);
+        REPLACE_ENCHANTED_LOOT = BUILDER.translation("config.rechantment.replace_enchanted_loot.title").define("replace_enchanted_loot", true);
 
         BUILDER.comment("Removes mending enchantment from found enchanted loot from generated world loot. Ex: end_city_treasure");
         BUILDER.comment("Mending books can be found only in book form as long as you have minecraft:mending set in a rarity pool.");
@@ -333,13 +333,13 @@ public class RechantmentCommonConfigs {
 
         BUILDER.comment("Excludes gold, leather, stone, wood enchanted drops from being affected by the REPLACE_ENCHANTED_LOOT configuration");
         BUILDER.comment("Example: Gold tools and armor from nether portal ruins will remain and not be replaced by Rechantment books");
-        EXCLUDE_LOWER_TIER_LOOT = BUILDER.translation("config.rechantment.exclude_lower_tier_loot.title").define("exclude_lower_tier_loot", false);
+        EXCLUDE_LOWER_TIER_LOOT = BUILDER.translation("config.rechantment.exclude_lower_tier_loot.title").define("exclude_lower_tier_loot", true);
 
         BUILDER.comment("Makes enchanted fished treasure have weaker enchants (level 5 enchants) and excludes it from REPLACE_ENCHANTED_LOOT");
         BUILDER.comment("Example: Enchanted bows and fishing rods will commonly have Power I or Lure I respectively");
         BUILDER.comment("This setting is applied before REPLACE_ENCHANTED_LOOT");
         BUILDER.comment("Without this enabled, fishing loot becomes an overpowered source for enchanted books with REPLACE_ENCHANTED_LOOT");
-        NERF_FISHING_LOOT = BUILDER.translation("config.rechantment.nerf_fishing_loot.title").define("nerf_fishing_loot", false);
+        NERF_FISHING_LOOT = BUILDER.translation("config.rechantment.nerf_fishing_loot.title").define("nerf_fishing_loot", true);
 
         BUILDER.pop();
 

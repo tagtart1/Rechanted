@@ -141,7 +141,7 @@
   "enchantment.minecraft.knockback.description": "Knocks mobs away from you when hit.",
   "enchantment.minecraft.fire_aspect.description": "Lights a target on fire when hit.",
   "enchantment.minecraft.looting.description": "Increases the amount of loot dropped by mobs.",
-  "enchantment.minecraft.sweeping.description": "Increases the damage done from sweeping attacks.",
+  "enchantment.minecraft.sweeping_edge.description": "Increases the damage done from sweeping attacks.",
   "enchantment.minecraft.efficiency.description": "Increases the mining speed of tools.",
   "enchantment.minecraft.silk_touch.description": "Mined blocks will drop as blocks instead of dropping their loot.",
   "enchantment.minecraft.unbreaking.description": "Increases the durability of the item.",
