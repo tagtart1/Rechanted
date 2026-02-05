@@ -49,38 +49,4 @@ public class TastyGemItem extends Item {
             tooltipComponents.add(Component.literal(s.trim()));
         }
     }
-
-    @Override
-    public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity) {
-
-        if (livingEntity instanceof ServerPlayer player) {
-
-            MobEffectInstance satiatedEffect = new MobEffectInstance(
-                    ModEffects.SATIATED_EFFECT,
-                    SatiatedEffect.DEFAULT_LENGTH_TICKS,
-                    0,
-                    false,
-                    true,
-                    true
-            );
-
-            MobEffectInstance regenEffect = new MobEffectInstance(
-                    MobEffects.REGENERATION,
-                    SatiatedEffect.DEFAULT_LENGTH_TICKS,
-                    0,
-                    false,
-                    true,
-                    true
-            );
-
-            player.addEffect(satiatedEffect);
-            player.addEffect(regenEffect);
-
-            player.getFoodData().setFoodLevel(20);
-            player.getFoodData().setSaturation(20);
-        }
-
-        stack.setCount(0);
-        return stack;
-    }
 }

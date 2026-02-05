@@ -18,13 +18,16 @@ public class  ModItems {
              () -> new ReturnGemItem(new Item.Properties()));
 
      public static final DeferredItem<Item> TASTY_GEM = ITEMS.register("tasty_gem",
-             () -> new TastyGemItem(new Item.Properties().food(Foods.PUMPKIN_PIE)));
+             () -> new TastyGemItem(new Item.Properties().food(ModFoodProperties.TASTY_GEM)));
 
      public static final DeferredItem<Item> WARP_GEM = ITEMS.register("warp_gem",
              () -> new WarpGemItem(new Item.Properties().durability(64)));
 
      public static final DeferredItem<Item> CLONE_GEM = ITEMS.register("clone_gem",
              () -> new CloneGemItem(new Item.Properties()));
+
+     public static final DeferredItem<Item> SMITHING_GEM = ITEMS.register("smithing_gem",
+             SmithingGemItem::new);
 
      public static final DeferredItem<Item> RECHANTMENT_BOOK = ITEMS.register("rechantment_book", () -> new RechantmentBookItem(new Item.Properties()));
 

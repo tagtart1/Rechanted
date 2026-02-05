@@ -54,13 +54,16 @@
   "item.rechantment.return_gem.description": "Safely teleport to your current respawn point.",
 
   "item.rechantment.tasty_gem": "Tasty Gem",
-  "item.rechantment.tasty_gem.description": "Become satiated for 30 minutes, losing hunger only when healing.",
+  "item.rechantment.tasty_gem.description": "Consume for a buff that gives regeneration and satiation.",
 
   "item.rechantment.warp_gem": "Warp Gem",
   "item.rechantment.warp_gem.description": "Can be thrown for safe teleportation.",
 
   "item.rechantment.clone_gem": "Clone Gem",
   "item.rechantment.clone_gem.description": "Becomes a clone of ANY enchanted book that has not been cloned before and is not itself a clone.",
+
+  "item.rechantment.smithing_gem": "Smithing Gem",
+  "item.rechantment.smithing_gem.description": "Acts as a Netherite Upgrade Template.",
 
   "enchantment.rechantment.thunder_strike": "Thunder Strike",
   "enchantment.rechantment.thunder_strike.description": "Chance to summon lightning to strike your targets.",
@@ -138,7 +141,7 @@
   "enchantment.minecraft.knockback.description": "Knocks mobs away from you when hit.",
   "enchantment.minecraft.fire_aspect.description": "Lights a target on fire when hit.",
   "enchantment.minecraft.looting.description": "Increases the amount of loot dropped by mobs.",
-  "enchantment.minecraft.sweeping.description": "Increases the damage done from sweeping attacks.",
+  "enchantment.minecraft.sweeping_edge.description": "Increases the damage done from sweeping attacks.",
   "enchantment.minecraft.efficiency.description": "Increases the mining speed of tools.",
   "enchantment.minecraft.silk_touch.description": "Mined blocks will drop as blocks instead of dropping their loot.",
   "enchantment.minecraft.unbreaking.description": "Increases the durability of the item.",
@@ -371,8 +374,6 @@
   "config.rechantment.announce_enchantments.tooltip": "Enchantments that will be announced when found in loot",
 
 
-  "config.rechantment.clear_enchanted_loot.title": "Clear Enchanted Loot",
-  "config.rechantment.clear_enchanted_loot.tooltip": "Remove enchantments from generated loot, leaving blank items",
   "config.rechantment.replace_enchanted_loot.title": "Replace Enchanted Loot",
   "config.rechantment.replace_enchanted_loot.tooltip": "Replace enchanted items with Rechantment books",
   "config.rechantment.remove_mending.title": "Remove Mending",
