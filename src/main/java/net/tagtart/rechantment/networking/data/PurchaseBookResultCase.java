@@ -18,5 +18,8 @@ public enum PurchaseBookResultCase {
     INSUFFICIENT_FLOOR,
 
     // Not enough of required lapis for a given tier
-    INSUFFICIENT_LAPIS
+    INSUFFICIENT_LAPIS,
+
+    // Gem animation is happening, don't allow purchase until it's done!
+    GEM_PENDING
 }

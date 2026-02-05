@@ -40,6 +40,8 @@ public class RechantmentTableMenu extends AbstractContainerMenu {
     public final RechantmentTableBlockEntity blockEntity;
     private final Level level;
 
+    public boolean gemEarnedEffectQueued = false;
+
     public RechantmentTableMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
         this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()));
     }

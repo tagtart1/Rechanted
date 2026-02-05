@@ -4,16 +4,11 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.IntTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -31,6 +26,7 @@ import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.block.entity.RechantmentTableBlockEntity;
 import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.item.ModItems;
+import net.tagtart.rechantment.screen.RechantmentTableMenu;
 import net.tagtart.rechantment.util.BookRarityProperties;
 import net.tagtart.rechantment.util.EnchantmentPoolEntry;
 import net.tagtart.rechantment.util.UtilFunctions;
@@ -86,6 +82,7 @@ public record PlayerPurchaseEnchantedBookC2SPayload(int bookPropertiesIndex, Blo
             boolean meetsBookshelfRequirement = UtilFunctions.playerMeetsBookshelfRequirement(bookProperties, bookshelves.getA());
             boolean meetsFloorBlocksRequirement = UtilFunctions.playerMeetsFloorRequirement(bookProperties, floorBlocks.getA());
             boolean meetsLapisRequirement = UtilFunctions.playerMeetsLapisRequirement(bookProperties, enchTableEntity.getItemHandlerLapisStack());
+            boolean validEntityState = enchTableEntity.tableState == RechantmentTableBlockEntity.CustomRechantmentTableState.Normal;
 
             PurchaseBookResultCase failCase = PurchaseBookResultCase.SUCCESS;
 
@@ -97,8 +94,9 @@ public record PlayerPurchaseEnchantedBookC2SPayload(int bookPropertiesIndex, Blo
             else if (!meetsBookshelfRequirement) failCase = PurchaseBookResultCase.INSUFFICIENT_BOOKS;
             else if (!meetsFloorBlocksRequirement) failCase = PurchaseBookResultCase.INSUFFICIENT_FLOOR;
             else if (!meetsLapisRequirement) failCase = PurchaseBookResultCase.INSUFFICIENT_LAPIS;
+            else if (!validEntityState) failCase = PurchaseBookResultCase.GEM_PENDING;
 
-                // At this point, should be good to go. Can destroy blocks and reward the book.
+            // At this point, should be good to go. Can destroy blocks and reward the book.
             else
             {
                 SoundEvent soundToPlay = SoundEvents.EXPERIENCE_ORB_PICKUP;
@@ -183,18 +181,26 @@ public record PlayerPurchaseEnchantedBookC2SPayload(int bookPropertiesIndex, Blo
 
                 // Roll for gem of chance
                 double gemOfChanceDropRate = bookProperties.rerollGemChance;
-                if (random.nextDouble() < gemOfChanceDropRate) {
+                //if (random.nextDouble() < gemOfChanceDropRate) {
+                if (true) {
 
-                    // Play sound effects, send a message
                     ItemStack chanceGemToGive = new ItemStack(ModItems.CHANCE_GEM.get());
+                    enchTableEntity.startGemPendingAnimation(chanceGemToGive);
+
+                    // If gem earned, send signal to menu to render the cool ass effect
+                    // in the screen's fbm shader.
+                    if (player.containerMenu instanceof RechantmentTableMenu rechantmentTableMenu) {
+                        rechantmentTableMenu.gemEarnedEffectQueued = true;
+                    }
+
                     soundToPlay = SoundEvents.PLAYER_LEVELUP;
                     player.sendSystemMessage(Component.literal("You found a Gem of Chance!").withStyle(ChatFormatting.GREEN));
                     int freeSlot = player.getInventory().getFreeSlot();
                     if (freeSlot == -1) {
-                        player.drop(chanceGemToGive, false);
+                        //player.drop(chanceGemToGive, false);
                     }
                     else {
-                        player.getInventory().setItem(freeSlot, chanceGemToGive);
+                        //player.getInventory().setItem(freeSlot, chanceGemToGive);
                     }
                 }
 
@@ -226,6 +232,9 @@ private static void sendEnchantResultPlayerMessage(Player player, PurchaseBookRe
             break;
         case INSUFFICIENT_LAPIS:
             player.sendSystemMessage(Component.literal("Server desync error: Not enough lapis lazuli in enchantment table!"));
+            break;
+        case GEM_PENDING:
+            player.sendSystemMessage(Component.literal("Server desync error: Can't purchase book while a gem is pending!"));
             break;
     }
 

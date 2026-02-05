@@ -21,6 +21,7 @@
   "message.rechantment.insufficient_books": "You only have %d/%d of the required bookshelves in range!",
   "message.rechantment.insufficient_floor": "You only have %d/%d of the required %s floor!",
   "message.rechantment.inventory_full": "You do not have enough space in your inventory for a book!",
+  "message.rechantment.gem_pending": "Wait, something's happening!",
 
   "enchantment.rarity.simple": "眤",
   "enchantment.rarity.unique": "眥",

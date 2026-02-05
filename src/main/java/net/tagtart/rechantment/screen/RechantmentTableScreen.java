@@ -41,6 +41,8 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
     public static final Style PINK_COLOR_STYLE = Style.EMPTY.withColor(0xFCB4B4);
     public static final Style MID_GRAY_COLOR_STYLE = Style.EMPTY.withColor(0xA8A8A8);
 
+    public static final float GEM_PENDING_EFFECT_Y_MOVE_SPEED = 0.5f;
+
     private static final Component grayHyphen = Component.literal("- ").withStyle(MID_GRAY_COLOR_STYLE);
     private static final Component whiteArrow = Component.literal("→ ").withStyle(ChatFormatting.WHITE);
     private static final Component redX = Component.literal("✘ ").withStyle(ChatFormatting.DARK_RED);
@@ -56,6 +58,7 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
     private BlockState[] cachedFloorBlocksInRange;
 
     private float timeElapsed = 0.0f;
+    private float gemEarnedEffectVCoord = -10.0f;
 
     private final float REQ_CHECK_RATE = 0.2f;  // How often shader will check if requirements are met to display effect.
     private float timeSinceLastReqCheck = 0.0f; // Time since last requirement check was made for shader effect.
@@ -142,6 +145,14 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
             timeSinceLastReqCheck = 0.0f;
         }
 
+        if (menu.gemEarnedEffectQueued) {
+            menu.gemEarnedEffectQueued = false;
+
+            gemEarnedEffectVCoord = 1.0f;
+        }
+        gemEarnedEffectVCoord -= GEM_PENDING_EFFECT_Y_MOVE_SPEED * pPartialTick;
+
+        lineShader.safeGetUniform("GemEarnedEffectVCoord").set(gemEarnedEffectVCoord);
         lineShader.safeGetUniform("Time").set(timeElapsed);
         lineShader.safeGetUniform("Resolution").set((float)imageWidth, (float)imageHeight);
 
@@ -223,6 +234,17 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
                         String translatedMsg = Component.translatable("message.rechantment.insufficient_exp").getString();
                         String argsAdded = String.format(translatedMsg, player.totalExperience, properties.requiredExp);
                         player.sendSystemMessage(Component.literal(argsAdded).withStyle(ChatFormatting.RED));
+
+                        break;
+                    }
+
+                    // If a gem is being earned, don't allow player to purchase book.
+                    if (menu.blockEntity.tableState != RechantmentTableBlockEntity.CustomRechantmentTableState.Normal) {
+                        player.closeContainer();
+                        Minecraft.getInstance().player.playSound(SoundEvents.LODESTONE_COMPASS_LOCK, 0.7F, 1.0f);
+
+                        String translatedMsg = Component.translatable("message.rechantment.gem_pending").getString();
+                        player.sendSystemMessage(Component.literal(translatedMsg).withStyle(ChatFormatting.RED));
 
                         break;
                     }

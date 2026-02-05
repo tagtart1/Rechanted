@@ -110,7 +110,7 @@ public class RechantmentTableBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        if (level.isClientSide() && state.getBlock() == ModBlocks.RECHANTMENT_TABLE_BLOCK.get()) {
+        if (state.getBlock() == ModBlocks.RECHANTMENT_TABLE_BLOCK.get()) {
             BlockEntityTicker<EnchantingTableBlockEntity> ticker = (pLevel1, pPos, pState1, pBlockEntity) -> {
                 ((RechantmentTableBlockEntity)pBlockEntity).tick(pLevel1, pPos, pState1);
             };

@@ -19,13 +19,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -60,26 +58,26 @@ public class RechantmentTableRenderer implements BlockEntityRenderer<Rechantment
     private void renderBook(RechantmentTableBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.75F, 0.5F);
-        float f = (float) blockEntity.time + partialTick;
-        poseStack.translate(0.0F, 0.1F + Mth.sin(f * 0.1F) * 0.01F, 0.0F);
-        float f1 = blockEntity.rot - blockEntity.oRot;
+        float time = (float) blockEntity.time + partialTick;
+        poseStack.translate(0.0F, 0.1F + Mth.sin(time * 0.1F) * 0.01F, 0.0F);
+        float yRotationBase = blockEntity.rot - blockEntity.oRot;
 
-        while (f1 >= (float) Math.PI) {
-            f1 -= (float) (Math.PI * 2);
+        while (yRotationBase >= (float) Math.PI) {
+            yRotationBase -= (float) (Math.PI * 2);
         }
 
-        while (f1 < (float) -Math.PI) {
-            f1 += (float) (Math.PI * 2);
+        while (yRotationBase < (float) -Math.PI) {
+            yRotationBase += (float) (Math.PI * 2);
         }
 
-        float f2 = (blockEntity.oRot + f1 * partialTick) + 3.14f;
-        poseStack.mulPose(Axis.YP.rotation(-f2));
+        float yRotation = (blockEntity.oRot + yRotationBase * partialTick) + 3.14f;
+        poseStack.mulPose(Axis.YP.rotation(-yRotation));
         poseStack.mulPose(Axis.ZP.rotationDegrees(100.0F));
         float f3 = Mth.lerp(partialTick, blockEntity.oFlip, blockEntity.flip);
-        float f4 = Mth.frac(f3 + 0.25F) * 1.6F - 0.3F;
-        float f5 = Mth.frac(f3 + 0.75F) * 1.6F - 0.3F;
+        float rightPageFlipAmount = Mth.frac(f3 + 0.25F) * 1.6F - 0.3F;
+        float leftPageFlipAmount = Mth.frac(f3 + 0.75F) * 1.6F - 0.3F;
         float f6 = Mth.lerp(partialTick, blockEntity.oOpen, blockEntity.open);
-        this.bookModel.setupAnim(f, Mth.clamp(f4, 0.0F, 1.0F), Mth.clamp(f5, 0.0F, 1.0F), f6);
+        this.bookModel.setupAnim(time, Mth.clamp(rightPageFlipAmount, 0.0F, 1.0F), Mth.clamp(leftPageFlipAmount, 0.0F, 1.0F), f6);
         VertexConsumer vertexconsumer = BOOK_LOCATION.buffer(bufferSource, RenderType::entitySolid);
         this.bookModel.render(poseStack, vertexconsumer, packedLight, packedOverlay, -1);
         poseStack.popPose();
@@ -102,7 +100,7 @@ public class RechantmentTableRenderer implements BlockEntityRenderer<Rechantment
         float itemsPerRender = lapisStack.getMaxStackSize() / (float)MAX_LAPIS_ITEMS_TO_RENDER; // Each multiple of these renders an additional lapis
         int lapisToRender = Math.min(Math.round(0.5f + ((float)blockEntity.getItemHandlerLapisStack().getCount() / itemsPerRender)), MAX_LAPIS_ITEMS_TO_RENDER);
 
-        Direction facing = blockEntity.getBlockState().getValue(BlockStateProperties.FACING).getCounterClockWise();
+        Direction facing = blockEntity.getLapisHolderFacingDirection();
         Vec3 facingDir = new Vec3(facing.getStepX(), facing.getStepY(), facing.getStepZ());
         Vec3 facingToLapisHolder = facingDir.multiply(0.45f, 1.0f, 0.45f);                      // Adjusts distance from block center towards facing dir of base lapis pos.
         Vec3 toBasePos = facingToLapisHolder.cross(UP).normalize();                                                   // Create direction along the side of block; should go to the player's RIGHT if looking at lapis holder.
@@ -129,7 +127,7 @@ public class RechantmentTableRenderer implements BlockEntityRenderer<Rechantment
             double z = (toFillItemDir.z * LAPIS_HOLDER_LENGTH * lapisFrac) + toFillPadding.z;
             poseStack.translate(x, y, z);
             poseStack.mulPose(Axis.YP.rotation(facingRotation));
-            poseStack.scale(0.9f, 0.9f, 0.9f);
+            poseStack.scale(0.8f, 0.8f, 0.8f);
 
             itemRenderer.renderStatic(staticRenderItemStack, ItemDisplayContext.FIXED, getLightLevel(level,
                     blockEntity.getBlockPos()), OverlayTexture.NO_OVERLAY, poseStack, bufferSource, level, 1);

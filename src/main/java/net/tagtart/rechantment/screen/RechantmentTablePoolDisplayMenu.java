@@ -21,7 +21,7 @@ public class RechantmentTablePoolDisplayMenu extends AbstractContainerMenu {
     public final int startingPropertiesIndex;
 
     public RechantmentTablePoolDisplayMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
-        this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), extraData.readInt()); // Default to first properties index
+        this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), extraData.readInt()); // Normal to first properties index
     }
 
     public RechantmentTablePoolDisplayMenu(int pContainerId, Inventory inv, BlockEntity entity, int bookPropertiesIndex) {

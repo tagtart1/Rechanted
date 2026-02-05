@@ -1,17 +1,20 @@
 package net.tagtart.rechantment.block.entity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -20,8 +23,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.EnchantingTableBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import net.tagtart.rechantment.block.custom.RechantmentTableBlock;
 import net.tagtart.rechantment.screen.RechantmentTableMenu;
 import net.tagtart.rechantment.sound.ModSounds;
 import net.tagtart.rechantment.util.BookRarityProperties;
@@ -30,6 +34,20 @@ import org.jetbrains.annotations.Nullable;
 import oshi.util.tuples.Pair;
 
 public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity implements MenuProvider {
+
+    // For super basic state-machine-esque logic; mainly allows the block renderer/clients to know
+    // how to render the book based on custom logic happening server side.
+    public enum CustomRechantmentTableState {
+        Normal,         // Normal state. In this state 99.99% of the time.
+        GemPending,     // Server rolled gem, book will begin floating up in the air before it's earned.
+        GemEarned,      // After gem pending is done, this just makes book float back down to normal position.
+    }
+
+    public static final int GEM_PENDING_ANIMATION_LENGTH_TICKS = 60;
+    public static final int GEM_EARNED_ANIMATION_LENGTH_TICKS = 20;
+
+    public static final double GEM_EARNED_ITEM_SPAWN_Y_OFFSET = 1.5;
+    public static final double GEM_EARNED_ITEM_MOVE_SPEED_ON_SPAWN = 0.3;  // Speed gem will move when spawned by table; moves in facing direction of lapis holder.
 
     private final ItemStackHandler itemHandler = new ItemStackHandler(1) {
 
@@ -47,6 +65,12 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
 
     private long totalTicks = 0;
     private int currentIndexRequirementsMet = -1;
+
+    public CustomRechantmentTableState tableState = CustomRechantmentTableState.Normal;
+    public long lastStateChangeTime = 0;
+    private ItemStack pendingGemItem = null;
+
+
 
     public RechantmentTableBlockEntity(BlockPos pPos, BlockState pBlockState)
     {
@@ -78,8 +102,6 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
         stopAmbientSound();
     }
 
-
-
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int pContainerId, Inventory inventory, Player player) {
@@ -100,8 +122,6 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
         itemHandler.deserializeNBT(registries, pTag.getCompound("inventory"));
     }
 
-
-
     @Override
     public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
@@ -113,23 +133,48 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
     }
 
     public void tick(Level pLevel, BlockPos pPos, BlockState pState) {
-        if (totalTicks == 0) {
-            soundLogicOnTick(pPos, pLevel);
-        }
-        totalTicks++;
-        newBookAnimationTick(pLevel, pPos, pState);
 
-        // This is so that any sound that needs to be playing when level is loaded gives player time to load.
-        // There's not really an elegant way to do this but most loading takes less than 3 seconds.
-        if (totalTicks < 60) {
-            return;
+        long stateTimeElapsed = level.getGameTime() - lastStateChangeTime;
+
+        if (!pLevel.isClientSide) {
+            System.out.println("penises");
         }
 
-        // Check if requirements are met currently after certain interval passed,
-        // then set which book index can currently be crafted for use elsewhere.
-        if (totalTicks % 4 == 0)
-        {
-            soundLogicOnTick(pPos, pLevel);
+        switch (tableState) {
+            case Normal:
+                if (totalTicks == 0) {
+                    soundLogicOnTick(pPos, pLevel);
+                }
+                totalTicks++;
+                newBookAnimationTick(pLevel, pPos, pState);
+
+                // This is so that any sound that needs to be playing when level is loaded gives player time to load.
+                // There's not really an elegant way to do this but most loading takes less than 3 seconds.
+                if (totalTicks < 60) {
+                    return;
+                }
+
+                // Check if requirements are met currently after certain interval passed,
+                // then set which book index can currently be crafted for use elsewhere.
+                if (totalTicks % 4 == 0)
+                {
+                    soundLogicOnTick(pPos, pLevel);
+                }
+                break;
+            case GemPending:
+                System.out.println(tableState.toString());
+
+                if (stateTimeElapsed >= GEM_PENDING_ANIMATION_LENGTH_TICKS) {
+                    completePendingGemAnimation();
+                }
+                break;
+            case GemEarned:
+                System.out.println(tableState.toString());
+
+                if (stateTimeElapsed >= GEM_EARNED_ANIMATION_LENGTH_TICKS) {
+                    gemEarnedToDefaultState();
+                }
+                break;
         }
     }
 
@@ -147,6 +192,68 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
     public boolean getIsCharged() {
         return currentIndexRequirementsMet >= 0;
     }
+
+    public Direction getLapisHolderFacingDirection() {
+        return getBlockState().getValue(BlockStateProperties.FACING).getCounterClockWise();
+    }
+
+    // Starts the gem earning animation process; once this state is complete and GemEarned state
+    // completes as well, the provided ItemStack will be spawned by the table.
+    public void startGemPendingAnimation(ItemStack bonusGem) {
+        if (tableState != CustomRechantmentTableState.Normal) return;
+
+        tableState = CustomRechantmentTableState.GemPending;
+        lastStateChangeTime = level.getGameTime();
+        pendingGemItem = bonusGem.copy();
+
+        setChanged();
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+    }
+
+    // If state is GemPending, this will complete the animation and spawn pendingGemItem.
+    // The rendered book will return to its resting position.
+    public void completePendingGemAnimation() {
+
+        if (tableState != CustomRechantmentTableState.GemPending) return;
+
+        tableState = CustomRechantmentTableState.GemEarned;
+        lastStateChangeTime = level.getGameTime();
+
+        ItemEntity item = new ItemEntity(
+            level,
+            worldPosition.getX() + 0.5,
+            worldPosition.getY() + GEM_EARNED_ITEM_SPAWN_Y_OFFSET,
+            worldPosition.getZ() + 0.5,
+            pendingGemItem
+        );
+        item.setDefaultPickUpDelay();
+
+        Direction facing = getLapisHolderFacingDirection();
+        Vec3 moveDir = new Vec3(facing.getStepX(), facing.getStepY(), facing.getStepZ()).normalize();
+        moveDir = moveDir.scale(GEM_EARNED_ITEM_MOVE_SPEED_ON_SPAWN);
+        item.setDeltaMovement(moveDir);
+
+        level.addFreshEntity(item);
+        level.playSound(null, getBlockPos(),SoundEvents.EXPERIENCE_BOTTLE_THROW, SoundSource.BLOCKS, 1.0f, 1.0f);
+
+        pendingGemItem = null;
+
+        setChanged();
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+    }
+
+    // If state is GemEarned, this will return the entity back to the default state.
+    public void gemEarnedToDefaultState() {
+        if (tableState != CustomRechantmentTableState.GemEarned) return;
+
+        tableState = CustomRechantmentTableState.Normal;
+        lastStateChangeTime = level.getGameTime();
+        pendingGemItem = null;
+
+        setChanged();
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+    }
+
 
     public void refreshCachedBlockStates(BookRarityProperties bookProperties, BlockPos pPos) {
         var reqBlockStates = getReqBlockStates(bookProperties, pPos);

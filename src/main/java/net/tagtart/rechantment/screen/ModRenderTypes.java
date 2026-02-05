@@ -17,7 +17,7 @@ import static net.minecraft.client.renderer.RenderStateShard.NO_CULL;
 
 public class ModRenderTypes {
 
-    // Default beacon beam render type culls the back face of the beam, so this is just that but with culling disabled.
+    // Normal beacon beam render type culls the back face of the beam, so this is just that but with culling disabled.
     // Easier to just use this than trying to render two quads with flipped normals or some shit.
     public static final BiFunction<ResourceLocation, Boolean, RenderType> BEACON_BEAM_NO_CULL = Util.memoize(
             (location, colorFlag) -> {
