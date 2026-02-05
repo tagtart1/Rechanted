@@ -29,7 +29,7 @@ import net.tagtart.rechantment.util.UtilFunctions;
 import org.jetbrains.annotations.Nullable;
 import oshi.util.tuples.Pair;
 
-public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity implements MenuProvider{
+public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity implements MenuProvider {
 
     private final ItemStackHandler itemHandler = new ItemStackHandler(1) {
 

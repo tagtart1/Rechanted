@@ -1,0 +1,12 @@
+{
+  "sources": [
+    {
+      "type": "single",
+      "resource": "entity/dusty_enchanting_table_book"
+    },
+    {
+      "type": "single",
+      "resource": "entity/enabled_enchanting_table_book"
+    }
+  ]
+}

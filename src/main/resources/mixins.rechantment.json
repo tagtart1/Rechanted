@@ -7,7 +7,8 @@
   "mixins": [
     "FortuneMixin",
     "EnchantmentTableBlockMixin",
-    "ItemRendererMixin"
+    "ItemRendererMixin",
+    "EnchantTableRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

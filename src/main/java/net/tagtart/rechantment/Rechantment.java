@@ -15,6 +15,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.tagtart.rechantment.attachments.ModAttachments;
 import net.tagtart.rechantment.block.ModBlocks;
 import net.tagtart.rechantment.block.entity.ModBlockEntities;
+import net.tagtart.rechantment.block.renderer.RechantmentTableRenderer;
 import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.config.RechantmentCommonConfigs;
 import net.tagtart.rechantment.effect.ModEffects;
@@ -105,7 +106,6 @@ public class Rechantment {
 
             ModItemProperties.addCustomItemProperties();
 
-            BlockEntityRenderers.register(ModBlockEntities.RECHANTMENT_TABLE_BE.get(), EnchantTableRenderer::new);
         }
 
         @SubscribeEvent
@@ -118,7 +118,8 @@ public class Rechantment {
         public static void registerRenderer(EntityRenderersEvent.RegisterRenderers event) {
             event.registerEntityRenderer(ModEntities.RETURN_GEM_BEAM_ENTITY.get(), ReturnGemBeamEntityRenderer::new);
             event.registerEntityRenderer(ModEntities.THROWN_WARP_GEM_ENTITY.get(), ThrownItemRenderer::new);
-        }
 
+            event.registerBlockEntityRenderer(ModBlockEntities.RECHANTMENT_TABLE_BE.get(), RechantmentTableRenderer::new);
+        }
     }
 }

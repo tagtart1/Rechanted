@@ -41,7 +41,7 @@ public class ModRenderTypes {
             RenderType.CompositeState.builder()
                     .setShaderState(new RenderStateShard.ShaderStateShard(() -> ModShaders.CLONED_ITEM_SHADER))
                     .setTextureState(new TextureStateShard(InventoryMenu.BLOCK_ATLAS, false, false))
-                    .setCullState(CULL)
+                    .setCullState(NO_CULL)
                     .setDepthTestState(LEQUAL_DEPTH_TEST)
                     .setWriteMaskState(COLOR_DEPTH_WRITE)
                     .setTransparencyState(TRANSLUCENT_TRANSPARENCY)

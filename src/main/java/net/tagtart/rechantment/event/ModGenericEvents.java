@@ -2,11 +2,9 @@ package net.tagtart.rechantment.event;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.*;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -34,6 +32,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.EnchantingTableBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec2;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
@@ -51,6 +51,7 @@ import net.neoforged.neoforge.network.registration.HandlerThread;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.block.ModBlocks;
+import net.tagtart.rechantment.block.entity.RechantmentTableBlockEntity;
 import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.config.RechantmentCommonConfigs;
 import net.tagtart.rechantment.enchantment.ModEnchantments;
@@ -96,20 +97,72 @@ public class ModGenericEvents {
         Level level = event.getUseOnContext().getLevel();
         BlockPos useOnPos = event.getUseOnContext().getClickedPos();
 
-        if (!level.isClientSide()) {
+        if (level instanceof ServerLevel serverLevel) {
 
             ItemStack usedItem = event.getItemStack();
             boolean isVanillaEnchantingTable = level.getBlockState(useOnPos).is(Blocks.ENCHANTING_TABLE);
+            boolean isNewEnchantingTable = level.getBlockState(useOnPos).is(ModBlocks.RECHANTMENT_TABLE_BLOCK);
 
+            // If player right clicks on vanilla enchanting table block with an emerald,
+            // the block becomes our modded enchanting table block (circumvents having to craft it)
             if (usedItem.is(Items.EMERALD) && isVanillaEnchantingTable) {
 
                 //level.destroyBlock(useOnPos, false);
                 usedItem.setCount(usedItem.getCount() - 1);
-                level.setBlock(useOnPos, ModBlocks.RECHANTMENT_TABLE_BLOCK.get().defaultBlockState(), 3);
+
+                BlockState newBlockState = ModBlocks.RECHANTMENT_TABLE_BLOCK.get().defaultBlockState();
+                try {
+                    Direction dir = event.getPlayer().getDirection();
+                    newBlockState = newBlockState.setValue(BlockStateProperties.FACING, dir.getCounterClockWise());
+                }
+                catch (NullPointerException ignored) {
+                }
+                level.setBlock(useOnPos, newBlockState, 3);
                 level.playSound(null, useOnPos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS,1.5f, 1.0f);
                 level.playSound(null, useOnPos, SoundEvents.ANVIL_LAND, SoundSource.BLOCKS,0.4f, 2.5f);
+
+                Random rand = new Random();
+
+                double x = rand.nextDouble(-0.6, 0.6);
+                double y = rand.nextDouble(-0.2, 0.2);
+                double z = rand.nextDouble(-0.6, 0.6);
+
+                serverLevel.sendParticles(ParticleTypes.HAPPY_VILLAGER, useOnPos.getX() + 0.5, useOnPos.getY() + 1.0, useOnPos.getZ() + 0.5, 13, x, y, z, 2.5);
+
                 event.cancelWithResult(ItemInteractionResult.CONSUME);
             }
+
+            // Allow the player to right-click our modded enchanting table block with lapis and transfer
+            // all possible lapis directly to the table's lapis slot; should make things convenient for some,
+            // even though I'd rather just open the menu and shift-click, you never know :)
+            else if (usedItem.is(Items.LAPIS_LAZULI) && isNewEnchantingTable) {
+
+                RechantmentTableBlockEntity rbe = (RechantmentTableBlockEntity)level.getBlockEntity(useOnPos);
+                ItemStack lapisStack = rbe.getItemHandlerLapisStack();
+                ItemStack replaceItemStack = new ItemStack(Items.LAPIS_LAZULI);
+
+                int maxStackSize = (lapisStack.is(Items.AIR)) ? 64 : lapisStack.getMaxStackSize();
+                int availableLapisSpace = maxStackSize - lapisStack.getCount();
+
+                // Replaces the item stack with a new one since just setting the count doesn't immediately
+                // update to clients and therefore the renderer. Is there a better way? Idk.
+                if (availableLapisSpace > 0) {
+
+                    int toPlace = Math.min(availableLapisSpace, usedItem.getCount());
+                    replaceItemStack.setCount(lapisStack.getCount() + toPlace);
+                    rbe.getItemHandler().setStackInSlot(0, replaceItemStack);
+
+                    usedItem.setCount(usedItem.getCount() - toPlace);
+
+                    event.getLevel().playSound(null, useOnPos, SoundEvents.BOOK_PUT, SoundSource.BLOCKS, 1.0f, 1.0f);
+
+                    event.cancelWithResult(ItemInteractionResult.CONSUME);
+                }
+                else {
+                    event.cancelWithResult(ItemInteractionResult.FAIL);
+                }
+            }
+
         }
     }
 
