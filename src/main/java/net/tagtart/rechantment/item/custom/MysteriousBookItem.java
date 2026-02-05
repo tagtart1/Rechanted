@@ -57,16 +57,16 @@ public class MysteriousBookItem extends Item {
             } else {
                 right = right.normalize();
             }
-            Vec3 up = right.cross(look).normalize();
+            Vec3 ringUp = right.cross(look).normalize();
+            ringUp = ringUp.scale(0.85).add(look.scale(-0.15)).normalize();
 
             double handSide = player.getMainArm() == HumanoidArm.RIGHT ? 1.0 : -1.0;
             Vec3 handCenter = player.getEyePosition().add(
                     look.scale(0.34)
                             .add(right.scale(0.30 * handSide))
-                            .add(up.scale(-0.18))
+                            .add(ringUp.scale(-0.18))
             );
             Vec3 ringRight = right;
-            Vec3 ringUp = up;
 
             int haloPoints = 14;
             double haloRadius = 0.38;

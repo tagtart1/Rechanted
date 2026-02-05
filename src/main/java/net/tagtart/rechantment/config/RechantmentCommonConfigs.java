@@ -114,6 +114,8 @@ public class RechantmentCommonConfigs {
     public static final ModConfigSpec.ConfigValue<? extends Boolean>      REPLACE_ENCHANTED_LOOT;
     public static final ModConfigSpec.ConfigValue<? extends Boolean>      EXCLUDE_LOWER_TIER_LOOT;
     public static final ModConfigSpec.ConfigValue<? extends Boolean>      NERF_FISHING_LOOT;
+    public static final ModConfigSpec.ConfigValue<? extends Boolean>      MODIFY_VILLAGER_TRADES;
+    public static final ModConfigSpec.IntValue                            VILLAGER_MYSTERIOUS_BOOK_EMERALD_COST;
     // Fortune nerf configs
     public static final ModConfigSpec.ConfigValue<? extends Boolean>      FORTUNE_NERF_ENABLED;
     public static final ModConfigSpec.DoubleValue                         FORTUNE_1_CHANCE;
@@ -341,6 +343,11 @@ public class RechantmentCommonConfigs {
         BUILDER.comment("Without this enabled, fishing loot becomes an overpowered source for enchanted books with REPLACE_ENCHANTED_LOOT");
         NERF_FISHING_LOOT = BUILDER.translation("config.rechantment.nerf_fishing_loot.title").define("nerf_fishing_loot", true);
 
+        BUILDER.translation("config.rechantment.villager_trades.name").comment("Settings that control villager trade modifications").push("Villager Trades");
+        BUILDER.comment("If false, villager trades are left untouched (no enchanted book replacement or enchant stripping).");
+        MODIFY_VILLAGER_TRADES = BUILDER.translation("config.rechantment.modify_villager_trades.title").define("modify_villager_trades", true);
+        BUILDER.comment("Cost in emeralds for the mysterious book trade when replacing enchanted books.");
+        VILLAGER_MYSTERIOUS_BOOK_EMERALD_COST = BUILDER.translation("config.rechantment.mysterious_book_emerald_cost.title").defineInRange("mysterious_book_emerald_cost", 32, 1, 64);
         BUILDER.pop();
 
         BUILDER.translation("config.rechantment.fortune_nerf.name").comment("Settings to control Fortune enchantment drop multipliers").push("Fortune Nerf");

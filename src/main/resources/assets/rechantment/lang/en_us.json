@@ -229,6 +229,7 @@
   "config.rechantment.announce_rare_drop_list.name": "Rare Drop Announcements",
 
   "config.rechantment.loot_table_enhancements.name": "Loot Table Enhancements",
+  "config.rechantment.villager_trades.name": "Villager Trades",
 
   "config.rechantment.fortune_nerf.name": "Fortune Nerf Settings",
   "config.rechantment.unique.key.title": "Rarity Key",
@@ -384,6 +385,8 @@
   "config.rechantment.exclude_lower_tier_loot.tooltip": "Don't affect gold, leather, stone, wood gear",
   "config.rechantment.nerf_fishing_loot.title": "Nerf Fishing Loot",
   "config.rechantment.nerf_fishing_loot.tooltip": "Make fishing loot have weaker enchantments",
+  "config.rechantment.modify_villager_trades.title": "Modify Villager Trades",
+  "config.rechantment.mysterious_book_emerald_cost.title": "Mysterious Book Emerald Cost",
 
   "config.rechantment.nerf_enabled.title": "Fortune Nerf Enabled",
   "config.rechantment.nerf_enabled.tooltip": "Enable fortune enchantment nerfing",
