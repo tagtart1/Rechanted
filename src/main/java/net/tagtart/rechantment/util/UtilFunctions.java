@@ -34,6 +34,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.tagtart.rechantment.config.RechantmentCommonConfigs;
 import net.tagtart.rechantment.event.ParticleEmitter;
+import net.tagtart.rechantment.item.ModItems;
+import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.networking.data.TriggerRebirthItemEffectS2CPayload;
 import net.tagtart.rechantment.sound.CustomClientSoundInstanceHandler;
 import net.tagtart.rechantment.sound.ModSounds;
@@ -126,6 +128,36 @@ public class UtilFunctions {
             }
         }
         return false;
+    }
+
+    public static ItemStack rollModdedBook(RegistryAccess registryAccess) {
+        ItemStack replacementBook = new ItemStack(ModItems.RECHANTMENT_BOOK.get());
+        BookRarityProperties bookRarityProperties = BookRarityProperties.getRandomRarityWeighted();
+        EnchantmentPoolEntry randomEnchantment = bookRarityProperties.getRandomEnchantmentWeighted();
+        int enchantmentLevel = randomEnchantment.getRandomEnchantLevelWeighted();
+
+        Random random = new Random();
+        int successRate = random.nextInt(bookRarityProperties.minSuccess, bookRarityProperties.maxSuccess);
+
+        Holder.Reference<Enchantment> enchantment = UtilFunctions.getEnchantmentReferenceIfPresent(
+                registryAccess,
+                randomEnchantment.enchantment
+        );
+        if (enchantment == null) {
+            return replacementBook;
+        }
+
+        ItemEnchantments.Mutable storedEnchants = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
+        storedEnchants.set(enchantment, enchantmentLevel);
+
+        replacementBook.set(DataComponents.STORED_ENCHANTMENTS, storedEnchants.toImmutable().withTooltip(false));
+        replacementBook.set(ModDataComponents.SUCCESS_RATE, successRate);
+
+        if (UtilFunctions.shouldAnnounceDrop(randomEnchantment.enchantment, enchantmentLevel)) {
+            replacementBook.set(ModDataComponents.ANNOUNCE_ON_FOUND, true);
+        }
+
+        return replacementBook;
     }
 
     // Forms a bounding box around the provided position by offsetting the corners by the provided offset values,

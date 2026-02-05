@@ -31,6 +31,8 @@ public class  ModItems {
 
      public static final DeferredItem<Item> RECHANTMENT_BOOK = ITEMS.register("rechantment_book", () -> new RechantmentBookItem(new Item.Properties()));
 
+     public static final DeferredItem<Item> MYSTERIOUS_BOOK = ITEMS.register("mysterious_book", () -> new MysteriousBookItem(new Item.Properties()));
+
      public static void register(IEventBus eventBus) {
          ITEMS.register(eventBus);
      }

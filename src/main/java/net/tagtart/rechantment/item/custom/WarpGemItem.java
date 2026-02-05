@@ -48,7 +48,6 @@ public class WarpGemItem  extends Item {
         for (String s : splitText) {
             tooltipComponents.add(Component.literal(s.trim()));
         }
-        tooltipComponents.add(Component.literal(" "));
     }
 
     @Override
