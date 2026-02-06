@@ -106,6 +106,7 @@ public class RechantmentCommonConfigs {
     public static final ModConfigSpec.ConfigValue<List<? extends String>> RARITY_4_ENCHANTMENTS;
 
     public static final ModConfigSpec.ConfigValue<? extends String>       GRINDSTONE_RESULT_ITEM;
+    public static final ModConfigSpec.DoubleValue                         SHINY_CHANCE_GEM_BREAK_CHANCE;
 
     public static final ModConfigSpec.ConfigValue<List<? extends String>> ANNOUNCEMENT_ENCHANTMENTS;
 
@@ -310,6 +311,11 @@ public class RechantmentCommonConfigs {
         BUILDER.translation("config.rechantment.configs_for_all_rarities.name").comment("Global settings that apply to all rarity tiers").push("Configs for all rarities");
         GRINDSTONE_RESULT_ITEM = BUILDER.translation("config.rechantment.grindstone_result_item.title").define("grindstone_result_item", "minecraft:paper");
 
+        BUILDER.pop();
+
+        BUILDER.translation("config.rechantment.chance_gems.name").comment("Settings for Chance Gems").push("Chance Gems");
+        BUILDER.comment("Chance for the shiny chance gem to shatter when applied.");
+        SHINY_CHANCE_GEM_BREAK_CHANCE = BUILDER.translation("config.rechantment.shiny_chance_gem_break_chance.title").defineInRange("shiny_chance_gem_break_chance", 0.25, 0.0, 1.0);
         BUILDER.pop();
 
         BUILDER.translation("config.rechantment.announce_rare_drop_list.name").comment("Settings for broadcasting rare enchantment drops to all players").push("Announce Rare Drop List");

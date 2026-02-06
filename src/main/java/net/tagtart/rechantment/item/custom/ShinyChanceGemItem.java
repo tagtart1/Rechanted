@@ -3,21 +3,18 @@ package net.tagtart.rechantment.item.custom;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.item.enchantment.*;
-import net.minecraft.world.level.Level;
-import net.tagtart.rechantment.Rechantment;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.tagtart.rechantment.component.ModDataComponents;
+import net.tagtart.rechantment.config.RechantmentCommonConfigs;
 import net.tagtart.rechantment.util.BookRarityProperties;
 import net.tagtart.rechantment.util.UtilFunctions;
 import org.jetbrains.annotations.NotNull;
@@ -25,8 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Random;
 
-public class ChanceGemItem extends Item {
-    public ChanceGemItem(Properties properties) {
+public class ShinyChanceGemItem extends Item {
+    public ShinyChanceGemItem(Properties properties) {
         super(properties);
     }
 
@@ -34,12 +31,12 @@ public class ChanceGemItem extends Item {
 
     @Override
     public Component getName(ItemStack pStack) {
-        return Component.translatable("item.rechantment.chance_gem").withStyle(ChatFormatting.AQUA);
+        return Component.translatable("item.rechantment.shiny_chance_gem").withStyle(ChatFormatting.LIGHT_PURPLE);
     }
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        Component itemDescription = Component.translatable("item.rechantment.chance_gem.description");
+        Component itemDescription = Component.translatable("item.rechantment.shiny_chance_gem.description");
 
         String itemDescriptionString = itemDescription.getString();
 
@@ -62,30 +59,33 @@ public class ChanceGemItem extends Item {
         ItemStack otherItemStack = otherSlot.getItem();
         Item item = otherItemStack.getItem();
 
-        if (!(item instanceof RechantmentBookItem)) {return super.overrideStackedOnOther(stack, otherSlot, action, player);}
+        if (!(item instanceof RechantmentBookItem)) {
+            return super.overrideStackedOnOther(stack, otherSlot, action, player);
+        }
 
         // Check if the book has already been randomized already
         boolean rerolled = otherItemStack.getOrDefault(ModDataComponents.REROLLED_SUCCESS_RATE, false);
         if (rerolled) {
             player.playSound(SoundEvents.VILLAGER_NO, 1f, 1f);
-            if (player.level().isClientSide) player.sendSystemMessage(Component.literal("This book has already been randomized!").withStyle(ChatFormatting.RED));
+            if (player.level().isClientSide) {
+                player.sendSystemMessage(Component.literal("This book has already been randomized!").withStyle(ChatFormatting.RED));
+            }
         } else {
-           
             ItemEnchantments storedEnchants = otherItemStack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
             if (storedEnchants.isEmpty()) {
-
                 return false;
             }
-            
+
             // Get the first (and should be only) enchantment from the book
             var bookEnchantEntry = storedEnchants.entrySet().iterator().next();
             Holder<Enchantment> enchantmentHolder = bookEnchantEntry.getKey();
             String enchantmentRaw = enchantmentHolder.unwrapKey().orElseThrow().location().toString();
 
-
             BookRarityProperties appliedBookProperties = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw);
 
-            if (appliedBookProperties == null) return false;
+            if (appliedBookProperties == null) {
+                return false;
+            }
 
             // Check current success rate
             int currentSuccessRate = otherItemStack.getOrDefault(ModDataComponents.SUCCESS_RATE, appliedBookProperties.minSuccess);
@@ -112,17 +112,23 @@ public class ChanceGemItem extends Item {
             // Prevents this book from being randomized again
             otherItemStack.set(ModDataComponents.REROLLED_SUCCESS_RATE, true);
 
-            player.playSound(SoundEvents.ENDER_EYE_DEATH, 1f, 1.6f);
-            if (player.level().isClientSide) player.sendSystemMessage(Component.literal("Rerolled!").withStyle(ChatFormatting.GREEN));
 
-            // Delete gem
-            stack.shrink(1);
+            if (!player.level().isClientSide) {
+                boolean shouldShatter = shouldShatter(rand);
+                if (shouldShatter) {
+                    stack.shrink(1);
+                    player.playSound(SoundEvents.AMETHYST_BLOCK_BREAK, 2f, 1f);
+                    player.sendSystemMessage(Component.literal("Rerolled, but the shiny gem has shattered!").withStyle(ChatFormatting.RED));
+                } else {
+                    // On Apply
+                    player.sendSystemMessage(Component.literal("Rerolled!").withStyle(ChatFormatting.GREEN));
+                    player.playSound(SoundEvents.ENDER_EYE_DEATH, 1f, 1.6f);
+                }
+            }
         }
 
         return true;
     }
-
-
 
     @Override
     public int getMaxStackSize(@NotNull ItemStack stack) {
@@ -132,5 +138,9 @@ public class ChanceGemItem extends Item {
     @Override
     public boolean isFoil(@NotNull ItemStack stack) {
         return true;
+    }
+
+    private static boolean shouldShatter(Random rand) {
+        return rand.nextDouble() < RechantmentCommonConfigs.SHINY_CHANCE_GEM_BREAK_CHANCE.get();
     }
 }

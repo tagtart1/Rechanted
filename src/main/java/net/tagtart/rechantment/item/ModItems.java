@@ -14,6 +14,9 @@ public class  ModItems {
      public static final DeferredItem<Item> CHANCE_GEM = ITEMS.register("chance_gem",
              () -> new ChanceGemItem(new Item.Properties()));
 
+     public static final DeferredItem<Item> SHINY_CHANCE_GEM = ITEMS.register("shiny_chance_gem",
+             () -> new ShinyChanceGemItem(new Item.Properties()));
+
      public static final DeferredItem<Item> RETURN_GEM = ITEMS.register("return_gem",
              () -> new ReturnGemItem(new Item.Properties()));
 
