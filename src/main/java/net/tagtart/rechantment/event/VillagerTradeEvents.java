@@ -25,75 +25,107 @@ public class VillagerTradeEvents {
 
     @SubscribeEvent
     public static void onVillagerTrades(VillagerTradesEvent event) {
-        if (!RechantmentCommonConfigs.MODIFY_VILLAGER_TRADES.get()) {
+        if (!shouldModifyTrades()) {
             return;
         }
 
-        VillagerProfession profession = event.getType();
         Int2ObjectMap<List<ItemListing>> trades = event.getTrades();
 
         for (int level : trades.keySet()) {
             List<ItemListing> listings = trades.get(level);
-            int listingCount = listings == null ? 0 : listings.size();
-            Rechantment.LOGGER.info("Villager trades: profession={}, level={}, entries={}", profession, level, listingCount);
 
             if (listings == null || listings.isEmpty()) {
                 continue;
             }
 
-            for (int i = 0; i < listings.size(); i++) {
-                ItemListing original = listings.get(i);
-                int tradeLevel = level;
+            replaceListingsForLevel(listings, level);
+        }
+    }
 
-                listings.set(i, (entity, random) -> {
-                    MerchantOffer offer = original.getOffer(entity, random);
-                    if (offer == null) {
-                        return null;
-                    }
-
-                    ItemStack result = offer.getResult();
-                    if (result.getItem() instanceof EnchantedBookItem) {
-                        ItemStack mysteriousBook = new ItemStack(ModItems.MYSTERIOUS_BOOK.get());
-                        int emeraldCount = RechantmentCommonConfigs.VILLAGER_MYSTERIOUS_BOOK_EMERALD_COST.get();
-                        ItemCost emeraldCost = new ItemCost(Items.EMERALD, emeraldCount);
-                        ItemCost bookCost = new ItemCost(Items.BOOK, 1);
-
-                        Rechantment.LOGGER.info(
-                                "Replaced enchanted book trade with mysterious book: profession={}, level={}",
-                                profession,
-                                tradeLevel
-                        );
-
-                        return new MerchantOffer(
-                                emeraldCost,
-                                Optional.of(bookCost),
-                                mysteriousBook,
-                                offer.getMaxUses(),
-                                offer.getXp(),
-                                offer.getPriceMultiplier()
-                        );
-                    }
+    private static boolean shouldModifyTrades() {
+        return RechantmentCommonConfigs.MODIFY_VILLAGER_TRADES.get();
+    }
 
 
-                    if (!result.isEnchanted()) {
-                        return offer;
-                    }
+    private static void replaceListingsForLevel(List<ItemListing> listings, int level) {
+        for (int i = 0; i < listings.size(); i++) {
+            ItemListing original = listings.get(i);
+            listings.set(i, wrapListing(original, level));
+        }
+    }
 
-                    result.set(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
-
-                    Rechantment.LOGGER.info(
-                            "Stripped enchantments from villager trade: profession={}, level={}, originalResult={}",
-                            profession,
-                            tradeLevel,
-                            result
-                    );
-
-                    return offer;
-                });
+    private static ItemListing wrapListing(ItemListing original, int tradeLevel) {
+        return (entity, random) -> {
+            MerchantOffer offer = original.getOffer(entity, random);
+            if (offer == null) {
+                return null;
             }
+
+            return adjustOffer(offer, tradeLevel);
+        };
+    }
+
+    private static MerchantOffer adjustOffer(MerchantOffer offer, int tradeLevel) {
+        ItemStack result = offer.getResult();
+        if (result.getItem() instanceof EnchantedBookItem) {
+            return replaceEnchantedBookOffer(offer, tradeLevel);
         }
 
-        // Modify offers by adding/removing ItemListing entries in event.getTrades().
-        // Example: trades.get(1).add(new BasicItemListing(...));
+        if (!result.isEnchanted()) {
+            return offer;
+        }
+
+        stripEnchantments(result);
+        return offer;
+    }
+
+    private static MerchantOffer replaceEnchantedBookOffer(MerchantOffer offer, int tradeLevel) {
+        if (isBelowJourneyman(tradeLevel)) {
+            return createAmethystOffer(offer);
+        }
+
+        return createMysteriousBookOffer(offer);
+    }
+
+    private static boolean isBelowJourneyman(int tradeLevel) {
+        return tradeLevel < 3;
+    }
+
+    private static MerchantOffer createMysteriousBookOffer(MerchantOffer originalOffer) {
+        ItemStack mysteriousBook = new ItemStack(ModItems.MYSTERIOUS_BOOK.get());
+        int emeraldCount = RechantmentCommonConfigs.VILLAGER_MYSTERIOUS_BOOK_EMERALD_COST.get();
+        ItemCost emeraldCost = new ItemCost(Items.EMERALD, emeraldCount);
+        ItemCost bookCost = new ItemCost(Items.BOOK, 1);
+        
+        return buildOffer(originalOffer, emeraldCost, Optional.of(bookCost), mysteriousBook, 3);
+    }
+
+    private static MerchantOffer createAmethystOffer(MerchantOffer originalOffer) {
+        ItemCost emeraldCost = new ItemCost(Items.EMERALD, 9);
+        ItemStack amethyst = new ItemStack(Items.AMETHYST_SHARD, 3);
+
+        return buildOffer(originalOffer, emeraldCost, Optional.empty(), amethyst, originalOffer.getMaxUses());
+    }
+
+    private static MerchantOffer buildOffer(
+            MerchantOffer originalOffer,
+            ItemCost primaryCost,
+            Optional<ItemCost> secondaryCost,
+            ItemStack result,
+            int maxUses
+    ) {
+        return new MerchantOffer(
+                primaryCost,
+                secondaryCost,
+                result,
+                maxUses,
+                originalOffer.getXp(),
+                originalOffer.getPriceMultiplier()
+        );
+    }
+
+    private static void stripEnchantments(ItemStack result) {
+        result.set(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+
     }
 }

@@ -88,7 +88,7 @@ public class MysteriousBookItem extends Item {
             }
 
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                    SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.8f, 1.2f);
+                    SoundEvents.ENDER_EYE_DEATH, SoundSource.PLAYERS, 0.8f, 1.0f);
 
             player.setItemInHand(usedHand, rolledBook);
             return InteractionResultHolder.consume(rolledBook);
