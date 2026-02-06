@@ -40,7 +40,7 @@ public class RechantmentTableMenu extends AbstractContainerMenu {
     public final RechantmentTableBlockEntity blockEntity;
     private final Level level;
 
-    public boolean gemEarnedEffectQueued = false;
+    public final DataSlot gemEarnedEffectQueued = DataSlot.standalone();
 
     public RechantmentTableMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
         this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()));
@@ -56,6 +56,8 @@ public class RechantmentTableMenu extends AbstractContainerMenu {
         addPlayerHotbar(inv);
 
         this.addSlot(new LapisSlot(blockEntity.getItemHandler(), 0, 80, 87));
+
+        addDataSlot(gemEarnedEffectQueued);
     }
 
     private static final int HOTBAR_SLOT_COUNT = 9;

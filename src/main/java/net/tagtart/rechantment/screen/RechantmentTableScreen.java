@@ -11,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -41,7 +42,7 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
     public static final Style PINK_COLOR_STYLE = Style.EMPTY.withColor(0xFCB4B4);
     public static final Style MID_GRAY_COLOR_STYLE = Style.EMPTY.withColor(0xA8A8A8);
 
-    public static final float GEM_PENDING_EFFECT_Y_MOVE_SPEED = 0.5f;
+    public static final float GEM_PENDING_EFFECT_Y_MOVE_SPEED = 0.01f;
 
     private static final Component grayHyphen = Component.literal("- ").withStyle(MID_GRAY_COLOR_STYLE);
     private static final Component whiteArrow = Component.literal("→ ").withStyle(ChatFormatting.WHITE);
@@ -58,7 +59,8 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
     private BlockState[] cachedFloorBlocksInRange;
 
     private float timeElapsed = 0.0f;
-    private float gemEarnedEffectVCoord = -10.0f;
+    private float gemEarnedEffectVCoord = -100.0f;
+    private int retainedMostRecentRequirements = -1;
 
     private final float REQ_CHECK_RATE = 0.2f;  // How often shader will check if requirements are met to display effect.
     private float timeSinceLastReqCheck = 0.0f; // Time since last requirement check was made for shader effect.
@@ -115,13 +117,34 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
         renderBGEffect(guiGraphics, pPartialTick, pMouseX, pMouseY);
     }
 
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+
+        if (menu.gemEarnedEffectQueued.get() != 0) {
+            menu.gemEarnedEffectQueued.set(0);
+
+            gemEarnedEffectVCoord = -0.1f;
+            retainedMostRecentRequirements = currentIndexRequirementsMet;
+        }
+    }
+
     protected void renderBGEffect(GuiGraphics guiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
         timeElapsed += pPartialTick;
         timeSinceLastReqCheck += pPartialTick;
 
+        // If a gem is earned, this will act as a flag to retain most recently met requirements instead
+        // of checking which rarity's is met. This is just so that if a gem is earned, the line
+        // shader stays active a little longer in cases where blocks/bookshelves also break at the same time.
+        if (retainedMostRecentRequirements != -1) {
+            currentIndexRequirementsMet = retainedMostRecentRequirements;
+            if (gemEarnedEffectVCoord > 2.5f) {
+                retainedMostRecentRequirements = -1;
+            }
+        }
         // Check if requirements are met currently after certain interval passed,
         // then set which book index can currently be crafted for use elsewhere.
-        if (timeSinceLastReqCheck >= REQ_CHECK_RATE)
+        else if (timeSinceLastReqCheck >= REQ_CHECK_RATE)
         {
             currentIndexRequirementsMet = 0;
             for (int i = 0; i < 5; ++i) {
@@ -145,14 +168,9 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
             timeSinceLastReqCheck = 0.0f;
         }
 
-        if (menu.gemEarnedEffectQueued) {
-            menu.gemEarnedEffectQueued = false;
+        gemEarnedEffectVCoord += GEM_PENDING_EFFECT_Y_MOVE_SPEED * pPartialTick;
 
-            gemEarnedEffectVCoord = 1.0f;
-        }
-        gemEarnedEffectVCoord -= GEM_PENDING_EFFECT_Y_MOVE_SPEED * pPartialTick;
-
-        lineShader.safeGetUniform("GemEarnedEffectVCoord").set(gemEarnedEffectVCoord);
+        lineShader.safeGetUniform("GemEarnEffectVCoord").set(gemEarnedEffectVCoord);
         lineShader.safeGetUniform("Time").set(timeElapsed);
         lineShader.safeGetUniform("Resolution").set((float)imageWidth, (float)imageHeight);
 

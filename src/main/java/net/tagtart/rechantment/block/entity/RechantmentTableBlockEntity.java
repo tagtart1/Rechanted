@@ -18,6 +18,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -33,6 +34,8 @@ import net.tagtart.rechantment.util.UtilFunctions;
 import org.jetbrains.annotations.Nullable;
 import oshi.util.tuples.Pair;
 
+import java.util.Optional;
+
 public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity implements MenuProvider {
 
     // For super basic state-machine-esque logic; mainly allows the block renderer/clients to know
@@ -43,7 +46,7 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
         GemEarned,      // After gem pending is done, this just makes book float back down to normal position.
     }
 
-    public static final int GEM_PENDING_ANIMATION_LENGTH_TICKS = 60;
+    public static final int GEM_PENDING_ANIMATION_LENGTH_TICKS = 120;
     public static final int GEM_EARNED_ANIMATION_LENGTH_TICKS = 20;
 
     public static final double GEM_EARNED_ITEM_SPAWN_Y_OFFSET = 1.5;
@@ -67,9 +70,8 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
     private int currentIndexRequirementsMet = -1;
 
     public CustomRechantmentTableState tableState = CustomRechantmentTableState.Normal;
-    public long lastStateChangeTime = 0;
-    private ItemStack pendingGemItem = null;
-
+    public long currentStateTimeRemaining = 0;
+    private ItemStack pendingGemItem = ItemStack.EMPTY;
 
 
     public RechantmentTableBlockEntity(BlockPos pPos, BlockState pBlockState)
@@ -113,13 +115,36 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
     protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider registries) {
         super.saveAdditional(pTag, registries);
         pTag.put("inventory", itemHandler.serializeNBT(registries));
+
+        pTag.putInt("CustomTableState", tableState.ordinal());
+        pTag.putLong("CurrentStateTimeRemaining", currentStateTimeRemaining);
+
+        if (pendingGemItem != ItemStack.EMPTY) {
+            pTag.put("PendingGem", pendingGemItem.save(registries));
+        }
     }
 
-    // For loading the data of what is inside the block when the game is loaded.
     @Override
     public void loadAdditional(CompoundTag pTag, HolderLookup.Provider registries) {
         super.loadAdditional(pTag, registries);
         itemHandler.deserializeNBT(registries, pTag.getCompound("inventory"));
+
+        tableState = CustomRechantmentTableState.values()[pTag.getInt("CustomTableState")];
+        currentStateTimeRemaining = pTag.getLong("CurrentStateTimeRemaining");
+
+        Optional<ItemStack> loadedGemItem = ItemStack.parse(registries, pTag.getCompound("PendingGem"));
+        loadedGemItem.ifPresent(itemStack -> pendingGemItem = itemStack);
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag pTag, HolderLookup.Provider lookupProvider) {
+        super.handleUpdateTag(pTag, lookupProvider);
+
+        tableState = CustomRechantmentTableState.values()[pTag.getInt("CustomTableState")];
+        currentStateTimeRemaining = pTag.getLong("CurrentStateTimeRemaining");
+
+        Optional<ItemStack> loadedGemItem = ItemStack.parse(lookupProvider, pTag.getCompound("PendingGem"));
+        loadedGemItem.ifPresent(itemStack -> pendingGemItem = itemStack);
     }
 
     @Override
@@ -134,10 +159,10 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
 
     public void tick(Level pLevel, BlockPos pPos, BlockState pState) {
 
-        long stateTimeElapsed = level.getGameTime() - lastStateChangeTime;
-
-        if (!pLevel.isClientSide) {
-            System.out.println("penises");
+        currentStateTimeRemaining--;
+        if (!level.isClientSide && tableState != CustomRechantmentTableState.Normal) {
+            System.out.println(tableState);
+            System.out.println(currentStateTimeRemaining);
         }
 
         switch (tableState) {
@@ -162,16 +187,14 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
                 }
                 break;
             case GemPending:
-                System.out.println(tableState.toString());
 
-                if (stateTimeElapsed >= GEM_PENDING_ANIMATION_LENGTH_TICKS) {
+                if (currentStateTimeRemaining <= 0) {
                     completePendingGemAnimation();
                 }
                 break;
             case GemEarned:
-                System.out.println(tableState.toString());
 
-                if (stateTimeElapsed >= GEM_EARNED_ANIMATION_LENGTH_TICKS) {
+                if (currentStateTimeRemaining <= 0) {
                     gemEarnedToDefaultState();
                 }
                 break;
@@ -200,10 +223,11 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
     // Starts the gem earning animation process; once this state is complete and GemEarned state
     // completes as well, the provided ItemStack will be spawned by the table.
     public void startGemPendingAnimation(ItemStack bonusGem) {
-        if (tableState != CustomRechantmentTableState.Normal) return;
+        if (level.isClientSide || tableState != CustomRechantmentTableState.Normal) return;
 
         tableState = CustomRechantmentTableState.GemPending;
-        lastStateChangeTime = level.getGameTime();
+        currentStateTimeRemaining = GEM_PENDING_ANIMATION_LENGTH_TICKS;
+
         pendingGemItem = bonusGem.copy();
 
         setChanged();
@@ -214,17 +238,17 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
     // The rendered book will return to its resting position.
     public void completePendingGemAnimation() {
 
-        if (tableState != CustomRechantmentTableState.GemPending) return;
+        if (level.isClientSide || tableState != CustomRechantmentTableState.GemPending || pendingGemItem == ItemStack.EMPTY) return;
 
         tableState = CustomRechantmentTableState.GemEarned;
-        lastStateChangeTime = level.getGameTime();
+        currentStateTimeRemaining = GEM_EARNED_ANIMATION_LENGTH_TICKS;
 
         ItemEntity item = new ItemEntity(
-            level,
-            worldPosition.getX() + 0.5,
-            worldPosition.getY() + GEM_EARNED_ITEM_SPAWN_Y_OFFSET,
-            worldPosition.getZ() + 0.5,
-            pendingGemItem
+                level,
+                worldPosition.getX() + 0.5,
+                worldPosition.getY() + GEM_EARNED_ITEM_SPAWN_Y_OFFSET,
+                worldPosition.getZ() + 0.5,
+                pendingGemItem
         );
         item.setDefaultPickUpDelay();
 
@@ -236,7 +260,7 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
         level.addFreshEntity(item);
         level.playSound(null, getBlockPos(),SoundEvents.EXPERIENCE_BOTTLE_THROW, SoundSource.BLOCKS, 1.0f, 1.0f);
 
-        pendingGemItem = null;
+        pendingGemItem = ItemStack.EMPTY;
 
         setChanged();
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -244,11 +268,13 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
 
     // If state is GemEarned, this will return the entity back to the default state.
     public void gemEarnedToDefaultState() {
-        if (tableState != CustomRechantmentTableState.GemEarned) return;
+        if (level.isClientSide || tableState != CustomRechantmentTableState.GemEarned) return;
 
         tableState = CustomRechantmentTableState.Normal;
-        lastStateChangeTime = level.getGameTime();
-        pendingGemItem = null;
+        currentStateTimeRemaining = 0;  // Irrelevant for default state
+        System.out.println(tableState);
+
+        pendingGemItem = ItemStack.EMPTY;
 
         setChanged();
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);

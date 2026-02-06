@@ -36,7 +36,7 @@ public record PlayerPurchaseEnchantedBookSpecialResultS2CPayload(int rewardedGem
         Player player = context.player();
 
         if (player.containerMenu instanceof RechantmentTableMenu rechantmentTableMenu) {
-            rechantmentTableMenu.gemEarnedEffectQueued = true;
+            //rechantmentTableMenu.gemEarnedEffectQueued = true;
         }
     }
 }

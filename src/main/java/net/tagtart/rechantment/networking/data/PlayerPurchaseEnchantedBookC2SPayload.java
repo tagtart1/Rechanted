@@ -190,7 +190,8 @@ public record PlayerPurchaseEnchantedBookC2SPayload(int bookPropertiesIndex, Blo
                     // If gem earned, send signal to menu to render the cool ass effect
                     // in the screen's fbm shader.
                     if (player.containerMenu instanceof RechantmentTableMenu rechantmentTableMenu) {
-                        rechantmentTableMenu.gemEarnedEffectQueued = true;
+                        rechantmentTableMenu.gemEarnedEffectQueued.set(rechantmentTableMenu.gemEarnedEffectQueued.get() + 1);
+                        rechantmentTableMenu.broadcastChanges();
                     }
 
                     soundToPlay = SoundEvents.PLAYER_LEVELUP;
