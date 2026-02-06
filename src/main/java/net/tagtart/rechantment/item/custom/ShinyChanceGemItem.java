@@ -4,7 +4,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
@@ -117,12 +119,22 @@ public class ShinyChanceGemItem extends Item {
                 boolean shouldShatter = shouldShatter(rand);
                 if (shouldShatter) {
                     stack.shrink(1);
-                    player.playSound(SoundEvents.AMETHYST_BLOCK_BREAK, 2f, 1f);
+
+                    if (player instanceof ServerPlayer sp) {
+                        sp.playNotifySound(SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.MASTER,  2.0f, 1.0f);
+                    }
                     player.sendSystemMessage(Component.literal("Rerolled, but the shiny gem has shattered!").withStyle(ChatFormatting.RED));
                 } else {
                     // On Apply
                     player.sendSystemMessage(Component.literal("Rerolled!").withStyle(ChatFormatting.GREEN));
-                    player.playSound(SoundEvents.ENDER_EYE_DEATH, 1f, 1.6f);
+
+
+                    // REMEMBER THIS FREAKING PATTERN FOR PLAYING SOUNDS, MAYBE USEFUL, CHECK SERVER PLAYER FIRST
+                    if (player instanceof ServerPlayer sp) {
+                        sp.playNotifySound(SoundEvents.ENDER_EYE_DEATH, SoundSource.MASTER,  2f, 1.6f);
+                    }
+
+
                 }
             }
         }
