@@ -37,14 +37,16 @@ public class ShinyChanceGemItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents,
+            TooltipFlag tooltipFlag) {
         Component itemDescription = Component.translatable("item.rechantment.shiny_chance_gem.description");
 
         String itemDescriptionString = itemDescription.getString();
 
         tooltipComponents.add(Component.literal(" "));
 
-        // Prevents the description text from making the tooltip go across the entire screen like a chump
+        // Prevents the description text from making the tooltip go across the entire
+        // screen like a chump
         List<String> splitText = UtilFunctions.wrapText(itemDescriptionString, MAX_TOOLTIP_WIDTH);
         for (String s : splitText) {
             tooltipComponents.add(Component.literal(s.trim()));
@@ -65,15 +67,23 @@ public class ShinyChanceGemItem extends Item {
             return super.overrideStackedOnOther(stack, otherSlot, action, player);
         }
 
+        if (player.getAbilities().instabuild) {
+            player.sendSystemMessage(Component.literal("You cannot apply this gem in creative mode.")
+                    .withStyle(ChatFormatting.RED));
+            return true;
+        }
+
         // Check if the book has already been randomized already
         boolean rerolled = otherItemStack.getOrDefault(ModDataComponents.REROLLED_SUCCESS_RATE, false);
         if (rerolled) {
             player.playSound(SoundEvents.VILLAGER_NO, 1f, 1f);
             if (player.level().isClientSide) {
-                player.sendSystemMessage(Component.literal("This book has already been randomized!").withStyle(ChatFormatting.RED));
+                player.sendSystemMessage(
+                        Component.literal("This book has already been randomized!").withStyle(ChatFormatting.RED));
             }
         } else {
-            ItemEnchantments storedEnchants = otherItemStack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
+            ItemEnchantments storedEnchants = otherItemStack.getOrDefault(DataComponents.STORED_ENCHANTMENTS,
+                    ItemEnchantments.EMPTY);
             if (storedEnchants.isEmpty()) {
                 return false;
             }
@@ -90,14 +100,18 @@ public class ShinyChanceGemItem extends Item {
             }
 
             // Check current success rate
-            int currentSuccessRate = otherItemStack.getOrDefault(ModDataComponents.SUCCESS_RATE, appliedBookProperties.minSuccess);
+            int currentSuccessRate = otherItemStack.getOrDefault(ModDataComponents.SUCCESS_RATE,
+                    appliedBookProperties.minSuccess);
             int upperBound = appliedBookProperties.maxSuccess;
 
-            // If current success rate is already at or above the maximum, don't allow reroll
+            // If current success rate is already at or above the maximum, don't allow
+            // reroll
             if (currentSuccessRate >= upperBound) {
                 player.playSound(SoundEvents.VILLAGER_NO, 1f, 1f);
                 if (player.level().isClientSide) {
-                    player.sendSystemMessage(Component.literal("This book's success rate (" + currentSuccessRate + "%) is already at maximum reroll result!")
+                    player.sendSystemMessage(Component
+                            .literal("This book's success rate (" + currentSuccessRate
+                                    + "%) is already at maximum reroll result!")
                             .withStyle(ChatFormatting.RED));
                 }
                 return true; // Return true to prevent further processing but don't consume the gem
@@ -114,26 +128,25 @@ public class ShinyChanceGemItem extends Item {
             // Prevents this book from being randomized again
             otherItemStack.set(ModDataComponents.REROLLED_SUCCESS_RATE, true);
 
-
             if (!player.level().isClientSide) {
                 boolean shouldShatter = shouldShatter(rand);
                 if (shouldShatter) {
                     stack.shrink(1);
 
                     if (player instanceof ServerPlayer sp) {
-                        sp.playNotifySound(SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.MASTER,  2.0f, 1.0f);
+                        sp.playNotifySound(SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.NEUTRAL, 4.0f, 1.0f);
                     }
-                    player.sendSystemMessage(Component.literal("Rerolled, but the shiny gem has shattered!").withStyle(ChatFormatting.RED));
+                    player.sendSystemMessage(Component.literal("Rerolled, but the shiny gem has shattered!")
+                            .withStyle(ChatFormatting.RED));
                 } else {
                     // On Apply
                     player.sendSystemMessage(Component.literal("Rerolled!").withStyle(ChatFormatting.GREEN));
 
-
-                    // REMEMBER THIS FREAKING PATTERN FOR PLAYING SOUNDS, MAYBE USEFUL, CHECK SERVER PLAYER FIRST
+                    // REMEMBER THIS FREAKING PATTERN FOR PLAYING SOUNDS, MAYBE USEFUL, CHECK SERVER
+                    // PLAYER FIRST
                     if (player instanceof ServerPlayer sp) {
-                        sp.playNotifySound(SoundEvents.ENDER_EYE_DEATH, SoundSource.MASTER,  2f, 1.6f);
+                        sp.playNotifySound(SoundEvents.ENDER_EYE_DEATH, SoundSource.NEUTRAL, 32f, 1.6f);
                     }
-
 
                 }
             }
