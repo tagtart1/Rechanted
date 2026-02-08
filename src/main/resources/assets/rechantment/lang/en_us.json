@@ -58,7 +58,7 @@
   "item.rechantment.return_gem.description": "Safely teleport to your current respawn point.",
 
   "item.rechantment.tasty_gem": "Tasty Gem",
-  "item.rechantment.tasty_gem.description": "Consume for a buff that gives regeneration and satiation.",
+  "item.rechantment.tasty_gem.description": "Consume to prevent hunger loss except when healing, and slowly regenerate health.",
 
   "item.rechantment.warp_gem": "Warp Gem",
   "item.rechantment.warp_gem.description": "Can be thrown for safe teleportation.",
@@ -67,7 +67,7 @@
   "item.rechantment.clone_gem.description": "Becomes a clone of ANY enchanted book that has not been cloned before and is not itself a clone.",
 
   "item.rechantment.smithing_gem": "Smithing Gem",
-  "item.rechantment.smithing_gem.description": "Acts as a Netherite Upgrade Template.",
+  "item.rechantment.smithing_gem.description": "Can be used to forge Netherite gear.",
 
   "enchantment.rechantment.thunder_strike": "Thunder Strike",
   "enchantment.rechantment.thunder_strike.description": "Chance to summon lightning to strike your targets.",
