@@ -113,7 +113,7 @@
   "enchantment.rechantment.vein_miner.description": "Mine entire veins of ore.",
 
   "enchantment.rechantment.rebirth": "Rebirth",
-  "enchantment.rechantment.rebirth.description": "Chance to bring your item back from death.",
+  "enchantment.rechantment.rebirth.description": "Brings your item back from death with a reset to repair cost.",
 
   "enchantment.rechantment.reborn": "Reborn",
   "enchantment.rechantment.reborn.description": "Prevents an item from being reborn again.",

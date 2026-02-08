@@ -245,14 +245,14 @@ public class ModEnchantments {
                 items.getOrThrow(Tags.Items.TOOLS),
                 items.getOrThrow(Tags.Items.TOOLS),
                 5,
-                3,
+                1,
                 Enchantment.dynamicCost(10, 20),
                 Enchantment.dynamicCost(60, 20),
                 2, EquipmentSlotGroup.MAINHAND)).exclusiveWith(HolderSet.direct(enchantments.getOrThrow(REBORN))));
 
         register(context, REBORN, Enchantment.enchantment(Enchantment.definition(
                 items.getOrThrow(Tags.Items.TOOLS),
-                5,
+                0,
                 1,
                 Enchantment.dynamicCost(10, 20),
                 Enchantment.dynamicCost(60, 20),
