@@ -32,8 +32,8 @@ public class ReturnGemBeamEntityRenderer extends EntityRenderer<ReturnGemBeamEnt
     public void render(ReturnGemBeamEntity p_entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
 
         if (!Minecraft.getInstance().isPaused()) {
-            p_entity.glowRadius += 0.004f;
-            p_entity.beamRadius += 0.004f;
+            p_entity.glowRadius += 0.0035f;
+            p_entity.beamRadius += 0.0035f;
         }
 
         int color1 = 0xccccff;
@@ -72,6 +72,7 @@ public class ReturnGemBeamEntityRenderer extends EntityRenderer<ReturnGemBeamEnt
     ) {
 
         UtilFunctions.translatePoseByInterpolatedPlayerPos(poseStack, player, entity, partialTick);
+        poseStack.translate(0f, -5.0f, 0.0f);
         poseStack.pushPose();
 
         int i = yOffset + height;
