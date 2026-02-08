@@ -6,6 +6,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
@@ -153,16 +154,27 @@ public class RechantmentBookItem extends Item {
         boolean shouldAttemptEnchant = action == ClickAction.PRIMARY && (itemToEnchantStack.isEnchanted() || itemToEnchantStack.isEnchantable());
         if (!shouldAttemptEnchant) { return false; }
 
-        // Dont allow creative mode enchants due to weird behavior with this method
         if (player.getAbilities().instabuild) {
-            player.sendSystemMessage(Component.literal("Books cannot be applied in creative mode!").withStyle(ChatFormatting.RED));
+            return applyCreative(stack, itemToEnchantStack, player);
+        }
+
+        return applyNormal(stack, itemToEnchantStack, player);
+    }
+
+    private boolean applyNormal(ItemStack stack, ItemStack itemToEnchantStack, Player player) {
+        // Keep original non-creative behavior server-side only.
+        if (player.level().isClientSide()) {
             return true;
         }
 
-        // Only allow server side logic
-        if (player.level().isClientSide()) { return true; }
+        return applyBook(stack, itemToEnchantStack, player, false);
+    }
 
-        // Server level
+    private boolean applyCreative(ItemStack stack, ItemStack itemToEnchantStack, Player player) {
+        return applyBook(stack, itemToEnchantStack, player, true);
+    }
+
+    private boolean applyBook(ItemStack stack, ItemStack itemToEnchantStack, Player player, boolean isCreative) {
         Level level = player.level();
 
         // Get the stored enchantment from the book using data components
@@ -184,7 +196,7 @@ public class RechantmentBookItem extends Item {
         if (canEnchantGeneral && !itemToEnchantStack.isEnchanted()) {
             // No enchantments on the other item so it can be applied
             mutableEnchants.set(enchantmentHolder, enchantmentLevel);
-            applyEnchantsSafely(mutableEnchants, itemToEnchantStack, player, level, stack);
+            applyEnchantsSafely(mutableEnchants, itemToEnchantStack, player, level, stack, isCreative);
         } else if (canEnchantGeneral) {
             // Check if item already has this enchantment
             if (itemEnchants.getLevel(enchantmentHolder) > 0) {
@@ -201,7 +213,7 @@ public class RechantmentBookItem extends Item {
                     } else {
                         mutableEnchants.set(enchantmentHolder, enchantmentLevel);
                     }
-                    applyEnchantsSafely(mutableEnchants, itemToEnchantStack, player, level, stack);
+                    applyEnchantsSafely(mutableEnchants, itemToEnchantStack, player, level, stack, isCreative);
                 }
             } else {
                 // Check compatibility with other enchantments
@@ -223,7 +235,7 @@ public class RechantmentBookItem extends Item {
                 if (allCompatible) {
                     // Enchant good to go, enchant that thing!
                     mutableEnchants.set(enchantmentHolder, enchantmentLevel);
-                    applyEnchantsSafely(mutableEnchants, itemToEnchantStack, player, level, stack);
+                    applyEnchantsSafely(mutableEnchants, itemToEnchantStack, player, level, stack, isCreative);
                 }
             }
         } else {
@@ -233,21 +245,31 @@ public class RechantmentBookItem extends Item {
         return true;
     }
 
-    private void applyEnchantsSafely(ItemEnchantments.Mutable enchants, ItemStack item, Player player, Level level, ItemStack enchantedBook) {
+    private void applyEnchantsSafely(ItemEnchantments.Mutable enchants, ItemStack item, Player player, Level level,
+            ItemStack enchantedBook, boolean isCreative) {
         int successRate = enchantedBook.getOrDefault(ModDataComponents.SUCCESS_RATE, 0);
 
         if (isSuccessfulEnchant(successRate)) {
             // Apply the enchantments to the item using data components
             item.set(DataComponents.ENCHANTMENTS, enchants.toImmutable());
-            level.playSound(null, player.getOnPos(), SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1f, 1f);
+            playEnchantSound(player, level, SoundEvents.PLAYER_LEVELUP, isCreative);
             sendClientMessage(player, Component.literal("Successfully enchanted.").withStyle(ChatFormatting.GREEN));
         } else {
             // Play bad sound
-            level.playSound(null, player.getOnPos(), ModSounds.ENCHANTED_BOOK_FAIL.get(), SoundSource.PLAYERS, 1f, 1f);
+            playEnchantSound(player, level, ModSounds.ENCHANTED_BOOK_FAIL.get(), isCreative);
             sendClientMessage(player, Component.literal("Enchantment failed to apply to item!").withStyle(ChatFormatting.RED));
         }
         // Break the book regardless of success or not
         enchantedBook.shrink(1);
+    }
+
+    private void playEnchantSound(Player player, Level level, SoundEvent soundEvent, boolean isCreative) {
+        if (isCreative) {
+            player.playSound(soundEvent, 1f, 1f);
+            return;
+        }
+
+        level.playSound(null, player.getOnPos(), soundEvent, SoundSource.PLAYERS, 1f, 1f);
     }
 
 

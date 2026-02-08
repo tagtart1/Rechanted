@@ -18,6 +18,7 @@ import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.attachments.ModAttachments;
+import net.tagtart.rechantment.effect.ModEffects;
 import net.tagtart.rechantment.event.ParticleEmitter;
 import net.tagtart.rechantment.util.UtilFunctions;
 
@@ -104,7 +105,7 @@ public class SpringJumpHandler {
         player.setDeltaMovement(jumpVec);
 
         // Calculate food cost on jump
-        if (!player.level().isClientSide()) {
+        if (!player.level().isClientSide() && !player.hasEffect(ModEffects.SATIATED_EFFECT)) {
             var foodData = player.getFoodData();
             float cost = 4.0F;
             float saturation = foodData.getSaturationLevel();

@@ -1,6 +1,8 @@
 package net.tagtart.rechantment.event.enchantment;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -8,15 +10,19 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.block.entity.RechantmentTableBlockEntity;
 import net.tagtart.rechantment.config.RechantmentCommonConfigs;
@@ -24,11 +30,23 @@ import net.tagtart.rechantment.enchantment.custom.WisdomEnchantmentEffect;
 import net.tagtart.rechantment.util.UtilFunctions;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 @EventBusSubscriber(modid = Rechantment.MOD_ID)
 public class BlockBreakEnchantmentsHandler {
+    private static final String TELEPATHY_DROP_TAG = "rechantment_telepathy_drop";
+    private static final String TELEPATHY_OWNER_PREFIX = "rechantment_telepathy_owner_";
+    private static final String TELEPATHY_START_TICK_KEY = "rechantment_telepathy_start_tick";
+    private static final int TELEPATHY_PULL_INTERVAL_TICKS = 2;
+    private static final int TELEPATHY_TIMEOUT_TICKS = 60; // 3 seconds
+    private static final double TELEPATHY_PULL_RADIUS = 12.0D;
+    private static final double TELEPATHY_PICKUP_DISTANCE_SQR = 1.44D; // 1.2 blocks
+    private static final int TELEPATHY_FULL_INVENTORY_WARNING_COOLDOWN_TICKS = 20;
+    private static final Map<UUID, Integer> TELEPATHY_WARNING_TICK_BY_PLAYER = new HashMap<>();
 
     private static final List<Integer> TIMBER_BLOCKS_PER_LEVEL = Arrays.asList(
             10,
@@ -129,6 +147,24 @@ public class BlockBreakEnchantmentsHandler {
         }
     }
 
+    @SubscribeEvent
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
+        Player player = event.getEntity();
+        if (player.level().isClientSide()) return;
+        if (player.tickCount % TELEPATHY_PULL_INTERVAL_TICKS != 0) return;
+
+        ServerLevel level = (ServerLevel) player.level();
+        AABB searchBox = player.getBoundingBox().inflate(TELEPATHY_PULL_RADIUS);
+        String ownerTag = getOwnerTagForPlayer(player);
+
+        List<ItemEntity> telepathyDrops = level.getEntitiesOfClass(ItemEntity.class, searchBox, item ->
+                item.getTags().contains(TELEPATHY_DROP_TAG) && item.getTags().contains(ownerTag));
+
+        for (ItemEntity itemEntity : telepathyDrops) {
+            pullTelepathyDropToPlayer(itemEntity, player, level);
+        }
+    }
+
     // Note this has to manually check logic with some synergistic enchantments due to how telepathy
     // changes block breaking logic.
     private static void telepathicallyDestroyBlock(BlockEvent.BreakEvent event, BlockPos blockPos, ServerLevel level, ItemStack handItem, int fortuneEnchantmentLevel) {
@@ -161,15 +197,19 @@ public class BlockBreakEnchantmentsHandler {
         if (!blockState.canHarvestBlock(level, blockPos, event.getPlayer())) return;
 
         for (ItemStack drop : drops) {
-            if (!event.getPlayer().addItem(drop)) {
-                event.getPlayer().drop(drop, false);
-            }
-            // Make pickup noise for telepathy
-            else {
-                Random random = new Random();
-                float randomPitch = .9f + random.nextFloat() * (1.6f - .9f);
-                level.playSound(null, blockPos.getX(), blockPos.getY(), blockPos.getZ(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, .25f, randomPitch);
-            }
+            if (drop.isEmpty()) continue;
+
+            ItemEntity itemEntity = new ItemEntity(
+                    level,
+                    blockPos.getX() + 0.5D,
+                    blockPos.getY() + 0.5D,
+                    blockPos.getZ() + 0.5D,
+                    drop.copy()
+            );
+            itemEntity.addTag(TELEPATHY_DROP_TAG);
+            itemEntity.addTag(getOwnerTagForPlayer(event.getPlayer()));
+            itemEntity.setPickUpDelay(0);
+            level.addFreshEntity(itemEntity);
         }
 
 
@@ -226,6 +266,63 @@ public class BlockBreakEnchantmentsHandler {
 
     private static float manuallyApplyWisdom(int wisdomEnchantmentLevel, float originalExp) {
         return WisdomEnchantmentEffect.trueProcess(wisdomEnchantmentLevel, RandomSource.create(), originalExp);
+    }
+
+    private static String getOwnerTagForPlayer(Player player) {
+        return TELEPATHY_OWNER_PREFIX + player.getStringUUID();
+    }
+
+    private static void pullTelepathyDropToPlayer(ItemEntity itemEntity, Player player, ServerLevel level) {
+        if (!itemEntity.getPersistentData().contains(TELEPATHY_START_TICK_KEY)) {
+            itemEntity.getPersistentData().putInt(TELEPATHY_START_TICK_KEY, itemEntity.tickCount);
+        }
+        int startTick = itemEntity.getPersistentData().getInt(TELEPATHY_START_TICK_KEY);
+        if (itemEntity.tickCount - startTick >= TELEPATHY_TIMEOUT_TICKS) {
+            releaseTelepathyDrop(itemEntity, player);
+            return;
+        }
+
+        itemEntity.setNoGravity(true);
+
+        Vec3 targetPos = player.position().add(0.0D, player.getBbHeight() * 0.5D, 0.0D);
+        Vec3 currentPos = itemEntity.position();
+        Vec3 direction = targetPos.subtract(currentPos);
+        double distance = direction.length();
+        if (distance > 0.0001D) {
+            double speed = Math.min(0.55D, 0.12D + distance * 0.08D);
+            itemEntity.setDeltaMovement(direction.normalize().scale(speed));
+        }
+
+        if (itemEntity.distanceToSqr(player) <= TELEPATHY_PICKUP_DISTANCE_SQR) {
+            ItemStack dropStack = itemEntity.getItem();
+            if (player.addItem(dropStack)) {
+                Random random = new Random();
+                float randomPitch = 0.9f + random.nextFloat() * (1.6f - 0.9f);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.25f, randomPitch);
+                itemEntity.discard();
+            } else {
+                warnInventoryFull(player);
+                releaseTelepathyDrop(itemEntity, player);
+            }
+        }
+    }
+
+    private static void releaseTelepathyDrop(ItemEntity itemEntity, Player player) {
+        itemEntity.setNoGravity(false);
+        itemEntity.removeTag(TELEPATHY_DROP_TAG);
+        itemEntity.removeTag(getOwnerTagForPlayer(player));
+        itemEntity.getPersistentData().remove(TELEPATHY_START_TICK_KEY);
+    }
+
+    private static void warnInventoryFull(Player player) {
+        UUID playerUuid = player.getUUID();
+        int nextAllowedTick = TELEPATHY_WARNING_TICK_BY_PLAYER.getOrDefault(playerUuid, 0);
+        if (player.tickCount < nextAllowedTick) {
+            return;
+        }
+
+        player.sendSystemMessage(Component.literal("Warning: inventory is full.").withStyle(ChatFormatting.RED));
+        TELEPATHY_WARNING_TICK_BY_PLAYER.put(playerUuid, player.tickCount + TELEPATHY_FULL_INVENTORY_WARNING_COOLDOWN_TICKS);
     }
 
 }
