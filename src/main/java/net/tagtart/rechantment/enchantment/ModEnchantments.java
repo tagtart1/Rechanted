@@ -239,13 +239,13 @@ public class ModEnchantments {
                 2, EquipmentSlotGroup.MAINHAND)));
 
         register(context, REBIRTH, Enchantment.enchantment(Enchantment.definition(
-                items.getOrThrow(Tags.Items.TOOLS),
-                items.getOrThrow(Tags.Items.TOOLS),
+                items.getOrThrow(ModItemTagsProvider.REBIRTH_ENCHANTABLE),
+                items.getOrThrow(ModItemTagsProvider.REBIRTH_ENCHANTABLE),
                 5,
                 1,
                 Enchantment.dynamicCost(10, 20),
                 Enchantment.dynamicCost(60, 20),
-                2, EquipmentSlotGroup.MAINHAND)));
+                2, EquipmentSlotGroup.ANY)));
 
         register(context, SPRING, Enchantment.enchantment(Enchantment.definition(
                 items.getOrThrow(ItemTags.LEG_ARMOR_ENCHANTABLE),

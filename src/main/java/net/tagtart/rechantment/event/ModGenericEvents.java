@@ -256,10 +256,13 @@ public class ModGenericEvents {
 
             if (hasRebornState) {
                 Component rebornText = Component.translatable("enchantment.rechantment.reborn").withStyle(Style.EMPTY.withColor(ChatFormatting.WHITE).withBold(true));
-                tooltip.add(enchantmentTooltipsStartIndex, rebornText);
+                int rebornInsertIndex = Math.max(1, Math.min(enchantmentTooltipsStartIndex, tooltip.size()));
+                tooltip.add(rebornInsertIndex, rebornText);
             }
         } else if (stack.getOrDefault(ModDataComponents.REBORN, false)) {
-            tooltip.add(Component.translatable("enchantment.rechantment.reborn").withStyle(Style.EMPTY.withColor(ChatFormatting.WHITE).withBold(true)));
+            Component rebornText = Component.translatable("enchantment.rechantment.reborn").withStyle(Style.EMPTY.withColor(ChatFormatting.WHITE).withBold(true));
+            int rebornInsertIndex = Math.min(1, tooltip.size());
+            tooltip.add(rebornInsertIndex, rebornText);
         }
 
 

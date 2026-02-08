@@ -9,6 +9,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.Tags;
 import net.tagtart.rechantment.Rechantment;
 
 import java.util.concurrent.CompletableFuture;
@@ -22,6 +23,7 @@ public class ModItemTagsProvider extends net.minecraft.data.tags.ItemTagsProvide
     public static final TagKey<Item> DIGGER_ITEM = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "digger_items"));
     public static final TagKey<Item> OVERLOAD_ENCHANTABLE = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "overload_enchantable"));
     public static final TagKey<Item> REACH_TOOLS = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "reach_tools"));
+    public static final TagKey<Item> REBIRTH_ENCHANTABLE = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "rebirth_enchantable"));
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
@@ -40,5 +42,13 @@ public class ModItemTagsProvider extends net.minecraft.data.tags.ItemTagsProvide
                 .addTag(ItemTags.AXES)
                 .addTag(ItemTags.SHOVELS)
                 .addTag(ItemTags.HOES);
+
+        this.tag(REBIRTH_ENCHANTABLE)
+                .addTag(Tags.Items.TOOLS)
+                .addTag(ItemTags.HEAD_ARMOR_ENCHANTABLE)
+                .addTag(ItemTags.CHEST_ARMOR_ENCHANTABLE)
+                .addTag(ItemTags.LEG_ARMOR_ENCHANTABLE)
+                .addTag(ItemTags.FOOT_ARMOR_ENCHANTABLE)
+                .addOptional(ResourceLocation.withDefaultNamespace("elytra"));
     }
 }

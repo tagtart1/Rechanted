@@ -20,8 +20,8 @@ public class TickDelayedTasks {
 
     public static final HashSet<TickDelayedTask> enqueuedTasks = new HashSet<>();
 
-    public static void EnqueueItemForRebirth(ServerPlayer player, ItemStack rebornItem, int inventorySlot, boolean isOffhand) {
-        enqueuedTasks.add(new EnqueuedRebirthEvent(player, rebornItem, inventorySlot, isOffhand));
+    public static void EnqueueItemForRebirth(ServerPlayer player, ItemStack rebornItem, int inventorySlot, boolean isOffhand, EquipmentSlot equipmentSlot) {
+        enqueuedTasks.add(new EnqueuedRebirthEvent(player, rebornItem, inventorySlot, isOffhand, equipmentSlot));
     }
 
     // NOTE: If rebirth isn't working properly, can try making this a ServerTickEvent.Pre.
@@ -53,13 +53,15 @@ public class TickDelayedTasks {
         public int inventorySlot;
         public ServerPlayer player;
         public ItemStack rebornItem;
+        public EquipmentSlot equipmentSlot;
 
-        public EnqueuedRebirthEvent(ServerPlayer player, ItemStack rebornItem, int inventorySlot, boolean isOffhand) {
+        public EnqueuedRebirthEvent(ServerPlayer player, ItemStack rebornItem, int inventorySlot, boolean isOffhand, EquipmentSlot equipmentSlot) {
             super(1);
             this.inventorySlot = inventorySlot;
             this.player = player;
             this.rebornItem = rebornItem;
             this.isOffhand = isOffhand;
+            this.equipmentSlot = equipmentSlot;
         }
 
         @Override
@@ -68,6 +70,9 @@ public class TickDelayedTasks {
 
             if (this.isOffhand) {
                 player.getInventory().offhand.set(0, this.rebornItem);
+            }
+            else if (this.equipmentSlot != null) {
+                player.setItemSlot(this.equipmentSlot, this.rebornItem);
             }
             else if (this.rebornItem.getItem() instanceof ArmorItem armorItem) {
                 EquipmentSlot armorSlot = armorItem.getEquipmentSlot();
