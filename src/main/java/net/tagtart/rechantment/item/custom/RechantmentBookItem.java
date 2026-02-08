@@ -19,6 +19,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.tagtart.rechantment.component.ModDataComponents;
+import net.tagtart.rechantment.enchantment.ModEnchantments;
 import net.tagtart.rechantment.sound.ModSounds;
 import net.tagtart.rechantment.util.BookRarityProperties;
 import net.tagtart.rechantment.util.UtilFunctions;
@@ -186,6 +187,12 @@ public class RechantmentBookItem extends Item {
         Holder<Enchantment> enchantmentHolder = bookEnchantEntry.getKey();
         int enchantmentLevel = bookEnchantEntry.getIntValue();
         Enchantment enchantment = enchantmentHolder.value();
+        boolean isRebirthBook = enchantmentHolder.unwrapKey().map(key -> key.equals(ModEnchantments.REBIRTH)).orElse(false);
+
+        if (isRebirthBook && itemToEnchantStack.getOrDefault(ModDataComponents.REBORN, false)) {
+            sendClientMessage(player, Component.literal("This item has already been Reborn.").withStyle(ChatFormatting.RED));
+            return true;
+        }
 
         boolean canEnchantGeneral = itemToEnchantStack.supportsEnchantment(enchantmentHolder);
 

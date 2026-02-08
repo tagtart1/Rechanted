@@ -45,7 +45,6 @@ import net.tagtart.rechantment.block.ModBlocks;
 import net.tagtart.rechantment.block.entity.RechantmentTableBlockEntity;
 import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.config.RechantmentCommonConfigs;
-import net.tagtart.rechantment.enchantment.ModEnchantments;
 import net.tagtart.rechantment.enchantment.custom.InquisitiveEnchantmentEffect;
 import net.tagtart.rechantment.item.ModItems;
 import net.tagtart.rechantment.networking.data.OpenEnchantTableScreenC2SPayload;
@@ -166,8 +165,6 @@ public class ModGenericEvents {
         if (event.getEntity() == null)
             return;
 
-        RegistryAccess registryAccess = event.getEntity().registryAccess();
-
         if (stack.getItem() instanceof EnchantedBookItem) {
             tooltip.add(Component.literal("Vanilla books have been disabled.").withStyle(ChatFormatting.RED));
         }
@@ -176,7 +173,7 @@ public class ModGenericEvents {
 
             ItemEnchantments enchantments = stack.get(DataComponents.ENCHANTMENTS);
             List<Object2IntMap.Entry<Holder<Enchantment>>> enchantsSorted = new ArrayList<>(enchantments.entrySet());
-            Holder<Enchantment> rebornEnchantment = UtilFunctions.getEnchantmentReferenceIfPresent(registryAccess, ModEnchantments.REBORN);
+            boolean hasRebornState = stack.getOrDefault(ModDataComponents.REBORN, false);
 
             enchantsSorted.sort((component1, component2) -> {
                 String enchantmentRaw1 = component1.getKey().unwrapKey().get().location().toString();
@@ -192,10 +189,6 @@ public class ModGenericEvents {
                 if (rarity1 == null && component1.getKey().is(EnchantmentTags.CURSE)) {
                     rarityValue1 = 99.0f;
                 }
-                else if (rarity1 == null && component1.getKey() == rebornEnchantment) {
-                    rarityValue1 = 100f;
-
-                }
                 else if (rarity1 != null) {
 
                     rarityValue1 = rarity1.rarity;
@@ -203,10 +196,6 @@ public class ModGenericEvents {
 
                 if (rarity2 == null && component2.getKey().is(EnchantmentTags.CURSE)) {
                     rarityValue2 = 99.0f;
-                }
-                else if (rarity2 == null && component2.getKey() == rebornEnchantment) {
-                    rarityValue1 = 100f;
-
                 }
                 else if (rarity2 != null) {
                     rarityValue2 = rarity2.rarity;
@@ -257,10 +246,6 @@ public class ModGenericEvents {
                     style = Style.EMPTY.withColor(ChatFormatting.RED);
                 }
 
-                else if (entry.getKey() == rebornEnchantment) {
-                    style = Style.EMPTY.withColor(ChatFormatting.WHITE).withBold(true);
-                }
-
                 else if (rarityProperties != null) {
                     style = Style.EMPTY.withColor(rarityProperties.color);
                 }
@@ -268,6 +253,13 @@ public class ModGenericEvents {
                 Component fullEnchantName = Enchantment.getFullname(entry.getKey(), enchantments.getLevel(entry.getKey()));
                 tooltip.set(replacementIndex++, Component.translatable(fullEnchantName.getString()).withStyle((style)));
             }
+
+            if (hasRebornState) {
+                Component rebornText = Component.translatable("enchantment.rechantment.reborn").withStyle(Style.EMPTY.withColor(ChatFormatting.WHITE).withBold(true));
+                tooltip.add(enchantmentTooltipsStartIndex, rebornText);
+            }
+        } else if (stack.getOrDefault(ModDataComponents.REBORN, false)) {
+            tooltip.add(Component.translatable("enchantment.rechantment.reborn").withStyle(Style.EMPTY.withColor(ChatFormatting.WHITE).withBold(true)));
         }
 
 

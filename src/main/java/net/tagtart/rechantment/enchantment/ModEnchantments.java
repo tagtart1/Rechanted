@@ -60,9 +60,6 @@ public class ModEnchantments {
     public static final ResourceKey<Enchantment> REBIRTH =ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "rebirth"));
 
-    public static final ResourceKey<Enchantment> REBORN =ResourceKey.create(Registries.ENCHANTMENT,
-            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "reborn"));
-
     public static final ResourceKey<Enchantment> SPRING = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "spring"));
 
@@ -248,15 +245,7 @@ public class ModEnchantments {
                 1,
                 Enchantment.dynamicCost(10, 20),
                 Enchantment.dynamicCost(60, 20),
-                2, EquipmentSlotGroup.MAINHAND)).exclusiveWith(HolderSet.direct(enchantments.getOrThrow(REBORN))));
-
-        register(context, REBORN, Enchantment.enchantment(Enchantment.definition(
-                items.getOrThrow(Tags.Items.TOOLS),
-                0,
-                1,
-                Enchantment.dynamicCost(10, 20),
-                Enchantment.dynamicCost(60, 20),
-                2, EquipmentSlotGroup.MAINHAND)).exclusiveWith(HolderSet.direct(enchantments.getOrThrow(REBIRTH))));
+                2, EquipmentSlotGroup.MAINHAND)));
 
         register(context, SPRING, Enchantment.enchantment(Enchantment.definition(
                 items.getOrThrow(ItemTags.LEG_ARMOR_ENCHANTABLE),

@@ -1,16 +1,15 @@
 package net.tagtart.rechantment.event.enchantment;
 
-import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerDestroyItemEvent;
 import net.tagtart.rechantment.Rechantment;
+import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.enchantment.ModEnchantments;
 import net.tagtart.rechantment.event.TickDelayedTasks;
 import net.tagtart.rechantment.util.UtilFunctions;
@@ -33,14 +32,9 @@ public class RebirthEnchantmentHandler {
 
                 ItemEnchantments.Mutable mutableCopy = new ItemEnchantments.Mutable(itemEnchantments);
                 mutableCopy.removeIf((enchantment) -> enchantment.getKey() == ModEnchantments.REBIRTH);
-
-                Holder<Enchantment> rebornEnchantment = UtilFunctions.getEnchantmentReferenceIfPresent(event.getEntity().registryAccess(), ModEnchantments.REBORN);
-                if (rebornEnchantment != null) {
-                    mutableCopy.set(rebornEnchantment, 1);
-                }
-
                 return mutableCopy.toImmutable();
             });
+            newItemStack.set(ModDataComponents.REBORN, true);
             newItemStack.setDamageValue(0);
             newItemStack.remove(DataComponents.REPAIR_COST);
 
