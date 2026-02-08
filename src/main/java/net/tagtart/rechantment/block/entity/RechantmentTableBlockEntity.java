@@ -18,7 +18,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -46,7 +45,7 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
         GemEarned,      // After gem pending is done, this just makes book float back down to normal position.
     }
 
-    public static final int GEM_PENDING_ANIMATION_LENGTH_TICKS = 120;
+    public static final int GEM_PENDING_ANIMATION_LENGTH_TICKS = 130;
     public static final int GEM_EARNED_ANIMATION_LENGTH_TICKS = 20;
 
     public static final double GEM_EARNED_ITEM_SPAWN_Y_OFFSET = 1.5;
@@ -161,8 +160,8 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
 
         currentStateTimeRemaining--;
         if (!level.isClientSide && tableState != CustomRechantmentTableState.Normal) {
-            System.out.println(tableState);
-            System.out.println(currentStateTimeRemaining);
+            //System.out.println(tableState);
+            //System.out.println(currentStateTimeRemaining);
         }
 
         switch (tableState) {

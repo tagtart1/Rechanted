@@ -4,9 +4,7 @@ import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.core.*;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -25,8 +23,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -42,6 +38,7 @@ import oshi.util.tuples.Pair;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Function;
 
 public class UtilFunctions {
     // Utility method to wrap text into lines
@@ -416,34 +413,8 @@ public class UtilFunctions {
             return originalCount;
     }
 
-    public static double clamp(double value, double min, double max) {
-        return Math.max(min, Math.min(value, max));
-    }
-
-    public static float inverseLerp(float a, float b, float value) {
-        if (a == b) {
-            return 0.0f;
-        }
-        return (value - a) / (b - a);
-    }
-
-    public static double inverseLerp(double a, double b, double value) {
-        if (a == b) {
-            return 0.0f;
-        }
-        return (value - a) / (b - a);
-    }
-
-    public static float lerp(float min, float max, float t) {
-        return min + (max - min) * t;
-    }
-
-    public static double lerp(double min, double max, double t) {
-        return min + (max - min) * t;
-    }
-
     public static double remap(double fromMin, double fromMax, double toMin, double toMax, double value) {
-        return lerp(toMin, toMax, inverseLerp(fromMin, fromMax, value));
+        return Mth.lerp(Mth.inverseLerp(fromMin, fromMax, value), toMin, toMax);
     }
 
     // If EVER called on server, game will shit its pants. Do not do that.

@@ -11,7 +11,6 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.util.UtilFunctions;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 // There are a lot of weird edge cases when items break in different scenarios.

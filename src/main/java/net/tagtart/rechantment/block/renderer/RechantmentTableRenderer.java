@@ -28,6 +28,12 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.tagtart.rechantment.block.entity.RechantmentTableBlockEntity;
+import net.tagtart.rechantment.util.AnimHelper;
+import net.tagtart.rechantment.util.UtilFunctions;
+import oshi.util.tuples.Pair;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 public class RechantmentTableRenderer implements BlockEntityRenderer<RechantmentTableBlockEntity> {
@@ -46,6 +52,31 @@ public class RechantmentTableRenderer implements BlockEntityRenderer<Rechantment
 
     private final BookModel bookModel;
 
+    // --- GEM PENDING KEYFRAMES ---
+    private final ArrayList<AnimHelper.FloatKeyframe> GEM_PENDING_Y_TRANSLATION_KEYFRAMES = new ArrayList<>(List.of(
+            new AnimHelper.FloatKeyframe(0f, 0f, AnimHelper::easeOutBack),
+            new AnimHelper.FloatKeyframe(110f, 1.2f, AnimHelper::linear)
+    ));
+
+    private final ArrayList<AnimHelper.FloatKeyframe> GEM_PENDING_Y_ROTATION_KEYFRAMES = new ArrayList<>(List.of(
+            new AnimHelper.FloatKeyframe(0f, 0f, AnimHelper::easeInOutQuad),
+            new AnimHelper.FloatKeyframe(100.0f, (float)Math.PI * 20.0f, AnimHelper::linear)
+    ));
+
+    private final ArrayList<AnimHelper.FloatKeyframe> GEM_PENDING_BOOK_OPEN_KEYFRAMES = new ArrayList<>(List.of(
+            new AnimHelper.FloatKeyframe(0f, 1.0f, AnimHelper::linear),
+            new AnimHelper.FloatKeyframe(105.0f, 1.0f, AnimHelper::easeInBack),
+            new AnimHelper.FloatKeyframe(110.0f, 0.0f, AnimHelper::easeOutBack),
+            new AnimHelper.FloatKeyframe(120.0f, 1.0f, AnimHelper::linear)
+    ));
+
+    // --- GEM EARNED KEYFRAMES ---
+    private final ArrayList<AnimHelper.FloatKeyframe> GEM_EARNED_Y_TRANSLATION_KEYFRAMES = new ArrayList<>(List.of(
+            new AnimHelper.FloatKeyframe(0f, GEM_PENDING_Y_TRANSLATION_KEYFRAMES.getLast().value, AnimHelper::easeInBack),   // So it starts at same y-offset last anim. ended.
+            new AnimHelper.FloatKeyframe(18.0f, 0f, AnimHelper::linear)
+    ));
+
+
     public RechantmentTableRenderer(BlockEntityRendererProvider.Context context) {
         this.bookModel = new BookModel(context.bakeLayer(ModelLayers.BOOK));
     }
@@ -56,28 +87,64 @@ public class RechantmentTableRenderer implements BlockEntityRenderer<Rechantment
     }
 
     private void renderBook(RechantmentTableBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.75F, 0.5F);
-        float time = (float) blockEntity.time + partialTick;
-        poseStack.translate(0.0F, 0.1F + Mth.sin(time * 0.1F) * 0.01F, 0.0F);
-        float yRotationBase = blockEntity.rot - blockEntity.oRot;
+        long gameTime = Minecraft.getInstance().level.getGameTime();
 
-        while (yRotationBase >= (float) Math.PI) {
-            yRotationBase -= (float) (Math.PI * 2);
+        if (blockEntity.tableState == RechantmentTableBlockEntity.CustomRechantmentTableState.Normal) {
+
+            float time = (float) blockEntity.time + partialTick;
+            poseStack.translate(0.0F, 0.1F + Mth.sin(time * 0.1F) * 0.01F, 0.0F);
+            float yRotationBase = blockEntity.rot - blockEntity.oRot;
+
+            while (yRotationBase >= (float) Math.PI) {
+                yRotationBase -= (float) (Math.PI * 2);
+            }
+
+            while (yRotationBase < (float) -Math.PI) {
+                yRotationBase += (float) (Math.PI * 2);
+            }
+
+            float yRotation = (blockEntity.oRot + yRotationBase * partialTick) + 3.14f;
+            poseStack.mulPose(Axis.YP.rotation(-yRotation));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(100.0F));
+            float f3 = Mth.lerp(partialTick, blockEntity.oFlip, blockEntity.flip);
+            float rightPageFlipAmount = Mth.frac(f3 + 0.25F) * 1.6F - 0.3F;
+            float leftPageFlipAmount = Mth.frac(f3 + 0.75F) * 1.6F - 0.3F;
+            float f6 = Mth.lerp(partialTick, blockEntity.oOpen, blockEntity.open);
+            this.bookModel.setupAnim(time, Mth.clamp(rightPageFlipAmount, 0.0F, 1.0F), Mth.clamp(leftPageFlipAmount, 0.0F, 1.0F), f6);
         }
 
-        while (yRotationBase < (float) -Math.PI) {
-            yRotationBase += (float) (Math.PI * 2);
+        if (blockEntity.tableState == RechantmentTableBlockEntity.CustomRechantmentTableState.GemPending) {
+
+            long stateStartTime = gameTime - (RechantmentTableBlockEntity.GEM_PENDING_ANIMATION_LENGTH_TICKS - blockEntity.currentStateTimeRemaining);
+            float time = (gameTime + partialTick - stateStartTime);
+
+            float yOffset = AnimHelper.evaluateKeyframes(GEM_PENDING_Y_TRANSLATION_KEYFRAMES, time);
+            float yRotationOffset = AnimHelper.evaluateKeyframes(GEM_PENDING_Y_ROTATION_KEYFRAMES, time);
+            float bookOpenOffset = AnimHelper.evaluateKeyframes(GEM_PENDING_BOOK_OPEN_KEYFRAMES, time);
+            //System.out.println(yOffset);
+
+            Direction facing = blockEntity.getLapisHolderFacingDirection();
+            Vec3 facingDir = new Vec3(facing.getStepX(), facing.getStepY(), facing.getStepZ()); // TODO: Cache vector to avoid new
+
+            float facingRotation = facingDir.toVector3f().angleSigned(NORTH.toVector3f(), UP.toVector3f());
+            facingRotation += (float) (Math.PI * 0.5f);
+            facingRotation += yRotationOffset;
+            if (facing == Direction.NORTH || facing == Direction.SOUTH) {
+                facingRotation += (float) (Math.PI);
+            }
+
+            poseStack.translate(0f, yOffset, 0f);
+            poseStack.mulPose(Axis.YP.rotation(facingRotation));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(10.0F));
+
+            this.bookModel.setupAnim(time, 0f, 0f, 1.0f);
+            VertexConsumer vertexconsumer = BOOK_LOCATION.buffer(bufferSource, RenderType::entitySolid);
+            this.bookModel.render(poseStack, vertexconsumer, packedLight, packedOverlay, -1);
         }
 
-        float yRotation = (blockEntity.oRot + yRotationBase * partialTick) + 3.14f;
-        poseStack.mulPose(Axis.YP.rotation(-yRotation));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(100.0F));
-        float f3 = Mth.lerp(partialTick, blockEntity.oFlip, blockEntity.flip);
-        float rightPageFlipAmount = Mth.frac(f3 + 0.25F) * 1.6F - 0.3F;
-        float leftPageFlipAmount = Mth.frac(f3 + 0.75F) * 1.6F - 0.3F;
-        float f6 = Mth.lerp(partialTick, blockEntity.oOpen, blockEntity.open);
-        this.bookModel.setupAnim(time, Mth.clamp(rightPageFlipAmount, 0.0F, 1.0F), Mth.clamp(leftPageFlipAmount, 0.0F, 1.0F), f6);
         VertexConsumer vertexconsumer = BOOK_LOCATION.buffer(bufferSource, RenderType::entitySolid);
         this.bookModel.render(poseStack, vertexconsumer, packedLight, packedOverlay, -1);
         poseStack.popPose();

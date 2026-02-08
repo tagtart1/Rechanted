@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -115,7 +116,7 @@ public class RechantmentTablePoolDisplayScreen extends AbstractContainerScreen<R
 
         // Hoverables that represent a loot table entry.
         entry_hoverables = new ArrayList<>();
-        Minecraft.getInstance().player.playSound(SoundEvents.BOOK_PAGE_TURN, 0.5F, (float)UtilFunctions.remap(0.0, 1.0, 0.85, 1.15, viewingPropertyIndex / 5.0));
+        Minecraft.getInstance().player.playSound(SoundEvents.BOOK_PAGE_TURN, 0.5F, (float) UtilFunctions.remap(0.0, 1.0, 0.85, 1.15, viewingPropertyIndex / 5.0));
         generateTableEntries();
 
         this.shaderEffectsByBookID = new ResourceLocation[5];
@@ -154,7 +155,7 @@ public class RechantmentTablePoolDisplayScreen extends AbstractContainerScreen<R
         }
         else {
             float scrollFrac = (float)(scrollPosition / maxScrollPosition);
-            guiGraphics.blit(SCROLL_BAR_LOCATION, this.leftPos + 163, this.topPos + (int)(UtilFunctions.lerp(46, 200, scrollFrac)), 0, 0, 12, 15, 24, 15);
+            guiGraphics.blit(SCROLL_BAR_LOCATION, this.leftPos + 163, this.topPos + (int)(Mth.lerp(scrollFrac, 46, 200)), 0, 0, 12, 15, 24, 15);
         }
         renderBGShaderEffect(guiGraphics);
 
@@ -217,7 +218,7 @@ public class RechantmentTablePoolDisplayScreen extends AbstractContainerScreen<R
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         scrollPosition -= scrollY * 6.0f;
-        scrollPosition = (float)UtilFunctions.clamp(scrollPosition, 0.0, maxScrollPosition);
+        scrollPosition = (float) Mth.clamp(scrollPosition, 0.0, maxScrollPosition);
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
@@ -226,13 +227,13 @@ public class RechantmentTablePoolDisplayScreen extends AbstractContainerScreen<R
 
         if (pButton == 0 && (draggingScrollbar || isMouseWithinScrollArea(pMouseX, pMouseY))) {
             draggingScrollbar = true;
-            double t = UtilFunctions.inverseLerp(0.0, maxScrollPosition, scrollPosition);
-            double scrollBarLocation = UtilFunctions.lerp(46, 200, t);
+            double t = Mth.inverseLerp(scrollPosition, 0.0, maxScrollPosition);
+            double scrollBarLocation = Mth.lerp(t, 46, 200);
             scrollBarLocation += pDragY;
 
-            double newT = UtilFunctions.inverseLerp(46, 200, scrollBarLocation);
-            scrollPosition = UtilFunctions.lerp(0.0, maxScrollPosition, newT);
-            scrollPosition = (float)UtilFunctions.clamp(scrollPosition, 0.0, maxScrollPosition);
+            double newT = Mth.inverseLerp( scrollBarLocation, 46, 200);
+            scrollPosition = Mth.lerp(newT, 0.0, maxScrollPosition);
+            scrollPosition = (float) Mth.clamp(scrollPosition, 0.0, maxScrollPosition);
         }
 
         return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
@@ -391,7 +392,7 @@ public class RechantmentTablePoolDisplayScreen extends AbstractContainerScreen<R
         index = index % BookRarityProperties.getAllProperties().length;
         viewingPropertyIndex = index;
 
-        Minecraft.getInstance().player.playSound(SoundEvents.BOOK_PAGE_TURN, 0.5F, (float)UtilFunctions.remap(0.0, 1.0, 0.8, 1.2, viewingPropertyIndex / 5.0));
+        Minecraft.getInstance().player.playSound(SoundEvents.BOOK_PAGE_TURN, 0.5F, (float) UtilFunctions.remap(0.0, 1.0, 0.8, 1.2, viewingPropertyIndex / 5.0));
         bookIcon.renderTexture = BookRarityProperties.getAllProperties()[viewingPropertyIndex].iconResourceLocation;
         generateTableEntries();
     }

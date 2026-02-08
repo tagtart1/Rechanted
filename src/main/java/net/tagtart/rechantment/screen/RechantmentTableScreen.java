@@ -11,7 +11,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -59,8 +58,7 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
     private BlockState[] cachedFloorBlocksInRange;
 
     private float timeElapsed = 0.0f;
-    private float gemEarnedEffectVCoord = -100.0f;
-    private int retainedMostRecentRequirements = -1;
+    private float gemEarnedEffectVCoord = 1000.0f;
 
     private final float REQ_CHECK_RATE = 0.2f;  // How often shader will check if requirements are met to display effect.
     private float timeSinceLastReqCheck = 0.0f; // Time since last requirement check was made for shader effect.
@@ -117,18 +115,6 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
         renderBGEffect(guiGraphics, pPartialTick, pMouseX, pMouseY);
     }
 
-    @Override
-    protected void containerTick() {
-        super.containerTick();
-
-        if (menu.gemEarnedEffectQueued.get() != 0) {
-            menu.gemEarnedEffectQueued.set(0);
-
-            gemEarnedEffectVCoord = -0.1f;
-            retainedMostRecentRequirements = currentIndexRequirementsMet;
-        }
-    }
-
     protected void renderBGEffect(GuiGraphics guiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
         timeElapsed += pPartialTick;
         timeSinceLastReqCheck += pPartialTick;
@@ -136,15 +122,13 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
         // If a gem is earned, this will act as a flag to retain most recently met requirements instead
         // of checking which rarity's is met. This is just so that if a gem is earned, the line
         // shader stays active a little longer in cases where blocks/bookshelves also break at the same time.
-        if (retainedMostRecentRequirements != -1) {
-            currentIndexRequirementsMet = retainedMostRecentRequirements;
-            if (gemEarnedEffectVCoord > 2.5f) {
-                retainedMostRecentRequirements = -1;
-            }
+        if (menu.gemEarnedEffectQueued.get() != 0) {
+            menu.gemEarnedEffectQueued.set(0);  // Doesn't actually broadcast change; only client side so this check doesn't repeat.
+            gemEarnedEffectVCoord = -0.1f;
         }
         // Check if requirements are met currently after certain interval passed,
         // then set which book index can currently be crafted for use elsewhere.
-        else if (timeSinceLastReqCheck >= REQ_CHECK_RATE)
+        else if (timeSinceLastReqCheck >= REQ_CHECK_RATE && menu.blockEntity.tableState == RechantmentTableBlockEntity.CustomRechantmentTableState.Normal)
         {
             currentIndexRequirementsMet = 0;
             for (int i = 0; i < 5; ++i) {
@@ -227,6 +211,17 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
                     BookRarityProperties properties = BookRarityProperties.getAllProperties()[i];
                     BlockPos pos = menu.blockEntity.getBlockPos();
 
+                    // If a gem is being earned, don't allow player to purchase book.
+                    if (menu.blockEntity.tableState != RechantmentTableBlockEntity.CustomRechantmentTableState.Normal) {
+                        player.closeContainer();
+                        Minecraft.getInstance().player.playSound(SoundEvents.LODESTONE_COMPASS_LOCK, 0.7F, 1.0f);
+
+                        String translatedMsg = Component.translatable("message.rechantment.gem_pending").getString();
+                        player.sendSystemMessage(Component.literal(translatedMsg).withStyle(ChatFormatting.RED));
+
+                        break;
+                    }
+
                     if (!floorRequirementsMet(properties, cachedFloorBlocksInRange)
                             || !bookshelfRequirementsMet(properties, cachedBookshelvesInRange)
                             || !lapisRequirementsMet(properties)) {
@@ -252,17 +247,6 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
                         String translatedMsg = Component.translatable("message.rechantment.insufficient_exp").getString();
                         String argsAdded = String.format(translatedMsg, player.totalExperience, properties.requiredExp);
                         player.sendSystemMessage(Component.literal(argsAdded).withStyle(ChatFormatting.RED));
-
-                        break;
-                    }
-
-                    // If a gem is being earned, don't allow player to purchase book.
-                    if (menu.blockEntity.tableState != RechantmentTableBlockEntity.CustomRechantmentTableState.Normal) {
-                        player.closeContainer();
-                        Minecraft.getInstance().player.playSound(SoundEvents.LODESTONE_COMPASS_LOCK, 0.7F, 1.0f);
-
-                        String translatedMsg = Component.translatable("message.rechantment.gem_pending").getString();
-                        player.sendSystemMessage(Component.literal(translatedMsg).withStyle(ChatFormatting.RED));
 
                         break;
                     }

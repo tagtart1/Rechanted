@@ -13,7 +13,6 @@ import net.neoforged.neoforge.common.Tags;
 import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.datagen.ModItemTagsProvider;
 import net.tagtart.rechantment.enchantment.custom.*;
-import net.tagtart.rechantment.util.UtilFunctions;
 
 public class ModEnchantments {
     public static final ResourceKey<Enchantment> THUNDER_STRIKE = ResourceKey.create(Registries.ENCHANTMENT,

@@ -1,10 +1,8 @@
 package net.tagtart.rechantment.item.custom;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
@@ -12,18 +10,13 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.item.ModItems;
-import net.tagtart.rechantment.util.BookRarityProperties;
 import net.tagtart.rechantment.util.UtilFunctions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Random;
-import java.util.function.Consumer;
 
 public class CloneGemItem extends Item {
     public CloneGemItem(Properties properties) {

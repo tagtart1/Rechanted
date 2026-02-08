@@ -1,16 +1,12 @@
 package net.tagtart.rechantment.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.tagtart.rechantment.Rechantment;
@@ -21,7 +17,6 @@ import net.tagtart.rechantment.util.UtilFunctions;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderable{
 
