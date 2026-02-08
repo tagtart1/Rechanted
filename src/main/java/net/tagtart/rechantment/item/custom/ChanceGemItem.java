@@ -18,6 +18,7 @@ import net.minecraft.world.item.enchantment.*;
 import net.minecraft.world.level.Level;
 import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.component.ModDataComponents;
+import net.tagtart.rechantment.sound.ModSounds;
 import net.tagtart.rechantment.util.BookRarityProperties;
 import net.tagtart.rechantment.util.UtilFunctions;
 import org.jetbrains.annotations.NotNull;
@@ -112,7 +113,7 @@ public class ChanceGemItem extends Item {
             // Prevents this book from being randomized again
             otherItemStack.set(ModDataComponents.REROLLED_SUCCESS_RATE, true);
 
-            player.playSound(SoundEvents.ENDER_EYE_DEATH, 1f, 1.6f);
+            player.playSound(ModSounds.ENDER_EYE_DEATH.get(), 0.9f, 1.6f);
             if (player.level().isClientSide) player.sendSystemMessage(Component.literal("Rerolled!").withStyle(ChatFormatting.GREEN));
 
             // Delete gem

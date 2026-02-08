@@ -78,5 +78,16 @@
         "name": "rechantment:super_burp"
       }
     ]
+  },
+  "ender_eye_death": {
+    "subtitles": "sounds.rechantment.ender_eye_death",
+    "sounds": [
+      {
+        "name": "rechantment:ender_eye_death1"
+      },
+      {
+        "name": "rechantment:ender_eye_death2"
+      }
+    ]
   }
 }

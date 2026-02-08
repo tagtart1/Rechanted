@@ -6,7 +6,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -21,6 +20,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.tagtart.rechantment.util.UtilFunctions;
 import net.tagtart.rechantment.util.BookRarityProperties;
+import net.tagtart.rechantment.sound.ModSounds;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
@@ -88,7 +88,7 @@ public class MysteriousBookItem extends Item {
             }
 
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                    SoundEvents.ENDER_EYE_DEATH, SoundSource.PLAYERS, 0.8f, 1.0f);
+                    ModSounds.ENDER_EYE_DEATH.get(), SoundSource.PLAYERS, 0.9f, 1.6f);
 
             player.setItemInHand(usedHand, rolledBook);
             return InteractionResultHolder.consume(rolledBook);

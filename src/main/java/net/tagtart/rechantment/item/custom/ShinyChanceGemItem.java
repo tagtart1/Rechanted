@@ -17,6 +17,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.config.RechantmentCommonConfigs;
+import net.tagtart.rechantment.sound.ModSounds;
 import net.tagtart.rechantment.util.BookRarityProperties;
 import net.tagtart.rechantment.util.UtilFunctions;
 import org.jetbrains.annotations.NotNull;
@@ -107,7 +108,7 @@ public class ShinyChanceGemItem extends Item {
                     if (player instanceof ServerPlayer sp) {
                         sp.playNotifySound(SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.NEUTRAL, 4.0f, 1.0f);
                     }
-                    player.sendSystemMessage(Component.literal("Rerolled, but the Shiny Gem has shattered!")
+                    player.sendSystemMessage(Component.literal("Rerolled, but the Shiny Chance Gem has shattered!")
                             .withStyle(ChatFormatting.RED));
                 } else {
                     // On Apply
@@ -116,7 +117,7 @@ public class ShinyChanceGemItem extends Item {
                     // REMEMBER THIS FREAKING PATTERN FOR PLAYING SOUNDS, MAYBE USEFUL, CHECK SERVER
                     // PLAYER FIRST
                     if (player instanceof ServerPlayer sp) {
-                        sp.playNotifySound(SoundEvents.ENDER_EYE_DEATH, SoundSource.NEUTRAL, 32f, 1.6f);
+                        sp.playNotifySound(ModSounds.ENDER_EYE_DEATH.get(), SoundSource.PLAYERS, 0.9f, 1.6f);
                     }
 
                 }
@@ -168,13 +169,13 @@ public class ShinyChanceGemItem extends Item {
         boolean shouldShatter = shouldShatter(rand);
         if (shouldShatter) {
             stack.shrink(1);
-            player.sendSystemMessage(Component.literal("Rerolled, but the Shiny Gem has shattered!")
+            player.sendSystemMessage(Component.literal("Rerolled, but the Shiny Chance Gem has shattered!")
                     .withStyle(ChatFormatting.RED));
             player.playSound(SoundEvents.AMETHYST_BLOCK_BREAK, 4.0f, 1.0f);
         } else {
             player.sendSystemMessage(Component.literal("Rerolled!")
                     .withStyle(ChatFormatting.GREEN));
-            player.playSound(SoundEvents.ENDER_EYE_DEATH, 8.0f, 1.6f);
+            player.playSound(ModSounds.ENDER_EYE_DEATH.get(), 0.9f, 1.6f);
         }
     }
 

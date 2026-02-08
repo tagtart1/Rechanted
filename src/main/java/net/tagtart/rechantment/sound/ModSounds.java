@@ -27,6 +27,7 @@ public class ModSounds {
     public static final Supplier<SoundEvent> ENCHANT_TABLE_CLOSE = registerSoundEvents("enchant_table_close");
 
     public static final Supplier<SoundEvent> SUPER_BURP = registerSoundEvents("super_burp");
+    public static final Supplier<SoundEvent> ENDER_EYE_DEATH = registerSoundEvents("ender_eye_death");
 
     private static Supplier<SoundEvent> registerSoundEvents(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, name)));
