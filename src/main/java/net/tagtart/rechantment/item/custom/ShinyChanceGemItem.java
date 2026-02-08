@@ -68,45 +68,24 @@ public class ShinyChanceGemItem extends Item {
         }
 
         if (player.getAbilities().instabuild) {
-            player.sendSystemMessage(Component.literal("You cannot apply this gem in creative mode.")
-                    .withStyle(ChatFormatting.RED));
+            applyCreative(stack, otherItemStack, player);
             return true;
         }
 
-        // Check if the book has already been randomized already
-        boolean rerolled = otherItemStack.getOrDefault(ModDataComponents.REROLLED_SUCCESS_RATE, false);
-        if (rerolled) {
+        if (hasAlreadyBeenRerolled(otherItemStack)) {
             player.playSound(SoundEvents.VILLAGER_NO, 1f, 1f);
             if (player.level().isClientSide) {
                 player.sendSystemMessage(
                         Component.literal("This book has already been randomized!").withStyle(ChatFormatting.RED));
             }
         } else {
-            ItemEnchantments storedEnchants = otherItemStack.getOrDefault(DataComponents.STORED_ENCHANTMENTS,
-                    ItemEnchantments.EMPTY);
-            if (storedEnchants.isEmpty()) {
-                return false;
-            }
-
-            // Get the first (and should be only) enchantment from the book
-            var bookEnchantEntry = storedEnchants.entrySet().iterator().next();
-            Holder<Enchantment> enchantmentHolder = bookEnchantEntry.getKey();
-            String enchantmentRaw = enchantmentHolder.unwrapKey().orElseThrow().location().toString();
-
-            BookRarityProperties appliedBookProperties = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw);
-
+            BookRarityProperties appliedBookProperties = getBookPropertiesForReroll(otherItemStack);
             if (appliedBookProperties == null) {
                 return false;
             }
 
-            // Check current success rate
-            int currentSuccessRate = otherItemStack.getOrDefault(ModDataComponents.SUCCESS_RATE,
-                    appliedBookProperties.minSuccess);
-            int upperBound = appliedBookProperties.maxSuccess;
-
-            // If current success rate is already at or above the maximum, don't allow
-            // reroll
-            if (currentSuccessRate >= upperBound) {
+            int currentSuccessRate = getCurrentSuccessRate(otherItemStack, appliedBookProperties);
+            if (isAtOrAboveMaxSuccessRate(otherItemStack, appliedBookProperties)) {
                 player.playSound(SoundEvents.VILLAGER_NO, 1f, 1f);
                 if (player.level().isClientSide) {
                     player.sendSystemMessage(Component
@@ -117,16 +96,8 @@ public class ShinyChanceGemItem extends Item {
                 return true; // Return true to prevent further processing but don't consume the gem
             }
 
-            // Randomize the rate
-            int lowerBound = appliedBookProperties.minSuccess;
             Random rand = new Random();
-
-            // Generate a new SuccessRate, inclusive bounds
-            int newSuccessRate = rand.nextInt(lowerBound, upperBound + 1);
-            otherItemStack.set(ModDataComponents.SUCCESS_RATE, newSuccessRate);
-
-            // Prevents this book from being randomized again
-            otherItemStack.set(ModDataComponents.REROLLED_SUCCESS_RATE, true);
+            rerollSuccessRate(otherItemStack, appliedBookProperties, rand);
 
             if (!player.level().isClientSide) {
                 boolean shouldShatter = shouldShatter(rand);
@@ -136,7 +107,7 @@ public class ShinyChanceGemItem extends Item {
                     if (player instanceof ServerPlayer sp) {
                         sp.playNotifySound(SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.NEUTRAL, 4.0f, 1.0f);
                     }
-                    player.sendSystemMessage(Component.literal("Rerolled, but the shiny gem has shattered!")
+                    player.sendSystemMessage(Component.literal("Rerolled, but the Shiny Gem has shattered!")
                             .withStyle(ChatFormatting.RED));
                 } else {
                     // On Apply
@@ -167,5 +138,76 @@ public class ShinyChanceGemItem extends Item {
 
     private static boolean shouldShatter(Random rand) {
         return rand.nextDouble() < RechantmentCommonConfigs.SHINY_CHANCE_GEM_BREAK_CHANCE.get();
+    }
+
+    private void applyCreative(ItemStack stack, ItemStack otherItemStack, Player player) {
+        if (hasAlreadyBeenRerolled(otherItemStack)) {
+            player.playSound(SoundEvents.VILLAGER_NO, 1f, 1f);
+            player.sendSystemMessage(Component.literal("This book has already been randomized!")
+                    .withStyle(ChatFormatting.RED));
+            return;
+        }
+
+        BookRarityProperties appliedBookProperties = getBookPropertiesForReroll(otherItemStack);
+        if (appliedBookProperties == null) {
+            return;
+        }
+
+        int currentSuccessRate = getCurrentSuccessRate(otherItemStack, appliedBookProperties);
+        if (isAtOrAboveMaxSuccessRate(otherItemStack, appliedBookProperties)) {
+            player.playSound(SoundEvents.VILLAGER_NO, 1f, 1f);
+            player.sendSystemMessage(Component.literal("This book's success rate (" + currentSuccessRate
+                    + "%) is already at maximum reroll result!")
+                    .withStyle(ChatFormatting.RED));
+            return;
+        }
+
+        Random rand = new Random();
+        rerollSuccessRate(otherItemStack, appliedBookProperties, rand);
+
+        boolean shouldShatter = shouldShatter(rand);
+        if (shouldShatter) {
+            stack.shrink(1);
+            player.sendSystemMessage(Component.literal("Rerolled, but the Shiny Gem has shattered!")
+                    .withStyle(ChatFormatting.RED));
+            player.playSound(SoundEvents.AMETHYST_BLOCK_BREAK, 4.0f, 1.0f);
+        } else {
+            player.sendSystemMessage(Component.literal("Rerolled!")
+                    .withStyle(ChatFormatting.GREEN));
+            player.playSound(SoundEvents.ENDER_EYE_DEATH, 8.0f, 1.6f);
+        }
+    }
+
+    private static boolean hasAlreadyBeenRerolled(ItemStack otherItemStack) {
+        return otherItemStack.getOrDefault(ModDataComponents.REROLLED_SUCCESS_RATE, false);
+    }
+
+    private static BookRarityProperties getBookPropertiesForReroll(ItemStack otherItemStack) {
+        ItemEnchantments storedEnchants = otherItemStack.getOrDefault(DataComponents.STORED_ENCHANTMENTS,
+                ItemEnchantments.EMPTY);
+        if (storedEnchants.isEmpty()) {
+            return null;
+        }
+
+        var bookEnchantEntry = storedEnchants.entrySet().iterator().next();
+        Holder<Enchantment> enchantmentHolder = bookEnchantEntry.getKey();
+        String enchantmentRaw = enchantmentHolder.unwrapKey().orElseThrow().location().toString();
+        return UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw);
+    }
+
+    private static int getCurrentSuccessRate(ItemStack otherItemStack, BookRarityProperties appliedBookProperties) {
+        return otherItemStack.getOrDefault(ModDataComponents.SUCCESS_RATE, appliedBookProperties.minSuccess);
+    }
+
+    private static boolean isAtOrAboveMaxSuccessRate(ItemStack otherItemStack,
+            BookRarityProperties appliedBookProperties) {
+        return getCurrentSuccessRate(otherItemStack, appliedBookProperties) >= appliedBookProperties.maxSuccess;
+    }
+
+    private static void rerollSuccessRate(ItemStack otherItemStack, BookRarityProperties appliedBookProperties,
+            Random rand) {
+        int newSuccessRate = rand.nextInt(appliedBookProperties.minSuccess, appliedBookProperties.maxSuccess + 1);
+        otherItemStack.set(ModDataComponents.SUCCESS_RATE, newSuccessRate);
+        otherItemStack.set(ModDataComponents.REROLLED_SUCCESS_RATE, true);
     }
 }
