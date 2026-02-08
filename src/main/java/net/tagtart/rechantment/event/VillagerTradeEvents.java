@@ -80,11 +80,19 @@ public class VillagerTradeEvents {
     }
 
     private static MerchantOffer replaceEnchantedBookOffer(MerchantOffer offer, int tradeLevel) {
+        if (isApprenticeLevel(tradeLevel)) {
+            return createCandleOffer(offer);
+        }
+
         if (isBelowJourneyman(tradeLevel)) {
             return createAmethystOffer(offer);
         }
 
         return createMysteriousBookOffer(offer);
+    }
+
+    private static boolean isApprenticeLevel(int tradeLevel) {
+        return tradeLevel == 2;
     }
 
     private static boolean isBelowJourneyman(int tradeLevel) {
@@ -105,6 +113,13 @@ public class VillagerTradeEvents {
         ItemStack amethyst = new ItemStack(Items.AMETHYST_SHARD, 3);
 
         return buildOffer(originalOffer, emeraldCost, Optional.empty(), amethyst, originalOffer.getMaxUses());
+    }
+
+    private static MerchantOffer createCandleOffer(MerchantOffer originalOffer) {
+        ItemCost emeraldCost = new ItemCost(Items.EMERALD, 4);
+        ItemStack candle = new ItemStack(Items.CANDLE, 1);
+
+        return buildOffer(originalOffer, emeraldCost, Optional.empty(), candle, originalOffer.getMaxUses());
     }
 
     private static MerchantOffer buildOffer(
