@@ -42,7 +42,7 @@ public class BlockBreakEnchantmentsHandler {
     private static final String TELEPATHY_OWNER_PREFIX = "rechantment_telepathy_owner_";
     private static final String TELEPATHY_START_TICK_KEY = "rechantment_telepathy_start_tick";
     private static final int TELEPATHY_PULL_INTERVAL_TICKS = 2;
-    private static final int TELEPATHY_TIMEOUT_TICKS = 60; // 3 seconds
+    private static final int TELEPATHY_TIMEOUT_TICKS = 40; // 2 seconds
     private static final double TELEPATHY_PULL_RADIUS = 12.0D;
     private static final double TELEPATHY_PICKUP_DISTANCE_SQR = 1.44D; // 1.2 blocks
     private static final int TELEPATHY_FULL_INVENTORY_WARNING_COOLDOWN_TICKS = 20;
@@ -208,6 +208,7 @@ public class BlockBreakEnchantmentsHandler {
             );
             itemEntity.addTag(TELEPATHY_DROP_TAG);
             itemEntity.addTag(getOwnerTagForPlayer(event.getPlayer()));
+            itemEntity.setInvulnerable(true);
             itemEntity.setPickUpDelay(0);
             level.addFreshEntity(itemEntity);
         }
@@ -278,7 +279,7 @@ public class BlockBreakEnchantmentsHandler {
         }
         int startTick = itemEntity.getPersistentData().getInt(TELEPATHY_START_TICK_KEY);
         if (itemEntity.tickCount - startTick >= TELEPATHY_TIMEOUT_TICKS) {
-            releaseTelepathyDrop(itemEntity, player);
+            tryPickupTelepathyDrop(itemEntity, player, level, true);
             return;
         }
 
@@ -294,21 +295,28 @@ public class BlockBreakEnchantmentsHandler {
         }
 
         if (itemEntity.distanceToSqr(player) <= TELEPATHY_PICKUP_DISTANCE_SQR) {
-            ItemStack dropStack = itemEntity.getItem();
-            if (player.addItem(dropStack)) {
-                Random random = new Random();
-                float randomPitch = 0.9f + random.nextFloat() * (1.6f - 0.9f);
-                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.25f, randomPitch);
-                itemEntity.discard();
-            } else {
-                warnInventoryFull(player);
-                releaseTelepathyDrop(itemEntity, player);
-            }
+            tryPickupTelepathyDrop(itemEntity, player, level, false);
+        }
+    }
+
+    private static void tryPickupTelepathyDrop(ItemEntity itemEntity, Player player, ServerLevel level, boolean releaseIfInsertFails) {
+        ItemStack dropStack = itemEntity.getItem();
+        if (player.addItem(dropStack)) {
+            Random random = new Random();
+            float randomPitch = 0.9f + random.nextFloat() * (1.6f - 0.9f);
+            level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.25f, randomPitch);
+            itemEntity.discard();
+        } else if (releaseIfInsertFails) {
+            warnInventoryFull(player);
+            itemEntity.setPos(player.getX(), player.getY() + 0.2D, player.getZ());
+            itemEntity.setDeltaMovement(Vec3.ZERO);
+            releaseTelepathyDrop(itemEntity, player);
         }
     }
 
     private static void releaseTelepathyDrop(ItemEntity itemEntity, Player player) {
         itemEntity.setNoGravity(false);
+        itemEntity.setInvulnerable(false);
         itemEntity.removeTag(TELEPATHY_DROP_TAG);
         itemEntity.removeTag(getOwnerTagForPlayer(player));
         itemEntity.getPersistentData().remove(TELEPATHY_START_TICK_KEY);
