@@ -181,8 +181,7 @@ public record PlayerPurchaseEnchantedBookC2SPayload(int bookPropertiesIndex, Blo
 
                 // Roll for gem of chance
                 double gemOfChanceDropRate = bookProperties.rerollGemChance;
-                //if (random.nextDouble() < gemOfChanceDropRate) {
-                if (true) {
+                if (random.nextDouble() < gemOfChanceDropRate) {
 
                     ItemStack chanceGemToGive = new ItemStack(ModItems.CHANCE_GEM.get());
                     enchTableEntity.startGemPendingAnimation(chanceGemToGive);

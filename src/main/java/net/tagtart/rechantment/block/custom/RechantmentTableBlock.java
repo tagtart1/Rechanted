@@ -1,6 +1,7 @@
 package net.tagtart.rechantment.block.custom;
 
 import com.mojang.serialization.MapCodec;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,7 +27,9 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.tagtart.rechantment.block.ModBlocks;
 import net.tagtart.rechantment.block.entity.RechantmentTableBlockEntity;
+import net.tagtart.rechantment.block.renderer.RechantmentTableRenderer;
 import net.tagtart.rechantment.screen.RechantmentTableMenu;
+import net.tagtart.rechantment.util.AnimHelper;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -79,10 +82,19 @@ public class RechantmentTableBlock extends BaseEntityBlock {
     @Override
     public void animateTick(BlockState pState, Level pLevel, BlockPos pPos, RandomSource pRandom) {
         BlockEntity be = pLevel.getBlockEntity(pPos);
-        if (be instanceof RechantmentTableBlockEntity && ((RechantmentTableBlockEntity) be).getIsCharged()) {
+        if (be instanceof RechantmentTableBlockEntity rbe && ((RechantmentTableBlockEntity) be).getIsCharged()) {
             for(BlockPos blockpos : BOOKSHELF_OFFSETS) {
                 if (pRandom.nextInt(16) == 0 && rechantment$isValidBookShelf(pLevel, pPos, blockpos)) {
-                    pLevel.addParticle(ParticleTypes.ENCHANT, (double)pPos.getX() + (double)0.5F, (double)pPos.getY() + (double)2.0F, (double)pPos.getZ() + (double)0.5F, (double)((float)blockpos.getX() + pRandom.nextFloat()) - (double)0.5F, (double)((float)blockpos.getY() - pRandom.nextFloat() - 1.0F), (double)((float)blockpos.getZ() + pRandom.nextFloat()) - (double)0.5F);
+
+                    float yOffset = 2.0f;
+                    if (rbe.tableState == RechantmentTableBlockEntity.CustomRechantmentTableState.GemPending) {
+                        long gameTime = Minecraft.getInstance().level.getGameTime();
+                        long stateStartTime = gameTime - (RechantmentTableBlockEntity.GEM_PENDING_ANIMATION_LENGTH_TICKS - rbe.currentStateTimeRemaining);
+                        float time = (gameTime - stateStartTime);
+
+                        yOffset += AnimHelper.evaluateKeyframes(RechantmentTableRenderer.GEM_PENDING_Y_TRANSLATION_KEYFRAMES, time);
+                    }
+                    pLevel.addParticle(ParticleTypes.ENCHANT, (double)pPos.getX() + 0.5, (double)pPos.getY() + (double)yOffset, (double)pPos.getZ() + 0.5, (blockpos.getX() + pRandom.nextDouble()) - 0.5, (double)(blockpos.getY() - pRandom.nextDouble() - 1.0), (blockpos.getZ() + pRandom.nextDouble()) - 0.5);
                 }
             }
         }

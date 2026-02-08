@@ -46,36 +46,53 @@ public class RechantmentTableRenderer implements BlockEntityRenderer<Rechantment
     public static final float LAPIS_HOLDER_LENGTH = 1.4f;
     public static final float LAPIS_HOLDER_PADDING = 0.05f;
 
-    private static final ItemStack staticRenderItemStack = new ItemStack(Items.LAPIS_LAZULI);
-    private static final Vec3 UP = new Vec3(0, 1, 0);   // Whole ass production level Vec3 class but no constants for directions smh.
-    private static final Vec3 NORTH = new Vec3(0, 0, 1);
+    public static final ItemStack staticRenderItemStack = new ItemStack(Items.LAPIS_LAZULI);
+    public static final Vec3 UP = new Vec3(0, 1, 0);   // Whole ass production level Vec3 class but no constants for directions smh.
+    public static final Vec3 NORTH = new Vec3(0, 0, 1);
 
     private final BookModel bookModel;
 
     // --- GEM PENDING KEYFRAMES ---
-    private final ArrayList<AnimHelper.FloatKeyframe> GEM_PENDING_Y_TRANSLATION_KEYFRAMES = new ArrayList<>(List.of(
+    public static final ArrayList<AnimHelper.FloatKeyframe> GEM_PENDING_Y_TRANSLATION_KEYFRAMES = new ArrayList<>(List.of(
             new AnimHelper.FloatKeyframe(0f, 0f, AnimHelper::easeOutBack),
-            new AnimHelper.FloatKeyframe(110f, 1.2f, AnimHelper::linear)
+            new AnimHelper.FloatKeyframe(110f, 1.15f, AnimHelper::linear)
     ));
 
-    private final ArrayList<AnimHelper.FloatKeyframe> GEM_PENDING_Y_ROTATION_KEYFRAMES = new ArrayList<>(List.of(
+    public static final ArrayList<AnimHelper.FloatKeyframe> GEM_PENDING_Y_ROTATION_KEYFRAMES = new ArrayList<>(List.of(
             new AnimHelper.FloatKeyframe(0f, 0f, AnimHelper::easeInOutQuad),
-            new AnimHelper.FloatKeyframe(100.0f, (float)Math.PI * 20.0f, AnimHelper::linear)
+            new AnimHelper.FloatKeyframe(100.0f, (float)Math.PI * 20.2f, AnimHelper::easeInOutBack),
+            new AnimHelper.FloatKeyframe(110.0f, (float)Math.PI * 20.0f, AnimHelper::linear)
     ));
 
-    private final ArrayList<AnimHelper.FloatKeyframe> GEM_PENDING_BOOK_OPEN_KEYFRAMES = new ArrayList<>(List.of(
+    public static final ArrayList<AnimHelper.FloatKeyframe> GEM_PENDING_Z_DEG_ROTATION_KEYFRAMES = new ArrayList<>(List.of(
+            new AnimHelper.FloatKeyframe(0f, -70f, AnimHelper::linear),
+            new AnimHelper.FloatKeyframe(45.0f, 0f, AnimHelper::linear)
+    ));
+
+
+    public static final ArrayList<AnimHelper.FloatKeyframe> GEM_PENDING_BOOK_OPEN_KEYFRAMES = new ArrayList<>(List.of(
             new AnimHelper.FloatKeyframe(0f, 1.0f, AnimHelper::linear),
-            new AnimHelper.FloatKeyframe(105.0f, 1.0f, AnimHelper::easeInBack),
-            new AnimHelper.FloatKeyframe(110.0f, 0.0f, AnimHelper::easeOutBack),
-            new AnimHelper.FloatKeyframe(120.0f, 1.0f, AnimHelper::linear)
+            new AnimHelper.FloatKeyframe(115.0f, 1.0f, AnimHelper::easeInBack),
+            new AnimHelper.FloatKeyframe(129.0f, 0.0f, AnimHelper::easeOutBack)
     ));
 
     // --- GEM EARNED KEYFRAMES ---
-    private final ArrayList<AnimHelper.FloatKeyframe> GEM_EARNED_Y_TRANSLATION_KEYFRAMES = new ArrayList<>(List.of(
-            new AnimHelper.FloatKeyframe(0f, GEM_PENDING_Y_TRANSLATION_KEYFRAMES.getLast().value, AnimHelper::easeInBack),   // So it starts at same y-offset last anim. ended.
-            new AnimHelper.FloatKeyframe(18.0f, 0f, AnimHelper::linear)
+    public static  final ArrayList<AnimHelper.FloatKeyframe> GEM_EARNED_Y_TRANSLATION_KEYFRAMES = new ArrayList<>(List.of(
+            new AnimHelper.FloatKeyframe(8f, GEM_PENDING_Y_TRANSLATION_KEYFRAMES.getLast().value, AnimHelper::easeInBack),   // So it starts at same y-offset last anim. ended.
+            new AnimHelper.FloatKeyframe(21.0f, 0f, AnimHelper::linear)
     ));
 
+    public static final ArrayList<AnimHelper.FloatKeyframe> GEM_EARNED_BOOK_OPEN_KEYFRAMES = new ArrayList<>(List.of(
+            new AnimHelper.FloatKeyframe(0f, 0.0f, AnimHelper::easeOutBack),
+            new AnimHelper.FloatKeyframe(8.0f, 1.0f, AnimHelper::linear),
+            new AnimHelper.FloatKeyframe(17.0f, 0.4f, AnimHelper::linear),
+            new AnimHelper.FloatKeyframe(20.0f, 1.0f, AnimHelper::easeInBack)
+    ));
+
+    public static final ArrayList<AnimHelper.FloatKeyframe> GEM_EARNED_Z_DEG_ROTATION_KEYFRAMES = new ArrayList<>(List.of(
+            new AnimHelper.FloatKeyframe(0f, 0f, AnimHelper::easeInOutQuad),
+            new AnimHelper.FloatKeyframe(20.0f, -60f, AnimHelper::linear)
+    ));
 
     public RechantmentTableRenderer(BlockEntityRendererProvider.Context context) {
         this.bookModel = new BookModel(context.bakeLayer(ModelLayers.BOOK));
@@ -123,24 +140,36 @@ public class RechantmentTableRenderer implements BlockEntityRenderer<Rechantment
 
             float yOffset = AnimHelper.evaluateKeyframes(GEM_PENDING_Y_TRANSLATION_KEYFRAMES, time);
             float yRotationOffset = AnimHelper.evaluateKeyframes(GEM_PENDING_Y_ROTATION_KEYFRAMES, time);
+            float zRotationOffset = AnimHelper.evaluateKeyframes(GEM_PENDING_Z_DEG_ROTATION_KEYFRAMES, time);
             float bookOpenOffset = AnimHelper.evaluateKeyframes(GEM_PENDING_BOOK_OPEN_KEYFRAMES, time);
+            float facingRotation = getCorrectBookFacingYRotation(blockEntity);
+
             //System.out.println(yOffset);
 
-            Direction facing = blockEntity.getLapisHolderFacingDirection();
-            Vec3 facingDir = new Vec3(facing.getStepX(), facing.getStepY(), facing.getStepZ()); // TODO: Cache vector to avoid new
+            poseStack.translate(0f, yOffset, 0f);
+            poseStack.mulPose(Axis.YP.rotation(facingRotation + yRotationOffset));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(170.0F + zRotationOffset));
 
-            float facingRotation = facingDir.toVector3f().angleSigned(NORTH.toVector3f(), UP.toVector3f());
-            facingRotation += (float) (Math.PI * 0.5f);
-            facingRotation += yRotationOffset;
-            if (facing == Direction.NORTH || facing == Direction.SOUTH) {
-                facingRotation += (float) (Math.PI);
-            }
+            this.bookModel.setupAnim(time, 0, 0, bookOpenOffset);
+            VertexConsumer vertexconsumer = BOOK_LOCATION.buffer(bufferSource, RenderType::entitySolid);
+            this.bookModel.render(poseStack, vertexconsumer, packedLight, packedOverlay, -1);
+        }
+
+        if (blockEntity.tableState == RechantmentTableBlockEntity.CustomRechantmentTableState.GemEarned) {
+
+            long stateStartTime = gameTime - (RechantmentTableBlockEntity.GEM_EARNED_ANIMATION_LENGTH_TICKS - blockEntity.currentStateTimeRemaining);
+            float time = (gameTime + partialTick - stateStartTime);
+
+            float yOffset = AnimHelper.evaluateKeyframes(GEM_EARNED_Y_TRANSLATION_KEYFRAMES, time);
+            float zRotationOffset = AnimHelper.evaluateKeyframes(GEM_EARNED_Z_DEG_ROTATION_KEYFRAMES, time);
+            float bookOpenOffset = AnimHelper.evaluateKeyframes(GEM_EARNED_BOOK_OPEN_KEYFRAMES, time);
+            float facingRotation = getCorrectBookFacingYRotation(blockEntity);
 
             poseStack.translate(0f, yOffset, 0f);
             poseStack.mulPose(Axis.YP.rotation(facingRotation));
-            poseStack.mulPose(Axis.ZP.rotationDegrees(10.0F));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(170F + zRotationOffset));
 
-            this.bookModel.setupAnim(time, 0f, 0f, 1.0f);
+            this.bookModel.setupAnim(time, 0f, 0f, bookOpenOffset);
             VertexConsumer vertexconsumer = BOOK_LOCATION.buffer(bufferSource, RenderType::entitySolid);
             this.bookModel.render(poseStack, vertexconsumer, packedLight, packedOverlay, -1);
         }
@@ -210,6 +239,19 @@ public class RechantmentTableRenderer implements BlockEntityRenderer<Rechantment
         int bLight = level.getBrightness(LightLayer.BLOCK, pos);
         int sLight = level.getBrightness(LightLayer.SKY, pos);
         return LightTexture.pack(bLight, sLight);
+    }
+
+    private static float getCorrectBookFacingYRotation(RechantmentTableBlockEntity be) {
+        Direction facing = be.getLapisHolderFacingDirection();
+        Vec3 facingDir = new Vec3(facing.getStepX(), facing.getStepY(), facing.getStepZ());
+
+        float facingRotation = facingDir.toVector3f().angleSigned(NORTH.toVector3f(), UP.toVector3f());
+        facingRotation -= (float) (Math.PI * 0.5f);
+        if (facing == Direction.NORTH || facing == Direction.SOUTH) {
+            facingRotation += (float) (Math.PI);
+        }
+
+        return facingRotation;
     }
 
     // Same as enchantment table still; copy-pasted

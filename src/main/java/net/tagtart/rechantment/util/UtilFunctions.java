@@ -414,7 +414,7 @@ public class UtilFunctions {
     }
 
     public static double remap(double fromMin, double fromMax, double toMin, double toMax, double value) {
-        return Mth.lerp(Mth.inverseLerp(fromMin, fromMax, value), toMin, toMax);
+        return Mth.lerp(Mth.inverseLerp(value, fromMin, fromMax), toMin, toMax);
     }
 
     // If EVER called on server, game will shit its pants. Do not do that.

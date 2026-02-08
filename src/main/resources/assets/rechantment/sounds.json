@@ -78,5 +78,21 @@
         "name": "rechantment:super_burp"
       }
     ]
+  },
+  "gem_pending": {
+    "subtitles": "sounds.rechantment.gem_pending",
+    "sounds": [
+      {
+        "name": "rechantment:gem_pending_ominous"
+      }
+    ]
+  },
+  "gem_earned": {
+    "subtitles": "sounds.rechantment.gem_earned",
+    "sounds": [
+      {
+        "name": "rechantment:gem_earned_wow"
+      }
+    ]
   }
 }

@@ -28,6 +28,10 @@ public class ModSounds {
 
     public static final Supplier<SoundEvent> SUPER_BURP = registerSoundEvents("super_burp");
 
+    public static final Supplier<SoundEvent> GEM_PENDING = registerSoundEvents("gem_pending");
+    public static final Supplier<SoundEvent> GEM_EARNED = registerSoundEvents("gem_earned");
+
+
     private static Supplier<SoundEvent> registerSoundEvents(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, name)));
     }

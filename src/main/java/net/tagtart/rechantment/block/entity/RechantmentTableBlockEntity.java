@@ -3,11 +3,13 @@ package net.tagtart.rechantment.block.entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -26,14 +28,17 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import net.tagtart.rechantment.block.renderer.RechantmentTableRenderer;
 import net.tagtart.rechantment.screen.RechantmentTableMenu;
 import net.tagtart.rechantment.sound.ModSounds;
 import net.tagtart.rechantment.util.BookRarityProperties;
 import net.tagtart.rechantment.util.UtilFunctions;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 import oshi.util.tuples.Pair;
 
 import java.util.Optional;
+import java.util.Random;
 
 public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity implements MenuProvider {
 
@@ -42,7 +47,7 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
     public enum CustomRechantmentTableState {
         Normal,         // Normal state. In this state 99.99% of the time.
         GemPending,     // Server rolled gem, book will begin floating up in the air before it's earned.
-        GemEarned,      // After gem pending is done, this just makes book float back down to normal position.
+        GemEarned,      // After gem pending is done, gem spawns and book floats back down to normal position.
     }
 
     public static final int GEM_PENDING_ANIMATION_LENGTH_TICKS = 130;
@@ -187,18 +192,91 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
                 break;
             case GemPending:
 
-                if (currentStateTimeRemaining <= 0) {
-                    completePendingGemAnimation();
+                if (pLevel instanceof ServerLevel serverLevel) {
+
+                    if (currentStateTimeRemaining == GEM_PENDING_ANIMATION_LENGTH_TICKS - 10) {
+                        serverLevel.playSound(null, getBlockPos(), ModSounds.ENCHANT_TABLE_CLOSE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+                    }
+
+                    if (currentStateTimeRemaining % 10 == 0 && currentStateTimeRemaining > 80) {
+                        serverLevel.playSound(null, getBlockPos(), ModSounds.ENCHANT_TABLE_OPEN.get(), SoundSource.BLOCKS, 1.0f, 1.1f);
+                    }
+
+                    if (currentStateTimeRemaining % 15 == 0 && currentStateTimeRemaining > 15) {
+                        float elapsedFraction = (1.0f - ((float) currentStateTimeRemaining / GEM_PENDING_ANIMATION_LENGTH_TICKS));
+                        sendRainbowCircleParticles(
+                                serverLevel,
+                                new Vec3(0, 0.3f, 0),
+                                RechantmentTableRenderer.UP,
+                                RechantmentTableRenderer.NORTH,
+                                0.8f * elapsedFraction,
+                                0.9f,
+                                Mth.clamp(elapsedFraction + 0.4f, 0.0f, 1.0f),
+                                elapsedFraction + 0.1f,
+                                0
+                        );
+                    }
+
+                    if (currentStateTimeRemaining <= 0) {
+                        completePendingGemAnimation();
+                    }
                 }
                 break;
             case GemEarned:
 
-                if (currentStateTimeRemaining <= 0) {
-                    gemEarnedToDefaultState();
+                if (pLevel instanceof ServerLevel serverLevel) {
+                    if (currentStateTimeRemaining <= 0) {
+                        gemEarnedToDefaultState();
+                    }
+
+                    // Needs to play slightly before book lands instead of right when it does; feels off for some reason if not.
+                    if (currentStateTimeRemaining == 2) {
+                        level.playSound(null, getBlockPos(), ModSounds.ENCHANT_TABLE_CLOSE.get(), SoundSource.BLOCKS, 1.5f, 1.0f);
+                    }
                 }
+
                 break;
         }
     }
+
+    public void sendRainbowCircleParticles(ServerLevel serverLevel, Vec3 offset, Vec3 up, Vec3 north, float radius, float saturation, float value, float particleScale, int overrideRGB) {
+        Random rand = new Random();
+        int numParticles = 15;
+        float tau = (float)Math.PI * 2.0f;
+        for (int i = 0; i < numParticles; ++i) {
+            Vec3 particleBasePos = getBlockPos().getCenter();
+
+            float angle = ((float) i / numParticles) * tau;
+            double relativeX = Math.cos(angle);
+            double relativeZ = Math.sin(angle);
+
+            Vec3 west = north.cross(up).normalize();
+            Vec3 particleDirection = north.scale(relativeX).add(west.scale(relativeZ)).normalize();
+
+            //double hue = (float)particleDirection.dot(north);
+            double hue = particleDirection.toVector3f().angleSigned(north.toVector3f(), up.toVector3f());
+            hue = UtilFunctions.remap(-Math.PI, Math.PI, 0.0, 1.0, hue);
+
+            int rgb = (overrideRGB != 0) ? overrideRGB : Mth.hsvToRgb((float) hue, saturation, value);
+
+            DustParticleOptions dustParticles = new DustParticleOptions(Vec3.fromRGB24(rgb).toVector3f(), particleScale);
+            particleDirection = particleDirection.scale(radius);
+
+            serverLevel.sendParticles(
+                    dustParticles,
+                    particleBasePos.x + particleDirection.x + offset.x,
+                    particleBasePos.y + particleDirection.y + offset.y,
+                    particleBasePos.z + particleDirection.z + offset.z,
+                    2,
+                    0,
+                    0,
+                    0,
+                    0.0
+
+            );
+        }
+    }
+
 
     @Override
     public Component getDisplayName() {
@@ -229,6 +307,8 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
 
         pendingGemItem = bonusGem.copy();
 
+        level.playSound(null, getBlockPos(), ModSounds.GEM_PENDING.get(), SoundSource.BLOCKS, 1.5f, 1.1f);
+
         setChanged();
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
@@ -252,12 +332,21 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
         item.setDefaultPickUpDelay();
 
         Direction facing = getLapisHolderFacingDirection();
-        Vec3 moveDir = new Vec3(facing.getStepX(), facing.getStepY(), facing.getStepZ()).normalize();
+        Vec3 moveDir = new Vec3(facing.getStepX(), 0.2f, facing.getStepZ()).normalize();
         moveDir = moveDir.scale(GEM_EARNED_ITEM_MOVE_SPEED_ON_SPAWN);
         item.setDeltaMovement(moveDir);
 
-        level.addFreshEntity(item);
-        level.playSound(null, getBlockPos(),SoundEvents.EXPERIENCE_BOTTLE_THROW, SoundSource.BLOCKS, 1.0f, 1.0f);
+        ServerLevel serverLevel = (ServerLevel)level;
+        serverLevel.addFreshEntity(item);
+        serverLevel.playSound(null, getBlockPos(), SoundEvents.EXPERIENCE_BOTTLE_THROW, SoundSource.BLOCKS, 1.0f, 1.0f);
+        serverLevel.playSound(null, getBlockPos(), ModSounds.GEM_EARNED.get(), SoundSource.BLOCKS, 0.8f, 1.15f);
+
+        Vec3 yOffset = new Vec3(0, 1.5f, 0);
+        sendRainbowCircleParticles(serverLevel, yOffset, RechantmentTableRenderer.UP,RechantmentTableRenderer.NORTH, 0.5f, 0.8f, 0.8f, 0.4f, 0);
+        sendRainbowCircleParticles(serverLevel, yOffset, RechantmentTableRenderer.NORTH, new Vec3(1, 0, 0), 0.7f, 0.8f, 0.9f, 0.5f, 0);
+        sendRainbowCircleParticles(serverLevel, yOffset, new Vec3(1, 0, 0),RechantmentTableRenderer.UP, 0.9f, 0.9f, 0.95f, 0.6f, 0);
+        //sendRainbowCircleParticles(serverLevel, yOffset, new Vec3(1, 1, 1).normalize(), new Vec3(1, -1, 1).normalize(), 0.7f, 0.8f, 0.8f, 0.7f, 0);
+        //sendRainbowCircleParticles(serverLevel, yOffset, new Vec3(1, 1, -1).normalize(), new Vec3(1, 1, -1).normalize(), 0.7f, 0.9f, 0.9f, 0.8f, 0);
 
         pendingGemItem = ItemStack.EMPTY;
 
