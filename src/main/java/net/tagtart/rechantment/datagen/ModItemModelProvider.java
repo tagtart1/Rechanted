@@ -18,11 +18,13 @@ public class ModItemModelProvider extends ItemModelProvider {
     protected void registerModels() {
         rechantmentBookItem();
         basicItem(ModItems.CHANCE_GEM.get());
+        basicItem(ModItems.SHINY_CHANCE_GEM.get());
         basicItem(ModItems.RETURN_GEM.get());
         basicItem(ModItems.TASTY_GEM.get());
         basicItem(ModItems.WARP_GEM.get());
         basicItem(ModItems.CLONE_GEM.get());
         basicItem(ModItems.SMITHING_GEM.get());
+        basicItem(ModItems.MYSTERIOUS_BOOK.get());
     }
 
     private void rechantmentBookItem() {

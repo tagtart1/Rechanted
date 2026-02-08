@@ -106,6 +106,7 @@ public class RechantmentCommonConfigs {
     public static final ModConfigSpec.ConfigValue<List<? extends String>> RARITY_4_ENCHANTMENTS;
 
     public static final ModConfigSpec.ConfigValue<? extends String>       GRINDSTONE_RESULT_ITEM;
+    public static final ModConfigSpec.DoubleValue                         SHINY_CHANCE_GEM_BREAK_CHANCE;
 
     public static final ModConfigSpec.ConfigValue<List<? extends String>> ANNOUNCEMENT_ENCHANTMENTS;
 
@@ -114,6 +115,8 @@ public class RechantmentCommonConfigs {
     public static final ModConfigSpec.ConfigValue<? extends Boolean>      REPLACE_ENCHANTED_LOOT;
     public static final ModConfigSpec.ConfigValue<? extends Boolean>      EXCLUDE_LOWER_TIER_LOOT;
     public static final ModConfigSpec.ConfigValue<? extends Boolean>      NERF_FISHING_LOOT;
+    public static final ModConfigSpec.ConfigValue<? extends Boolean>      MODIFY_VILLAGER_TRADES;
+    public static final ModConfigSpec.IntValue                            VILLAGER_MYSTERIOUS_BOOK_EMERALD_COST;
     // Fortune nerf configs
     public static final ModConfigSpec.ConfigValue<? extends Boolean>      FORTUNE_NERF_ENABLED;
     public static final ModConfigSpec.DoubleValue                         FORTUNE_1_CHANCE;
@@ -310,6 +313,11 @@ public class RechantmentCommonConfigs {
 
         BUILDER.pop();
 
+        BUILDER.translation("config.rechantment.chance_gems.name").comment("Settings for Chance Gems").push("Chance Gems");
+        BUILDER.comment("Chance for the shiny chance gem to shatter when applied.");
+        SHINY_CHANCE_GEM_BREAK_CHANCE = BUILDER.translation("config.rechantment.shiny_chance_gem_break_chance.title").defineInRange("shiny_chance_gem_break_chance", 0.25, 0.0, 1.0);
+        BUILDER.pop();
+
         BUILDER.translation("config.rechantment.announce_rare_drop_list.name").comment("Settings for broadcasting rare enchantment drops to all players").push("Announce Rare Drop List");
         BUILDER.comment("The game will broadcast a message to all players if a player gets any listed enchantments within the level range to drop from the enchantment table",
                 "Format: <enchantment>|<level-range>",
@@ -341,6 +349,11 @@ public class RechantmentCommonConfigs {
         BUILDER.comment("Without this enabled, fishing loot becomes an overpowered source for enchanted books with REPLACE_ENCHANTED_LOOT");
         NERF_FISHING_LOOT = BUILDER.translation("config.rechantment.nerf_fishing_loot.title").define("nerf_fishing_loot", true);
 
+        BUILDER.translation("config.rechantment.villager_trades.name").comment("Settings that control villager trade modifications").push("Villager Trades");
+        BUILDER.comment("If false, villager trades are left untouched (no enchanted book replacement or enchant stripping).");
+        MODIFY_VILLAGER_TRADES = BUILDER.translation("config.rechantment.modify_villager_trades.title").define("modify_villager_trades", true);
+        BUILDER.comment("Cost in emeralds for the mysterious book trade when replacing enchanted books.");
+        VILLAGER_MYSTERIOUS_BOOK_EMERALD_COST = BUILDER.translation("config.rechantment.mysterious_book_emerald_cost.title").defineInRange("mysterious_book_emerald_cost", 32, 1, 64);
         BUILDER.pop();
 
         BUILDER.translation("config.rechantment.fortune_nerf.name").comment("Settings to control Fortune enchantment drop multipliers").push("Fortune Nerf");

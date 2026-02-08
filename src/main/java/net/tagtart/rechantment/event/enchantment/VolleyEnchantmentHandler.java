@@ -15,7 +15,7 @@ import net.tagtart.rechantment.util.UtilFunctions;
 
 @EventBusSubscriber(modid = Rechantment.MOD_ID)
 public class VolleyEnchantmentHandler {
-    private static final float FAN_ANGLE_DEG = 10.0f;
+    private static final float FAN_ANGLE_DEG = 7.0f;
     private static final double[][] CHANCES = {
             {0.25, 0.15, 0.10, 0.10, 0.02, 0.005}, // Level 1
             {0.30, 0.20, 0.15, 0.15, 0.03, 0.01}, // Level 2

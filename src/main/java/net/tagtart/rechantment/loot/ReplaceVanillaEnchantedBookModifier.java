@@ -9,6 +9,7 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
+import net.tagtart.rechantment.util.UtilFunctions;
 
 public class ReplaceVanillaEnchantedBookModifier extends LootModifier {
 
@@ -24,7 +25,7 @@ public class ReplaceVanillaEnchantedBookModifier extends LootModifier {
         for (int i = 0; i < generatedLoot.size(); ++i) {
             ItemStack itemStack = generatedLoot.get(i);
             if (itemStack.getItem() instanceof EnchantedBookItem) {
-                generatedLoot.set(i, LootModifierUtils.rollModdedBook(context));
+                generatedLoot.set(i, UtilFunctions.rollModdedBook(context.getLevel().registryAccess()));
             }
         }
 

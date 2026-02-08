@@ -1,5 +1,7 @@
 {
   "item.rechantment.rechantment_book": "ᴍʏꜱᴛᴇʀɪᴏᴜꜱ ʙᴏᴏᴋ",
+  "item.rechantment.mysterious_book": "ᴍʏꜱᴛᴇʀɪᴏᴜꜱ ʙᴏᴏᴋ",
+  "item.rechantment.mysterious_book.description":  "A book sealed by magic. Said to contain an enchantment within.",
 
   "block.rechantment.rechantment_enchanting_table": "Enchanting Table",
 
@@ -50,12 +52,14 @@
 
   "item.rechantment.chance_gem": "Chance Gem",
   "item.rechantment.chance_gem.description": "Randomizes the success rate on an enchanted book.",
+  "item.rechantment.shiny_chance_gem": "Shiny Chance Gem",
+  "item.rechantment.shiny_chance_gem.description": "Randomizes the success rate on an enchanted book. Its shimmer seems boundless.",
 
   "item.rechantment.return_gem": "Return Gem",
   "item.rechantment.return_gem.description": "Safely teleport to your current respawn point.",
 
   "item.rechantment.tasty_gem": "Tasty Gem",
-  "item.rechantment.tasty_gem.description": "Consume for a buff that gives regeneration and satiation.",
+  "item.rechantment.tasty_gem.description": "Consume to prevent hunger loss except when healing, and slowly regenerate health.",
 
   "item.rechantment.warp_gem": "Warp Gem",
   "item.rechantment.warp_gem.description": "Can be thrown for safe teleportation.",
@@ -64,7 +68,7 @@
   "item.rechantment.clone_gem.description": "Becomes a clone of ANY enchanted book that has not been cloned before and is not itself a clone.",
 
   "item.rechantment.smithing_gem": "Smithing Gem",
-  "item.rechantment.smithing_gem.description": "Acts as a Netherite Upgrade Template.",
+  "item.rechantment.smithing_gem.description": "Can be used to forge Netherite gear.",
 
   "enchantment.rechantment.thunder_strike": "Thunder Strike",
   "enchantment.rechantment.thunder_strike.description": "Chance to summon lightning to strike your targets.",
@@ -224,10 +228,12 @@
 
 
   "config.rechantment.configs_for_all_rarities.name": "Global Rarity Settings",
+  "config.rechantment.chance_gems.name": "Chance Gems",
 
   "config.rechantment.announce_rare_drop_list.name": "Rare Drop Announcements",
 
   "config.rechantment.loot_table_enhancements.name": "Loot Table Enhancements",
+  "config.rechantment.villager_trades.name": "Villager Trades",
 
   "config.rechantment.fortune_nerf.name": "Fortune Nerf Settings",
   "config.rechantment.unique.key.title": "Rarity Key",
@@ -369,6 +375,8 @@
   "config.rechantment.fortune_nerf.tooltip": "Control how Fortune enchantment affects block drops",
   "config.rechantment.grindstone_result_item.title": "Grindstone Result Item",
   "config.rechantment.grindstone_result_item.tooltip": "Item received when grinding any enchanted book",
+  "config.rechantment.shiny_chance_gem_break_chance.title": "Shiny Chance Gem Break Chance",
+  "config.rechantment.shiny_chance_gem_break_chance.tooltip": "Chance for the shiny chance gem to shatter when applied",
 
 
   "config.rechantment.announce_enchantments.title": "Announced Enchantments",
@@ -383,6 +391,8 @@
   "config.rechantment.exclude_lower_tier_loot.tooltip": "Don't affect gold, leather, stone, wood gear",
   "config.rechantment.nerf_fishing_loot.title": "Nerf Fishing Loot",
   "config.rechantment.nerf_fishing_loot.tooltip": "Make fishing loot have weaker enchantments",
+  "config.rechantment.modify_villager_trades.title": "Modify Villager Trades",
+  "config.rechantment.mysterious_book_emerald_cost.title": "Mysterious Book Emerald Cost",
 
   "config.rechantment.nerf_enabled.title": "Fortune Nerf Enabled",
   "config.rechantment.nerf_enabled.tooltip": "Enable fortune enchantment nerfing",

@@ -31,11 +31,13 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.RECHANTMENT_TABLE_BLOCK);
 
                         output.accept(ModItems.CHANCE_GEM.get());
+                        output.accept(ModItems.SHINY_CHANCE_GEM.get());
                         output.accept(ModItems.RETURN_GEM.get());
                         output.accept(ModItems.TASTY_GEM.get());
                         output.accept(ModItems.CLONE_GEM.get());
                         output.accept(ModItems.WARP_GEM.get());
                         output.accept(ModItems.SMITHING_GEM.get());
+                        output.accept(ModItems.MYSTERIOUS_BOOK.get());
 
                         BookRarityProperties[] bookRarityProperties = BookRarityProperties.getAllProperties();
                         for(BookRarityProperties bookRarityProperty : bookRarityProperties) {

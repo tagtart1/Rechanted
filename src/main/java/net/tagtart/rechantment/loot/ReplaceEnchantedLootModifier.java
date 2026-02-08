@@ -25,6 +25,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
 import net.tagtart.rechantment.config.RechantmentCommonConfigs;
+import net.tagtart.rechantment.util.UtilFunctions;
 
 public class ReplaceEnchantedLootModifier extends LootModifier {
 
@@ -68,7 +69,7 @@ public class ReplaceEnchantedLootModifier extends LootModifier {
                 continue;
             }
 
-            generatedLoot.set(i, LootModifierUtils.rollModdedBook(context));
+            generatedLoot.set(i, UtilFunctions.rollModdedBook(context.getLevel().registryAccess()));
         }
 
         return generatedLoot;
