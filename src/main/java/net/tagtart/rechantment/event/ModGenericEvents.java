@@ -45,6 +45,7 @@ import net.tagtart.rechantment.block.ModBlocks;
 import net.tagtart.rechantment.block.entity.RechantmentTableBlockEntity;
 import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.config.RechantmentCommonConfigs;
+import net.tagtart.rechantment.event.enchantment.TelepathyEnchantmentHandler;
 import net.tagtart.rechantment.enchantment.custom.InquisitiveEnchantmentEffect;
 import net.tagtart.rechantment.item.ModItems;
 import net.tagtart.rechantment.networking.data.OpenEnchantTableScreenC2SPayload;
@@ -280,16 +281,9 @@ public class ModGenericEvents {
            int telepathyEnchantment = UtilFunctions.getEnchantmentFromItem("rechantment:telepathy", weapon, event.getEntity().registryAccess());
            if (telepathyEnchantment == 0) return;
 
-           Collection<ItemEntity> items = event.getDrops();
-
-           for (ItemEntity item : items) {
-               if (!player.addItem(item.getItem())) {
-                   ItemStack itemToDrop = item.getItem();
-                   player.drop(itemToDrop, false);
-               }
+           for (ItemEntity item : event.getDrops()) {
+               TelepathyEnchantmentHandler.markItemEntityForTelepathy(item, player);
            }
-
-           event.setCanceled(true);
         }
     }
 
@@ -309,8 +303,17 @@ public class ModGenericEvents {
 
         if (telepathyEnchantment != 0) {
             Player player = event.getAttackingPlayer();
-            ExperienceOrb expOrb = new ExperienceOrb(event.getAttackingPlayer().level(), player.getX(), player.getY(), player.getZ(), expToDrop);
-            event.getAttackingPlayer().level().addFreshEntity(expOrb);
+            if (expToDrop > 0) {
+                ExperienceOrb expOrb = new ExperienceOrb(
+                        event.getAttackingPlayer().level(),
+                        event.getEntity().getX(),
+                        event.getEntity().getY() + 0.5D,
+                        event.getEntity().getZ(),
+                        expToDrop
+                );
+                TelepathyEnchantmentHandler.markExperienceOrbForTelepathy(expOrb, player);
+                event.getAttackingPlayer().level().addFreshEntity(expOrb);
+            }
             event.setDroppedExperience(0);
         } else {
             event.setDroppedExperience(expToDrop);
@@ -327,45 +330,6 @@ public class ModGenericEvents {
             event.setCanceled(true);
         }
     }
-
-    // TODO: Reimplement when enchantment system is ported.
-    //  This one specifically also needs port from tags to data components figured out
-//        @SubscribeEvent
-//        public static void onPickup(ItemEntityPickupEvent event) {
-//            ItemStack pStack = event.getItemEntity().getItem();
-//            if (!(event.getPlayer().level() instanceof ServerLevel level)) return;
-//            if (!pStack.hasTag()) return;
-//            CompoundTag tag = pStack.getTag();
-//            if (tag == null) return;
-//            boolean shouldAnnounce = tag.getBoolean("Announce");
-//            if (!shouldAnnounce) return;
-//
-//            tag.remove("Announce");
-//            int successRate = tag.getInt("SuccessRate");
-//            String enchantmentRaw = tag.getCompound("Enchantment").getString("id");
-//            Style displayHoverStyle = pStack.getDisplayName().getStyle();
-//            String displayNameString;
-//            StringBuilder sb = new StringBuilder(pStack.getDisplayName().getString());
-//            sb.delete(0, 3);
-//            sb.deleteCharAt(sb.length() - 1);
-//            displayNameString = sb.toString();
-//            Component playerName = event.getPlayer().getDisplayName();
-//            BookRarityProperties bookProps = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw);
-//            if (bookProps == null) return;
-//
-//            for (ServerPlayer otherPlayer : level.players()) {
-//                otherPlayer.sendSystemMessage(Component.literal(playerName.getString() + " found ")
-//                        .append(Component.literal(displayNameString).withStyle(displayHoverStyle.withColor(bookProps.color).withUnderlined(true)))
-//                        .append(" at ")
-//                        .append(Component.literal(successRate + "%").withStyle(Style.EMPTY.withColor(bookProps.color)))
-//                        .append("!"));
-//            }
-//
-//            level.playSound(null, event.getPlayer().getOnPos(), SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.PLAYERS, 1f, 1f);
-//
-//
-//
-//        }
 
     @SubscribeEvent
     public static void onGrindstoneChange(GrindstoneEvent.OnPlaceItem event) {

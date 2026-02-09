@@ -235,6 +235,7 @@ public class RechantmentCommonConfigs {
         rarity_2_default_enchantments.add("minecraft:fire_aspect|1|1-2|2,1");
         rarity_2_default_enchantments.add("minecraft:fortune|1|1-3|2,2,1");
         rarity_2_default_enchantments.add("rechantment:telepathy|1|1|1");
+        rarity_2_default_enchantments.add("rechantment:vein_miner|1|1|1");
         rarity_2_default_enchantments.add("rechantment:berserk|1|3|1");
         rarity_2_default_enchantments.add("rechantment:bash|1|1|1");
         RARITY_2_ENCHANTMENTS = BUILDER.translation("config.rechantment.elite.enchantments.title").defineList("enchantments", rarity_2_default_enchantments, () -> "minecraft:sharpness|1|1-4|3,3,2,1", s -> s instanceof String);
@@ -271,6 +272,7 @@ public class RechantmentCommonConfigs {
         rarity_3_default_enchantments.add("rechantment:wisdom|1|1-2|2,1");
         rarity_3_default_enchantments.add("rechantment:courage|1|1|1");
         rarity_3_default_enchantments.add("rechantment:spring|1|1-3|3,2,1");
+        rarity_3_default_enchantments.add("rechantment:timber|1|1-3|3,2,1");
         rarity_3_default_enchantments.add("rechantment:reach|1|1-3|3,2,1");
         rarity_3_default_enchantments.add("minecraft:channeling|1|1|1");
         RARITY_3_ENCHANTMENTS = BUILDER.translation("config.rechantment.ultimate.enchantments.title").defineList("enchantments", rarity_3_default_enchantments, () -> "minecraft:sharpness|1|1-4|3,3,2,1", s -> s instanceof String);

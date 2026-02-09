@@ -21,6 +21,14 @@ public class TickDelayedTasks {
     public static final HashSet<TickDelayedTask> enqueuedTasks = new HashSet<>();
 
     public static void EnqueueItemForRebirth(ServerPlayer player, ItemStack rebornItem, int inventorySlot, boolean isOffhand, EquipmentSlot equipmentSlot) {
+        Rechantment.LOGGER.info(
+                "Rebirth enqueue task: player={}, item={}, slot={}, inventorySlot={}, offhand={}",
+                player.getName().getString(),
+                rebornItem,
+                equipmentSlot,
+                inventorySlot,
+                isOffhand
+        );
         enqueuedTasks.add(new EnqueuedRebirthEvent(player, rebornItem, inventorySlot, isOffhand, equipmentSlot));
     }
 
@@ -66,23 +74,36 @@ public class TickDelayedTasks {
 
         @Override
         public void onTicksDelayElapsed() {
+            Rechantment.LOGGER.info(
+                    "Rebirth execute task: player={}, item={}, slot={}, inventorySlot={}, offhand={}",
+                    player.getName().getString(),
+                    this.rebornItem,
+                    this.equipmentSlot,
+                    this.inventorySlot,
+                    this.isOffhand
+            );
             UtilFunctions.triggerRebirthClientEffects(player, (ServerLevel) player.level(), this.rebornItem.getItem().getDefaultInstance());
 
             if (this.isOffhand) {
                 player.getInventory().offhand.set(0, this.rebornItem);
+                Rechantment.LOGGER.info("Rebirth execute route: offhand");
             }
             else if (this.equipmentSlot != null) {
                 player.setItemSlot(this.equipmentSlot, this.rebornItem);
+                Rechantment.LOGGER.info("Rebirth execute route: explicit equipment slot {}", this.equipmentSlot);
             }
             else if (this.rebornItem.getItem() instanceof ArmorItem armorItem) {
                 EquipmentSlot armorSlot = armorItem.getEquipmentSlot();
                 player.setItemSlot(armorSlot, this.rebornItem);
+                Rechantment.LOGGER.info("Rebirth execute route: inferred armor slot {}", armorSlot);
             }
             else if (this.inventorySlot != -1) {
                 player.getInventory().setItem(this.inventorySlot, this.rebornItem);
+                Rechantment.LOGGER.info("Rebirth execute route: inventory slot {}", this.inventorySlot);
             }
             else {
                 player.drop(this.rebornItem, false); // Drop the item if the slot is occupied
+                Rechantment.LOGGER.info("Rebirth execute route: dropped item");
             }
         }
     }
