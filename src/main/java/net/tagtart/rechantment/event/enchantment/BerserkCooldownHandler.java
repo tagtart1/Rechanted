@@ -26,7 +26,7 @@ public class BerserkCooldownHandler {
                     0,
                     false, // ambient
                     false, // visible particles
-                    true   // show icon
+                    false  // show icon
             );
             entity.addEffect(cooldownEffect);
         }
