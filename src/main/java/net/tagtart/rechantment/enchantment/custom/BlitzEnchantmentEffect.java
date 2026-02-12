@@ -2,9 +2,12 @@ package net.tagtart.rechantment.enchantment.custom;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -89,10 +92,20 @@ public record BlitzEnchantmentEffect() implements EnchantmentEntityEffect {
                         BLITZ_DURATION,
                         amplifierToApply, // will display as Blitz I, II, III
                         false, // ambient
-                        true,  // visible particles
+                        false, // visible particles
                         true   // show icon
                 );
                 player.addEffect(blitzEffect);
+                level.playSound(
+                        null,
+                        player.getX(),
+                        player.getY(),
+                        player.getZ(),
+                        SoundEvents.ENDER_DRAGON_HURT,
+                        SoundSource.PLAYERS,
+                        1F,
+                        1.15F
+                );
 
                 // Reset combo
                 player.setData(ModAttachments.BLITZ_COMBO, 0);
@@ -113,6 +126,18 @@ public record BlitzEnchantmentEffect() implements EnchantmentEntityEffect {
             // Get current Blitz effect to determine stack level
             MobEffectInstance blitzEffect = player.getEffect(ModEffects.BLITZ_EFFECT);
             if (blitzEffect == null) return;
+
+            level.sendParticles(
+                    ParticleTypes.INSTANT_EFFECT,
+                    target.getX(),
+                    target.getY(0.55),
+                    target.getZ(),
+                    12,
+                    target.getBbWidth() * 0.35,
+                    target.getBbHeight() * 0.45,
+                    target.getBbWidth() * 0.35,
+                    0.05
+            );
 
             // Stack level is amplifier + 1 (amplifier 0 = stack 1)
             int stackLevel = blitzEffect.getAmplifier() + 1;
