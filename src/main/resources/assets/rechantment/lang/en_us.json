@@ -103,8 +103,8 @@
   "enchantment.rechantment.overload": "Overload",
   "enchantment.rechantment.overload.description": "Increases maximum health.",
 
-  "enchantment.rechantment.telepathy": "Telepathy",
-  "enchantment.rechantment.telepathy.description": "Item drops teleport directly to your inventory.",
+  "enchantment.rechantment.telekinesis": "Telekinesis",
+  "enchantment.rechantment.telekinesis.description": "Item drops begin to gravitate towards you.",
 
   "enchantment.rechantment.timber": "Timber",
   "enchantment.rechantment.timber.description": "Harvest the entire tree when breaking logs.",
@@ -411,3 +411,4 @@
 
   "effect.rechantment.satiated": "Satiated"
 }
+

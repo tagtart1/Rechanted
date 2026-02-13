@@ -45,7 +45,7 @@ import net.tagtart.rechantment.block.ModBlocks;
 import net.tagtart.rechantment.block.entity.RechantmentTableBlockEntity;
 import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.config.RechantmentCommonConfigs;
-import net.tagtart.rechantment.event.enchantment.TelepathyEnchantmentHandler;
+import net.tagtart.rechantment.event.enchantment.TelekinesisEnchantmentHandler;
 import net.tagtart.rechantment.enchantment.custom.InquisitiveEnchantmentEffect;
 import net.tagtart.rechantment.item.ModItems;
 import net.tagtart.rechantment.networking.data.OpenEnchantTableScreenC2SPayload;
@@ -278,11 +278,11 @@ public class ModGenericEvents {
 
        if ((event.getSource().getEntity() instanceof Player player)) {
            ItemStack weapon = player.getMainHandItem();
-           int telepathyEnchantment = UtilFunctions.getEnchantmentFromItem("rechantment:telepathy", weapon, event.getEntity().registryAccess());
-           if (telepathyEnchantment == 0) return;
+           int telekinesisEnchantment = UtilFunctions.getEnchantmentFromItem("rechantment:telekinesis", weapon, event.getEntity().registryAccess());
+           if (telekinesisEnchantment == 0) return;
 
            for (ItemEntity item : event.getDrops()) {
-               TelepathyEnchantmentHandler.markItemEntityForTelepathy(item, player);
+               TelekinesisEnchantmentHandler.markItemEntityForTelekinesis(item, player);
            }
         }
     }
@@ -293,7 +293,7 @@ public class ModGenericEvents {
         if (event.getAttackingPlayer() == null) return;
         ItemStack weapon = event.getAttackingPlayer().getMainHandItem();
         int inquisitiveEnchantmentLevel = UtilFunctions.getEnchantmentFromItem("rechantment:inquisitive", weapon, event.getAttackingPlayer().registryAccess());
-        int telepathyEnchantment = UtilFunctions.getEnchantmentFromItem("rechantment:telepathy", weapon, event.getAttackingPlayer().registryAccess());
+        int telekinesisEnchantment = UtilFunctions.getEnchantmentFromItem("rechantment:telekinesis", weapon, event.getAttackingPlayer().registryAccess());
 
         int expToDrop = event.getDroppedExperience();
 
@@ -301,7 +301,7 @@ public class ModGenericEvents {
             expToDrop = (int)InquisitiveEnchantmentEffect.trueProcess(inquisitiveEnchantmentLevel, RandomSource.create(), (float)expToDrop);
         }
 
-        if (telepathyEnchantment != 0) {
+        if (telekinesisEnchantment != 0) {
             Player player = event.getAttackingPlayer();
             if (expToDrop > 0) {
                 ExperienceOrb expOrb = new ExperienceOrb(
@@ -311,7 +311,7 @@ public class ModGenericEvents {
                         event.getEntity().getZ(),
                         expToDrop
                 );
-                TelepathyEnchantmentHandler.markExperienceOrbForTelepathy(expOrb, player);
+                TelekinesisEnchantmentHandler.markExperienceOrbForTelekinesis(expOrb, player);
                 event.getAttackingPlayer().level().addFreshEntity(expOrb);
             }
             event.setDroppedExperience(0);
@@ -450,3 +450,4 @@ public class ModGenericEvents {
         stack.remove(ModDataComponents.ANNOUNCE_ON_FOUND);
     }
 }
+

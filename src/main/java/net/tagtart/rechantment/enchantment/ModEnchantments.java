@@ -54,8 +54,8 @@ public class ModEnchantments {
     public static final ResourceKey<Enchantment> VEIN_MINER = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "vein_miner"));
 
-    public static final ResourceKey<Enchantment> TELEPATHY = ResourceKey.create(Registries.ENCHANTMENT,
-            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "telepathy"));
+    public static final ResourceKey<Enchantment> TELEKINESIS = ResourceKey.create(Registries.ENCHANTMENT,
+            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "telekinesis"));
 
     public static final ResourceKey<Enchantment> REBIRTH =ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "rebirth"));
@@ -229,7 +229,7 @@ public class ModEnchantments {
                 Enchantment.dynamicCost(60, 20),
                 2, EquipmentSlotGroup.MAINHAND)));
 
-        register(context, TELEPATHY, Enchantment.enchantment(Enchantment.definition(
+        register(context, TELEKINESIS, Enchantment.enchantment(Enchantment.definition(
                 items.getOrThrow(ModItemTagsProvider.DIGGER_ITEM),
                 items.getOrThrow(ModItemTagsProvider.DIGGER_ITEM),
                 5,
@@ -281,3 +281,4 @@ public class ModEnchantments {
         registry.register(key, builder.build(key.location()));
     }
 }
+

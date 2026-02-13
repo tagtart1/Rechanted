@@ -24,10 +24,12 @@ import java.time.Instant;
 public record BlitzEnchantmentEffect() implements EnchantmentEntityEffect {
 
     private static final float ATTACK_STRENGTH_THRESHOLD = 0.50f; // 50% charge required
-    private static final long COMBO_WINDOW_MILLIS = 1000; // 1 second between hits
+    private static final long FIRST_STACK_COMBO_WINDOW_MILLIS = 1250; // 1.25 seconds between hits for first stack
     private static final long ACTIVE_COMBO_WINDOW_MILLIS = 1500; // 1.5 seconds when Blitz is active
     private static final int COMBO_REQUIRED = 6; // Hits needed to activate
-    private static final int BLITZ_DURATION = 10 * 20; // 10 seconds in ticks
+    private static final int BLITZ_I_DURATION = 10 * 20; // 10 seconds in ticks
+    private static final int BLITZ_II_DURATION = 12 * 20; // 12 seconds in ticks
+    private static final int BLITZ_III_DURATION = 15 * 20; // 15 seconds in ticks
     private static final int MAX_BLITZ_STACKS = 3;
 
     public static final MapCodec<BlitzEnchantmentEffect> CODEC = MapCodec
@@ -49,8 +51,8 @@ public record BlitzEnchantmentEffect() implements EnchantmentEntityEffect {
         int currentCombo = player.getData(ModAttachments.BLITZ_COMBO);
         boolean hasBlitzActive = player.hasEffect(ModEffects.BLITZ_EFFECT);
 
-        // Determine combo window based on whether Blitz is active
-        long comboWindow = hasBlitzActive ? ACTIVE_COMBO_WINDOW_MILLIS : COMBO_WINDOW_MILLIS;
+        // First stack has its own timing window; active Blitz keeps its existing combo timing.
+        long comboWindow = hasBlitzActive ? ACTIVE_COMBO_WINDOW_MILLIS : FIRST_STACK_COMBO_WINDOW_MILLIS;
 
         // Check if within combo window
         Duration timeSinceLastHit = Duration.between(lastAttack, now);
@@ -89,7 +91,7 @@ public record BlitzEnchantmentEffect() implements EnchantmentEntityEffect {
                 // Activate Blitz
                 MobEffectInstance blitzEffect = new MobEffectInstance(
                         ModEffects.BLITZ_EFFECT,
-                        BLITZ_DURATION,
+                        getBlitzDurationTicksForAmplifier(amplifierToApply),
                         amplifierToApply, // will display as Blitz I, II, III
                         false, // ambient
                         false, // visible particles
@@ -159,6 +161,14 @@ public record BlitzEnchantmentEffect() implements EnchantmentEntityEffect {
     @Override
     public MapCodec<? extends EnchantmentEntityEffect> codec() {
         return CODEC;
+    }
+
+    private static int getBlitzDurationTicksForAmplifier(int amplifier) {
+        return switch (amplifier) {
+            case 0 -> BLITZ_I_DURATION;
+            case 1 -> BLITZ_II_DURATION;
+            default -> BLITZ_III_DURATION;
+        };
     }
 }
 

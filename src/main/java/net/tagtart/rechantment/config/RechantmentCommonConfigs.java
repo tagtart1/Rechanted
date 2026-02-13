@@ -234,7 +234,7 @@ public class RechantmentCommonConfigs {
         rarity_2_default_enchantments.add("rechantment:voids_bane|1|4|1");
         rarity_2_default_enchantments.add("minecraft:fire_aspect|1|1-2|2,1");
         rarity_2_default_enchantments.add("minecraft:fortune|1|1-3|2,2,1");
-        rarity_2_default_enchantments.add("rechantment:telepathy|1|1|1");
+        rarity_2_default_enchantments.add("rechantment:telekinesis|1|1|1");
         rarity_2_default_enchantments.add("rechantment:vein_miner|1|1|1");
         rarity_2_default_enchantments.add("rechantment:berserk|1|3|1");
         rarity_2_default_enchantments.add("rechantment:bash|1|1|1");
@@ -372,3 +372,4 @@ public class RechantmentCommonConfigs {
         SPEC = BUILDER.build();
     }
 }
+

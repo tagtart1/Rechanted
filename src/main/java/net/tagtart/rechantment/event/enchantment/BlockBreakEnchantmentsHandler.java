@@ -34,7 +34,7 @@ public class BlockBreakEnchantmentsHandler {
             30
     );
 
-    // Telepathy, Vein Miner, Timber, Wisdom Enchantments - Blocks
+    // Telekinesis, Vein Miner, Timber, Wisdom Enchantments - Blocks
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
         if (event.getPlayer().level().isClientSide()) return;
@@ -48,7 +48,7 @@ public class BlockBreakEnchantmentsHandler {
         }
 
         ItemStack handItem = event.getPlayer().getMainHandItem();
-        int telepathyEnchantmentLevel = UtilFunctions.getEnchantmentFromItem("rechantment:telepathy", handItem, event.getLevel().registryAccess());
+        int telekinesisEnchantmentLevel = UtilFunctions.getEnchantmentFromItem("rechantment:telekinesis", handItem, event.getLevel().registryAccess());
         int veinMinerEnchantmentLevel = UtilFunctions.getEnchantmentFromItem("rechantment:vein_miner", handItem, event.getLevel().registryAccess());
         int timberEnchantmentLevel = UtilFunctions.getEnchantmentFromItem("rechantment:timber", handItem, event.getLevel().registryAccess());
         int fortuneEnchantmentLevel = UtilFunctions.getEnchantmentFromItem("minecraft:fortune", handItem, event.getPlayer().registryAccess());
@@ -56,18 +56,18 @@ public class BlockBreakEnchantmentsHandler {
 
         if (veinMinerEnchantmentLevel != 0 && event.getState().is(Tags.Blocks.ORES)) {
             BlockPos[] oresToDestroy = UtilFunctions.BFSLevelForBlocks(level, Tags.Blocks.ORES, event.getPos(), 10, true);
-            destroyBulkBlocks(event, oresToDestroy, level, handItem, telepathyEnchantmentLevel, fortuneEnchantmentLevel);
+            destroyBulkBlocks(event, oresToDestroy, level, handItem, telekinesisEnchantmentLevel, fortuneEnchantmentLevel);
         }
 
         else if (timberEnchantmentLevel != 0 && event.getState().is(BlockTags.LOGS)) {
             int searchLimit = TIMBER_BLOCKS_PER_LEVEL.get(timberEnchantmentLevel - 1);
 
             BlockPos[] woodToDestroy = UtilFunctions.BFSLevelForBlocks(level, BlockTags.LOGS, event.getPos(), searchLimit, true);
-            destroyBulkBlocks(event, woodToDestroy, level, handItem, telepathyEnchantmentLevel, fortuneEnchantmentLevel);
+            destroyBulkBlocks(event, woodToDestroy, level, handItem, telekinesisEnchantmentLevel, fortuneEnchantmentLevel);
         }
 
-        // Telepathy check. Only happens when destroying a single block normally here
-        else if (telepathyEnchantmentLevel != 0) {
+        // Telekinesis check. Only happens when destroying a single block normally here
+        else if (telekinesisEnchantmentLevel != 0) {
 
             telepathicallyDestroyBlock(event, event.getPos(), level, handItem, fortuneEnchantmentLevel);
 
@@ -127,7 +127,7 @@ public class BlockBreakEnchantmentsHandler {
         }
     }
 
-    // Note this has to manually check logic with some synergistic enchantments due to how telepathy
+    // Note this has to manually check logic with some synergistic enchantments due to how telekinesis
     // changes block breaking logic.
     private static void telepathicallyDestroyBlock(BlockEvent.BreakEvent event, BlockPos blockPos, ServerLevel level, ItemStack handItem, int fortuneEnchantmentLevel) {
         BlockState blockState = level.getBlockState(blockPos);
@@ -168,7 +168,7 @@ public class BlockBreakEnchantmentsHandler {
                     blockPos.getZ() + 0.5D,
                     drop.copy()
             );
-            TelepathyEnchantmentHandler.markItemEntityForTelepathy(itemEntity, event.getPlayer());
+            TelekinesisEnchantmentHandler.markItemEntityForTelekinesis(itemEntity, event.getPlayer());
             level.addFreshEntity(itemEntity);
         }
 
@@ -190,26 +190,26 @@ public class BlockBreakEnchantmentsHandler {
                     blockPos.getZ() + 0.5D,
                     expToDrop
             );
-            TelepathyEnchantmentHandler.markExperienceOrbForTelepathy(expOrb, player);
+            TelekinesisEnchantmentHandler.markExperienceOrbForTelekinesis(expOrb, player);
             level.addFreshEntity(expOrb);
         }
     }
 
     // Vein miner / timber specific
-    private static void destroyBulkBlocks(BlockEvent.BreakEvent event, BlockPos[] blocksToDestroy, ServerLevel level, ItemStack handItem, int telepathyEnchantmentLevel, int fortuneEnchantmentLevel) {
+    private static void destroyBulkBlocks(BlockEvent.BreakEvent event, BlockPos[] blocksToDestroy, ServerLevel level, ItemStack handItem, int telekinesisEnchantmentLevel, int fortuneEnchantmentLevel) {
         int destroyedSuccessfully = 0;
         //int wisdomEnchantment = UtilFunctions.getEnchantmentFromItem("rechantment:wisdom", handItem, event.getPlayer().registryAccess());
 
         for (BlockPos blockPos : blocksToDestroy) {
             BlockState blockState = level.getBlockState(blockPos);
 
-            // Account for telepathy with each block to destroy
-            if (telepathyEnchantmentLevel != 0) {
+            // Account for telekinesis with each block to destroy
+            if (telekinesisEnchantmentLevel != 0) {
                 telepathicallyDestroyBlock(event, blockPos, level, handItem, fortuneEnchantmentLevel);
                 ++destroyedSuccessfully;
             }
 
-            // If no telepathy, just do basic block destroy manually.
+            // If no telekinesis, just do basic block destroy manually.
             else {
                 ++destroyedSuccessfully;
 
@@ -236,3 +236,4 @@ public class BlockBreakEnchantmentsHandler {
     }
 
 }
+
