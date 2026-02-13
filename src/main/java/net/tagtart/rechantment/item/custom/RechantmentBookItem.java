@@ -26,6 +26,7 @@ import net.tagtart.rechantment.util.UtilFunctions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 public class RechantmentBookItem extends Item {
@@ -80,16 +81,13 @@ public class RechantmentBookItem extends Item {
         if (enchantRarityInfo == null)
             return Component.literal("Invalid enchantment!");
 
-        String romanLevel ="";
-
-        if (enchantment.getMaxLevel() != 1)
-            romanLevel = Component.translatable("enchantment.level." + enchantmentLevel).getString();
-
-        String enchantFormattedName = Component.translatable("enchantment." + enchantmentSource + "." + enchantmentName).getString();
+        String romanLevel = resolveEnchantmentLevelText(enchantment, enchantmentLevel);
+        String enchantFormattedName = resolveEnchantmentDisplayName(enchantmentSource, enchantmentName);
         String rarityIcon = Component.translatable("enchantment.rarity." + enchantRarityInfo.key).getString();
+        String fullName = romanLevel.isEmpty() ? enchantFormattedName : enchantFormattedName + " " + romanLevel;
 
         return Component.literal(rarityIcon + " ")
-                .append(Component.literal(enchantFormattedName + " " + romanLevel)
+                .append(Component.literal(fullName)
                         .withStyle(Style.EMPTY.withColor(enchantRarityInfo.color)));
 
     }
@@ -320,5 +318,51 @@ public class RechantmentBookItem extends Item {
 
         }
         return text;
+    }
+
+    private static String resolveEnchantmentDisplayName(String enchantmentSource, String enchantmentName) {
+        String enchantmentTranslationKey = "enchantment." + enchantmentSource + "." + enchantmentName;
+        String translatedName = Component.translatable(enchantmentTranslationKey).getString();
+        if (!translatedName.equals(enchantmentTranslationKey)) {
+            return translatedName;
+        }
+
+        return fallbackEnchantmentName(enchantmentName);
+    }
+
+    private static String resolveEnchantmentLevelText(Enchantment enchantment, int enchantmentLevel) {
+        if (enchantment.getMaxLevel() == 1) {
+            return "";
+        }
+
+        String levelTranslationKey = "enchantment.level." + enchantmentLevel;
+        String translatedLevel = Component.translatable(levelTranslationKey).getString();
+        if (!translatedLevel.equals(levelTranslationKey)) {
+            return translatedLevel;
+        }
+
+        return UtilFunctions.intToRoman(enchantmentLevel);
+    }
+
+    private static String fallbackEnchantmentName(String enchantmentName) {
+        String[] segments = enchantmentName.split("_");
+        StringBuilder formattedName = new StringBuilder();
+        for (String segment : segments) {
+            if (segment.isEmpty()) {
+                continue;
+            }
+
+            if (!formattedName.isEmpty()) {
+                formattedName.append(" ");
+            }
+
+            String lowercaseSegment = segment.toLowerCase(Locale.ROOT);
+            formattedName.append(Character.toUpperCase(lowercaseSegment.charAt(0)));
+            if (lowercaseSegment.length() > 1) {
+                formattedName.append(lowercaseSegment.substring(1));
+            }
+        }
+
+        return formattedName.toString();
     }
 }
