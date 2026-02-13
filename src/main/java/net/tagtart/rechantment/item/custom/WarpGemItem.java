@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -19,7 +20,11 @@ import net.tagtart.rechantment.util.UtilFunctions;
 import java.util.List;
 
 public class WarpGemItem  extends Item {
+    private static final int TRUE_WARP_GEM_MAX_DURABILITY = 24;
+    private static final int[] RANDOM_WARP_GEM_DURABILITY = new int[]{12, 16, 20, 24};
+
     public WarpGemItem(Properties properties) {
+
         super(properties);
     }
 
@@ -72,7 +77,17 @@ public class WarpGemItem  extends Item {
         }
 
         player.awardStat(Stats.ITEM_USED.get(this));
-        itemstack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+        EquipmentSlot usedSlot = hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
+        itemstack.hurtAndBreak(1, player, usedSlot);
         return InteractionResultHolder.sidedSuccess(itemstack, level.isClientSide());
+    }
+
+
+    // Used for whenever a warp gem comes from the enchanting table and we want it to start with random damage
+    public static void initializeRandomizedDurability(ItemStack stack, RandomSource random) {
+        if (stack.isEmpty()) return;
+        int remainingDurability = RANDOM_WARP_GEM_DURABILITY[random.nextInt(RANDOM_WARP_GEM_DURABILITY.length)];
+        int startingDamage = Math.max(0, TRUE_WARP_GEM_MAX_DURABILITY - remainingDurability);
+        stack.setDamageValue(startingDamage);
     }
 }

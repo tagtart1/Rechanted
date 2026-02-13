@@ -79,11 +79,14 @@ public record ThunderStrikeEnchantmentEffect() implements EnchantmentEntityEffec
             }
 
             // Apply lightning damage attributed to the attacker (so looting works)
+            int invulnerableTime = livingTarget.invulnerableTime;
+            livingTarget.invulnerableTime = 0;
             if (attacker != null) {
                 livingTarget.hurt(level.damageSources().indirectMagic(lightningBolt, attacker), LIGHTNING_DAMAGE);
             } else {
                 livingTarget.hurt(level.damageSources().lightningBolt(), LIGHTNING_DAMAGE);
             }
+            livingTarget.invulnerableTime = invulnerableTime;
 
             // Calculate knockback direction from center of lightning strike
             double d0 = livingTarget.getX() - entity.getX();

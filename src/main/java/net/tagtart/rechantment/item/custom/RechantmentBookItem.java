@@ -29,6 +29,9 @@ import java.util.List;
 import java.util.Random;
 
 public class RechantmentBookItem extends Item {
+    private static final String DEFAULT_BOOK_DESCRIPTION =
+            "Mystical powers imbue this book granting its bearers power.";
+
     // Holds the item names for each icon on the tooltip
     public static final String[] BASE_ICON_ITEMS = {
             "minecraft:iron_helmet",
@@ -109,8 +112,17 @@ public class RechantmentBookItem extends Item {
 
         tooltipComponents.add(Component.literal(" "));
 
-        Component translatable = Component.translatable("enchantment." + enchantmentInfo[0] + "." + enchantmentInfo[1] + ".description");
-        String resolvedText = translatable.getString();
+        String baseTranslationKey = "enchantment." + enchantmentInfo[0] + "." + enchantmentInfo[1];
+        String descriptionKey = baseTranslationKey + ".description";
+        String shortDescriptionKey = baseTranslationKey + ".desc";
+        // Fallback order for tooltip text: .description -> .desc -> static default sentence.
+        String resolvedText = Component.translatable(descriptionKey).getString();
+        if (resolvedText.equals(descriptionKey)) {
+            resolvedText = Component.translatable(shortDescriptionKey).getString();
+            if (resolvedText.equals(shortDescriptionKey)) {
+                resolvedText = DEFAULT_BOOK_DESCRIPTION;
+            }
+        }
         List<String> splitText = UtilFunctions.wrapText(resolvedText, maxWidthTooltip);
         for (String line : splitText) {
             tooltipComponents.add(Component.literal(line.trim()));

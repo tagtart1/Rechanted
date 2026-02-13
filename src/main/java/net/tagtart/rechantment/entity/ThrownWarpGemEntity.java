@@ -27,7 +27,8 @@ import net.tagtart.rechantment.event.TickDelayedTasks;
 import net.tagtart.rechantment.item.ModItems;
 import org.joml.Vector3f;
 
-import java.util.Random;
+import java.util.List;
+import java.util.function.Supplier;
 
 public class ThrownWarpGemEntity extends ThrownEnderpearl {
     private static final double TRAIL_BACK_OFFSET = 0.25;
@@ -39,6 +40,21 @@ public class ThrownWarpGemEntity extends ThrownEnderpearl {
     private static final double LANDING_RING_RADIUS = 1.25;
     private static final double LANDING_RING_SPEED = 10.35;
     private static final double LANDING_RING_Y_SPEED = 0.02;
+    private static final int EFFECT_DURATION_20S = 20 * 20;
+    private static final int EFFECT_DURATION_30S = 30 * 20;
+    private static final int EFFECT_DURATION_3S = 3 * 20;
+    private static final List<Supplier<MobEffectInstance>> RANDOM_LANDING_EFFECT_POOL = List.of(
+            () -> new MobEffectInstance(MobEffects.DAMAGE_BOOST, EFFECT_DURATION_20S, 0),
+            () -> new MobEffectInstance(MobEffects.MOVEMENT_SPEED, EFFECT_DURATION_20S, 0),
+            () -> new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, EFFECT_DURATION_20S, 0),
+            () -> new MobEffectInstance(MobEffects.FIRE_RESISTANCE, EFFECT_DURATION_20S, 0),
+            () -> new MobEffectInstance(MobEffects.REGENERATION, EFFECT_DURATION_20S, 0),
+            () -> new MobEffectInstance(MobEffects.NIGHT_VISION, EFFECT_DURATION_30S, 0),
+            () -> new MobEffectInstance(MobEffects.ABSORPTION, EFFECT_DURATION_20S, 0),
+            () -> new MobEffectInstance(MobEffects.DIG_SPEED, EFFECT_DURATION_30S, 1),
+            () -> new MobEffectInstance(MobEffects.JUMP, EFFECT_DURATION_20S, 3),
+            () -> new MobEffectInstance(MobEffects.LEVITATION, EFFECT_DURATION_3S, 0)
+    );
 
     public ThrownWarpGemEntity(EntityType<ThrownWarpGemEntity> entityType, Level level) {
         super(entityType, level);
@@ -98,6 +114,7 @@ public class ThrownWarpGemEntity extends ThrownEnderpearl {
                             entity.resetFallDistance();
                             serverplayer.resetCurrentImpulseContext();
                             serverplayer.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 20 * 5));
+                            applyRandomLandingEffect(serverplayer, serverlevel);
                             playWarpGemSound(serverlevel, this.position());
                         }
                     }
@@ -108,6 +125,10 @@ public class ThrownWarpGemEntity extends ThrownEnderpearl {
                         )
                     );
                     entity.resetFallDistance();
+                    if (entity instanceof LivingEntity livingEntity) {
+                        livingEntity.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 20 * 5));
+                        applyRandomLandingEffect(livingEntity, serverlevel);
+                    }
                     playWarpGemSound(serverlevel, this.position());
                 }
             }
@@ -175,5 +196,10 @@ public class ThrownWarpGemEntity extends ThrownEnderpearl {
     private void playWarpGemSound(Level level, Vec3 pos) {
         // Replace this sound with your custom landing sound.
         level.playSound(null, pos.x, pos.y, pos.z, SoundEvents.AMETHYST_BLOCK_FALL, SoundSource.PLAYERS, 2.0F, 1.0F);
+    }
+
+    private static void applyRandomLandingEffect(LivingEntity entity, ServerLevel level) {
+        int randomIndex = level.getRandom().nextInt(RANDOM_LANDING_EFFECT_POOL.size());
+        entity.addEffect(RANDOM_LANDING_EFFECT_POOL.get(randomIndex).get());
     }
 }
