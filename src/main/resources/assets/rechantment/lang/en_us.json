@@ -69,6 +69,9 @@
   "item.rechantment.warp_gem": "Warp Gem",
   "item.rechantment.warp_gem.description": "Can be thrown for safe teleportation. The gem is unstable and has undefined effects and durability.",
   "item.rechantment.warp_gem.desc": "Can be thrown for safe teleportation. The gem is unstable and has undefined effects and durability.",
+  "item.rechantment.lucky_gem": "Lucky Gem",
+  "item.rechantment.lucky_gem.description": "Launches forward where you aim and hangs in the air. It feels like a promise of something bigger.",
+  "item.rechantment.lucky_gem.desc": "Launches forward where you aim and hangs in the air. It feels like a promise of something bigger.",
 
   "item.rechantment.clone_gem": "Clone Gem",
   "item.rechantment.clone_gem.description": "Becomes a clone of ANY enchanted book that has not been cloned before and is not itself a clone.",

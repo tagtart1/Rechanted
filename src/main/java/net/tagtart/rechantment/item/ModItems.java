@@ -26,6 +26,9 @@ public class  ModItems {
      public static final DeferredItem<Item> WARP_GEM = ITEMS.register("warp_gem",
              () -> new WarpGemItem(new Item.Properties().durability(24)));
 
+     public static final DeferredItem<Item> LUCKY_GEM = ITEMS.register("lucky_gem",
+             () -> new LuckyGemItem(new Item.Properties()));
+
      public static final DeferredItem<Item> CLONE_GEM = ITEMS.register("clone_gem",
              () -> new CloneGemItem(new Item.Properties()));
 

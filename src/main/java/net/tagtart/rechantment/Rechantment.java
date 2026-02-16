@@ -118,6 +118,7 @@ public class Rechantment {
         public static void registerRenderer(EntityRenderersEvent.RegisterRenderers event) {
             event.registerEntityRenderer(ModEntities.RETURN_GEM_BEAM_ENTITY.get(), ReturnGemBeamEntityRenderer::new);
             event.registerEntityRenderer(ModEntities.THROWN_WARP_GEM_ENTITY.get(), ThrownItemRenderer::new);
+            event.registerEntityRenderer(ModEntities.LUCKY_GEM_ENTITY.get(), ThrownItemRenderer::new);
 
             event.registerBlockEntityRenderer(ModBlockEntities.RECHANTMENT_TABLE_BE.get(), RechantmentTableRenderer::new);
         }
