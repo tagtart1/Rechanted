@@ -76,7 +76,7 @@ public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderabl
         ArrayList<Component> retVal = new ArrayList<>();
 
         String[] enchantmentInfo = poolEntry.enchantment.split(":");
-        Component translatable = Component.translatable("enchantment." + enchantmentInfo[0] + "." + enchantmentInfo[1] + ".description");
+        Component translatable = Component.translatable("enchantment." + enchantmentInfo[0] + "." + enchantmentInfo[1] + ".desc");
         String resolvedText = translatable.getString();
         List<String> splitText = UtilFunctions.wrapText(resolvedText, 165);
         for (String line : splitText) {

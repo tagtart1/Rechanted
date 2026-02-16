@@ -75,7 +75,7 @@ public class SmithingGemItem extends SmithingTemplateItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.add(Component.literal(" "));
-        tooltipComponents.add(Component.translatable("item.rechantment.smithing_gem.description").withStyle(ChatFormatting.WHITE));
+        tooltipComponents.add(Component.translatable("item.rechantment.smithing_gem.desc").withStyle(ChatFormatting.WHITE));
         tooltipComponents.add(Component.literal(" "));
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }

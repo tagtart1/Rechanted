@@ -26,7 +26,7 @@ public class TastyGemItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        Component itemDescription = Component.translatable("item.rechantment.tasty_gem.description");
+        Component itemDescription = Component.translatable("item.rechantment.tasty_gem.desc");
 
         String itemDescriptionString = itemDescription.getString();
 

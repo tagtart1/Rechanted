@@ -110,16 +110,10 @@ public class RechantmentBookItem extends Item {
 
         tooltipComponents.add(Component.literal(" "));
 
-        String baseTranslationKey = "enchantment." + enchantmentInfo[0] + "." + enchantmentInfo[1];
-        String descriptionKey = baseTranslationKey + ".description";
-        String shortDescriptionKey = baseTranslationKey + ".desc";
-        // Fallback order for tooltip text: .description -> .desc -> static default sentence.
+        String descriptionKey = "enchantment." + enchantmentInfo[0] + "." + enchantmentInfo[1] + ".desc";
         String resolvedText = Component.translatable(descriptionKey).getString();
         if (resolvedText.equals(descriptionKey)) {
-            resolvedText = Component.translatable(shortDescriptionKey).getString();
-            if (resolvedText.equals(shortDescriptionKey)) {
-                resolvedText = DEFAULT_BOOK_DESCRIPTION;
-            }
+            resolvedText = DEFAULT_BOOK_DESCRIPTION;
         }
         List<String> splitText = UtilFunctions.wrapText(resolvedText, maxWidthTooltip);
         for (String line : splitText) {
