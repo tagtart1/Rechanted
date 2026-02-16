@@ -56,6 +56,7 @@ public class LuckyGemItem extends Item {
 
         if (!level.isClientSide) {
             LuckyGemEntity luckyGemEntity = new LuckyGemEntity(level, player.getX(), player.getY(0.5D), player.getZ());
+            luckyGemEntity.setOwner(player);
             luckyGemEntity.setItem(itemStack.copyWithCount(1));
             luckyGemEntity.signalInDirection(player.getLookAngle());
             level.addFreshEntity(luckyGemEntity);

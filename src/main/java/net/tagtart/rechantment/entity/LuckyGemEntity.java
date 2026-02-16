@@ -3,14 +3,18 @@ package net.tagtart.rechantment.entity;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.ChatFormatting;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
@@ -20,8 +24,11 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.tagtart.rechantment.item.ModItems;
 
+import java.util.UUID;
+
 public class LuckyGemEntity extends Entity implements ItemSupplier {
     private static final EntityDataAccessor<ItemStack> DATA_ITEM_STACK = SynchedEntityData.defineId(LuckyGemEntity.class, EntityDataSerializers.ITEM_STACK);
+    private static final String OWNER_UUID_TAG = "OwnerUUID";
     private double tx;
     private double ty;
     private double tz;
@@ -39,6 +46,7 @@ public class LuckyGemEntity extends Entity implements ItemSupplier {
     private static final double RISE_TARGET_Y_SCALE = 0.20D;
     private static final double RISE_TARGET_Y_VELOCITY_CAP = 1.0D;
     private static final double DIVE_VERTICAL_VELOCITY = -0.9D;
+    private UUID ownerUuid;
     private int life;
 
 
@@ -95,6 +103,10 @@ public class LuckyGemEntity extends Entity implements ItemSupplier {
         this.life = 0;
     }
 
+    public void setOwner(Player owner) {
+        this.ownerUuid = owner.getUUID();
+    }
+
     private FlightPhase getFlightPhase() {
         if (this.life < RISE_DURATION_TICKS) {
             return FlightPhase.RISING;
@@ -133,6 +145,14 @@ public class LuckyGemEntity extends Entity implements ItemSupplier {
         return direction == Direction.UP;
     }
 
+    private Player getOwnerPlayer() {
+        if (this.ownerUuid == null || !(this.level() instanceof ServerLevel serverLevel)) {
+            return null;
+        }
+
+        return serverLevel.getPlayerByUUID(this.ownerUuid);
+    }
+
     private Vec3 computeSteeringVelocity(Vec3 currentVelocity, double targetY, double yBlend) {
         double d4 = this.tx - this.getX();
         double d5 = this.tz - this.getZ();
@@ -148,6 +168,27 @@ public class LuckyGemEntity extends Entity implements ItemSupplier {
     private void popAndDropItem() {
         // TODO: spawn firework
         this.playSound(SoundEvents.ENDER_EYE_DEATH, 1.0F, 1.0F);
+        this.discard();
+    }
+
+    private void handleConfinedSpaceFailure() {
+        Player owner = this.getOwnerPlayer();
+        ItemStack stack = this.getItem().copy();
+        if (owner != null) {
+            if (!owner.getAbilities().instabuild && !stack.isEmpty()) {
+                if (!owner.getInventory().add(stack)) {
+                    owner.drop(stack, false);
+                }
+            }
+
+            owner.displayClientMessage(
+                    Component.literal("The power should not be casted in confined spaces...").withStyle(ChatFormatting.LIGHT_PURPLE),
+                    true
+            );
+        } else if (!stack.isEmpty()) {
+            this.level().addFreshEntity(new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), stack));
+        }
+
         this.discard();
     }
 
@@ -196,7 +237,7 @@ public class LuckyGemEntity extends Entity implements ItemSupplier {
 
                 BlockHitResult hit = this.traceBlockHit(startPos, startPos.add(vec3));
                 if (hit != null && this.checkCeilingHIt(hit)) {
-                    this.life = DIVE_PHASE_START_TICK;
+                    this.handleConfinedSpaceFailure();
                     return;
                 }
             } else if (phase == FlightPhase.PAUSE) {
@@ -256,6 +297,9 @@ public class LuckyGemEntity extends Entity implements ItemSupplier {
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         compound.put("Item", this.getItem().save(this.registryAccess()));
+        if (this.ownerUuid != null) {
+            compound.putUUID(OWNER_UUID_TAG, this.ownerUuid);
+        }
     }
 
     /**
@@ -268,12 +312,19 @@ public class LuckyGemEntity extends Entity implements ItemSupplier {
         } else {
             this.setItem(this.getDefaultItem());
         }
+
+        if (compound.hasUUID(OWNER_UUID_TAG)) {
+            this.ownerUuid = compound.getUUID(OWNER_UUID_TAG);
+        } else {
+            this.ownerUuid = null;
+        }
     }
 
     private ItemStack getDefaultItem() {
         return new ItemStack(ModItems.LUCKY_GEM.get());
     }
 
+    // TODO: figure out what does this do
     @Override
     public float getLightLevelDependentMagicValue() {
         return 1.0F;
