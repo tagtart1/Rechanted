@@ -169,6 +169,9 @@ public class RechantmentCommonConfigs {
         rarity_0_default_enchantments.add("minecraft:aqua_affinity|1|1|1");
         rarity_0_default_enchantments.add("minecraft:punch|1|1-2|3,1");
         rarity_0_default_enchantments.add("minecraft:piercing|1|3-4|2,1");
+        rarity_0_default_enchantments.add("minecraft:density|1|1-5|4,3,2,2,1");
+        rarity_0_default_enchantments.add("minecraft:breach|1|1-4|4,3,2,1");
+        rarity_0_default_enchantments.add("minecraft:wind_burst|1|1-3|3,2,1");
 
         RARITY_0_ENCHANTMENTS = BUILDER.translation("config.rechantment.simple.enchantments.title").defineList("enchantments", rarity_0_default_enchantments, () -> "minecraft:sharpness|1|1-4|3,3,2,1", s -> s instanceof String);
         BUILDER.pop();
@@ -372,4 +375,3 @@ public class RechantmentCommonConfigs {
         SPEC = BUILDER.build();
     }
 }
-

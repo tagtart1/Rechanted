@@ -50,6 +50,7 @@ public class RechantmentBookItem extends Item {
             "minecraft:bow",
             "minecraft:crossbow",
             "minecraft:elytra",
+            "minecraft:mace",
     };
 
     public RechantmentBookItem(Properties properties) {

@@ -46,9 +46,9 @@
   "enchantment.icon.shovel": "瞕",
   "enchantment.icon.sword": "瞖",
   "enchantment.icon.trident": "瞗",
+  "enchantment.icon.mace": "瞘",
 
   "creative.rechantment.title": "Rechantment",
-
 
   "item.rechantment.chance_gem": "Chance Gem",
   "item.rechantment.chance_gem.desc": "Randomizes the success rate on an enchanted book.",
@@ -129,6 +129,12 @@
   "enchantment.rechantment.reach": "Reach",
   "enchantment.rechantment.reach.desc": "Increases block interaction reach while holding the tool.",
 
+  "enchantment.minecraft.breach": "Breach",
+  "enchantment.minecraft.breach.desc": "Reduces target armor effectiveness when striking with a mace.",
+  "enchantment.minecraft.density": "Density",
+  "enchantment.minecraft.density.desc": "Increases smash damage based on fall distance.",
+  "enchantment.minecraft.wind_burst": "Wind Burst",
+  "enchantment.minecraft.wind_burst.desc": "Launches the attacker upward after a successful smash attack.",
   "enchantment.minecraft.protection.desc": "Reduces most types of damage by increasing amounts.",
   "enchantment.minecraft.fire_protection.desc": "Reduces damage and burn time when lit on fire.",
   "enchantment.minecraft.feather_falling.desc": "Reduces the damage dealt from falling.",
@@ -178,8 +184,6 @@
 
   "config.rechantment.book_rarities.title": "Book Rarity",
 
-
-
   "config.rechantment.simple.name": "Edit Simple Rarity",
   "config.rechantment.simple.title": "Simple Rarity",
   "config.rechantment.simple.key.title": "Rarity Key",
@@ -222,12 +226,9 @@
 
   "config.rechantment.elite.name": "Edit Elite Rarity",
 
-
   "config.rechantment.ultimate.name": "Edit Ultimate Rarity",
 
-
   "config.rechantment.legendary.name": "Edit Legendary Rarity",
-
 
   "config.rechantment.configs_for_all_rarities.name": "Global Rarity Settings",
   "config.rechantment.chance_gems.name": "Chance Gems",
@@ -380,10 +381,8 @@
   "config.rechantment.shiny_chance_gem_break_chance.title": "Shiny Chance Gem Break Chance",
   "config.rechantment.shiny_chance_gem_break_chance.tooltip": "Chance for the shiny chance gem to shatter when applied",
 
-
   "config.rechantment.announce_enchantments.title": "Announced Enchantments",
   "config.rechantment.announce_enchantments.tooltip": "Enchantments that will be announced when found in loot",
-
 
   "config.rechantment.replace_enchanted_loot.title": "Replace Enchanted Loot",
   "config.rechantment.replace_enchanted_loot.tooltip": "Replace enchanted items with Rechantment books",
@@ -413,4 +412,3 @@
 
   "effect.rechantment.satiated": "Satiated"
 }
-
