@@ -39,7 +39,7 @@ public class LuckyGemPopTrailHandler {
 
         boolean isGemTrail = persistentData.getBoolean(LuckyGemEntity.POP_REWARD_TRAIL_IS_GEM_KEY);
         serverLevel.sendParticles(
-                isGemTrail ? ParticleTypes.FLAME : ParticleTypes.FIREWORK,
+                isGemTrail ? ParticleTypes.HAPPY_VILLAGER : ParticleTypes.FIREWORK,
                 itemEntity.getX(),
                 itemEntity.getY() + 0.1D,
                 itemEntity.getZ(),

@@ -195,13 +195,6 @@ public record PlayerPurchaseEnchantedBookC2SPayload(int bookPropertiesIndex, Blo
 
                     soundToPlay = SoundEvents.PLAYER_LEVELUP;
                     player.sendSystemMessage(Component.literal("You found a Gem of Chance!").withStyle(ChatFormatting.GREEN));
-                    int freeSlot = player.getInventory().getFreeSlot();
-                    if (freeSlot == -1) {
-                        //player.drop(chanceGemToGive, false);
-                    }
-                    else {
-                        //player.getInventory().setItem(freeSlot, chanceGemToGive);
-                    }
                 }
 
                 level.playSound(null, payload.enchantTablePos, soundToPlay, SoundSource.BLOCKS, 1f, 1f);

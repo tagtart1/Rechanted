@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public final class LuckyGemDropTable {
+    private static final int MYSTERIOUS_BOOK_MIN = 2;
+    private static final int MYSTERIOUS_BOOK_MAX = 5;
     private static final DropPool MATERIALS_POOL = new DropPool(List.of(
             DropEntry.weighted(() -> Items.IRON_BLOCK, 1, 3, 41),
             DropEntry.weighted(() -> Items.GOLD_BLOCK, 1, 3, 41),
@@ -52,14 +54,17 @@ public final class LuckyGemDropTable {
 
     public static List<ItemStack> rollDrops(RandomSource random) {
         List<ItemStack> drops = new ArrayList<>();
-
-        drops.add(DropEntry.weighted(ModItems.MYSTERIOUS_BOOK::get, 2, 5, 1).roll(random));
+        int mysteriousBookCount = random.nextIntBetweenInclusive(MYSTERIOUS_BOOK_MIN, MYSTERIOUS_BOOK_MAX);
+        for (int i = 0; i < mysteriousBookCount; i++) {
+            drops.add(new ItemStack(ModItems.MYSTERIOUS_BOOK.get(), 1));
+        }
+        drops.add(new ItemStack(Items.EXPERIENCE_BOTTLE, random.nextIntBetweenInclusive(1, 32)));
         drops.add(MATERIALS_POOL.roll(random));
         drops.add(GOLDEN_FOOD_POOL.roll(random));
         drops.add(UTILITY_POOL.roll(random));
         drops.add(WOOL_POOL.roll(random));
 
-        if (random.nextDouble() < 0.015D) {
+        if (random.nextDouble() < 1D) {
             // TODO: Replace with weighted random gem roll once the shared gem-weight table is available.
             drops.add(new ItemStack(ModItems.CHANCE_GEM.get(), 1));
         }
@@ -73,7 +78,7 @@ public final class LuckyGemDropTable {
         }
 
         ItemStack roll(RandomSource random) {
-            int count = random.nextInt(this.maxCount - this.minCount + 1) + this.minCount;
+            int count = random.nextIntBetweenInclusive(this.minCount, this.maxCount);
             return new ItemStack(this.itemSupplier.get(), count);
         }
     }
