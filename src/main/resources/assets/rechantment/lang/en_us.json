@@ -46,6 +46,7 @@
   "enchantment.icon.shovel": "瞕",
   "enchantment.icon.sword": "瞖",
   "enchantment.icon.trident": "瞗",
+  "enchantment.icon.spear": "瞙",
   "enchantment.icon.mace": "瞘",
 
   "creative.rechantment.title": "Rechantment",
@@ -135,6 +136,8 @@
   "enchantment.minecraft.density.desc": "Increases smash damage based on fall distance.",
   "enchantment.minecraft.wind_burst": "Wind Burst",
   "enchantment.minecraft.wind_burst.desc": "Launches the attacker upward after a successful smash attack.",
+  "enchantment.minecraft.lunge": "Lunge",
+  "enchantment.minecraft.lunge.desc": "Propels the attacker forward after a jab.",
   "enchantment.minecraft.protection.desc": "Reduces most types of damage by increasing amounts.",
   "enchantment.minecraft.fire_protection.desc": "Reduces damage and burn time when lit on fire.",
   "enchantment.minecraft.feather_falling.desc": "Reduces the damage dealt from falling.",
