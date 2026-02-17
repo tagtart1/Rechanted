@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.AnvilUpdateEvent;
 import net.neoforged.neoforge.event.GrindstoneEvent;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
@@ -59,6 +60,7 @@ import java.util.List;
 
 @EventBusSubscriber(modid = Rechantment.MOD_ID)
 public class ModGenericEvents {
+    private static final String ENCHANTMENT_DESCRIPTIONS_MOD_ID = "enchdesc";
 
     @SubscribeEvent
     public static void register(RegisterPayloadHandlersEvent event) {
@@ -173,8 +175,16 @@ public class ModGenericEvents {
         else if (stack.isEnchanted()) {
 
             ItemEnchantments enchantments = stack.get(DataComponents.ENCHANTMENTS);
+            if (enchantments == null || enchantments.isEmpty()) {
+                if (stack.getOrDefault(ModDataComponents.REBORN, false)) {
+                    addRebornTooltipAtTop(tooltip);
+                }
+                return;
+            }
+
             List<Object2IntMap.Entry<Holder<Enchantment>>> enchantsSorted = new ArrayList<>(enchantments.entrySet());
             boolean hasRebornState = stack.getOrDefault(ModDataComponents.REBORN, false);
+            boolean hasEnchantmentDescriptions = hasEnchantmentDescriptionsLoaded();
 
             enchantsSorted.sort((component1, component2) -> {
                 String enchantmentRaw1 = component1.getKey().unwrapKey().get().location().toString();
@@ -206,67 +216,100 @@ public class ModGenericEvents {
                 return Float.compare(rarityValue2, rarityValue1);
             });
 
-            // First pass:
-            // Only replace line indices that match an enchantment's translated name.
-            // This is technically a foolproof way of doing this but is very slow and I hate to do it like this.
-            // If there's a better way to accomplish the same thing then this def should be refactored.
-            int enchantmentTooltipsStartIndex = tooltip.size();
-            for(int i = 1; i <= enchantsSorted.size(); i++) {
+            if (hasEnchantmentDescriptions) {
+                // Compatibility path:
+                // Keep rarity/curse coloring, but do not reorder lines to avoid index conflicts with Enchantment Descriptions.
+                Set<Integer> consumedIndices = new HashSet<>();
+                for (Object2IntMap.Entry<Holder<Enchantment>> entry : enchantsSorted) {
+                    Component fullEnchantName = Enchantment.getFullname(entry.getKey(), enchantments.getLevel(entry.getKey()));
+                    String translatedString = fullEnchantName.getString();
 
-                Object2IntMap.Entry<Holder<Enchantment>> entry = enchantsSorted.get(i - 1);
+                    for (int tooltipIndex = 0; tooltipIndex < tooltip.size(); tooltipIndex++) {
+                        if (consumedIndices.contains(tooltipIndex)) {
+                            continue;
+                        }
 
-                Component fullEnchantName = Enchantment.getFullname(entry.getKey(), enchantments.getLevel(entry.getKey()));
-
-
-                MutableComponent translatedText = Component.translatable(fullEnchantName.getString());
-                String translatedString = translatedText.getString(); // avoid redundant toString calls below
-                Optional<Component> replacedComponent = tooltip.stream().filter((text) -> {
-                    String existingTranslated = text.getString();
-                    if (existingTranslated.equalsIgnoreCase(translatedString)) {
-                        return true;
+                        if (tooltip.get(tooltipIndex).getString().equalsIgnoreCase(translatedString)) {
+                            tooltip.set(tooltipIndex, fullEnchantName.copy().withStyle(getStyleForEnchantment(entry.getKey())));
+                            consumedIndices.add(tooltipIndex);
+                            break;
+                        }
                     }
-                    return false;
-                }).findFirst();
-                if (replacedComponent.isPresent()) {
-                    int replaceIndex = tooltip.indexOf(replacedComponent.get());
-                    enchantmentTooltipsStartIndex = Math.min(replaceIndex, enchantmentTooltipsStartIndex);
                 }
             }
+            else {
+                // First pass:
+                // Only replace line indices that match an enchantment's translated name.
+                // This is technically a foolproof way of doing this but is very slow and I hate to do it like this.
+                // If there's a better way to accomplish the same thing then this def should be refactored.
+                int enchantmentTooltipsStartIndex = tooltip.size();
+                for (int i = 1; i <= enchantsSorted.size(); i++) {
 
-            // Second pass:
-            // Now actually replace tooltips of enchantments in our desired order.
-            int replacementIndex = enchantmentTooltipsStartIndex;
-            for(int i = 1; i <= enchantsSorted.size(); i++) {
-
-                Object2IntMap.Entry<Holder<Enchantment>> entry = enchantsSorted.get(i - 1);
-                String enchantmentRaw = entry.getKey().unwrapKey().get().location().toString();
-                BookRarityProperties rarityProperties = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw);
-
-                Style style = Style.EMPTY;
-                if (entry.getKey().is(EnchantmentTags.CURSE)) {
-                    style = Style.EMPTY.withColor(ChatFormatting.RED);
+                    Object2IntMap.Entry<Holder<Enchantment>> entry = enchantsSorted.get(i - 1);
+                    Component fullEnchantName = Enchantment.getFullname(entry.getKey(), enchantments.getLevel(entry.getKey()));
+                    String translatedString = fullEnchantName.getString();
+                    Optional<Component> replacedComponent = tooltip.stream().filter((text) -> {
+                        String existingTranslated = text.getString();
+                        if (existingTranslated.equalsIgnoreCase(translatedString)) {
+                            return true;
+                        }
+                        return false;
+                    }).findFirst();
+                    if (replacedComponent.isPresent()) {
+                        int replaceIndex = tooltip.indexOf(replacedComponent.get());
+                        enchantmentTooltipsStartIndex = Math.min(replaceIndex, enchantmentTooltipsStartIndex);
+                    }
                 }
 
-                else if (rarityProperties != null) {
-                    style = Style.EMPTY.withColor(rarityProperties.color);
+                // Second pass:
+                // Now actually replace tooltips of enchantments in our desired order.
+                int replacementIndex = enchantmentTooltipsStartIndex;
+                for (int i = 1; i <= enchantsSorted.size(); i++) {
+                    Object2IntMap.Entry<Holder<Enchantment>> entry = enchantsSorted.get(i - 1);
+                    Component fullEnchantName = Enchantment.getFullname(entry.getKey(), enchantments.getLevel(entry.getKey()));
+                    tooltip.set(replacementIndex++, fullEnchantName.copy().withStyle(getStyleForEnchantment(entry.getKey())));
                 }
-
-                Component fullEnchantName = Enchantment.getFullname(entry.getKey(), enchantments.getLevel(entry.getKey()));
-                tooltip.set(replacementIndex++, Component.translatable(fullEnchantName.getString()).withStyle((style)));
             }
 
             if (hasRebornState) {
-                Component rebornText = Component.translatable("enchantment.rechantment.reborn").withStyle(Style.EMPTY.withColor(ChatFormatting.WHITE).withBold(true));
-                int rebornInsertIndex = Math.max(1, Math.min(enchantmentTooltipsStartIndex, tooltip.size()));
-                tooltip.add(rebornInsertIndex, rebornText);
+                addRebornTooltipAtTop(tooltip);
             }
         } else if (stack.getOrDefault(ModDataComponents.REBORN, false)) {
-            Component rebornText = Component.translatable("enchantment.rechantment.reborn").withStyle(Style.EMPTY.withColor(ChatFormatting.WHITE).withBold(true));
-            int rebornInsertIndex = Math.min(1, tooltip.size());
-            tooltip.add(rebornInsertIndex, rebornText);
+            addRebornTooltipAtTop(tooltip);
         }
 
 
+    }
+
+    private static boolean hasEnchantmentDescriptionsLoaded() {
+        return ModList.get().isLoaded(ENCHANTMENT_DESCRIPTIONS_MOD_ID);
+    }
+
+    private static Style getStyleForEnchantment(Holder<Enchantment> enchantmentHolder) {
+        if (enchantmentHolder.is(EnchantmentTags.CURSE)) {
+            return Style.EMPTY.withColor(ChatFormatting.RED);
+        }
+
+        String enchantmentRaw = enchantmentHolder.unwrapKey().get().location().toString();
+        BookRarityProperties rarityProperties = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw);
+        if (rarityProperties != null) {
+            return Style.EMPTY.withColor(rarityProperties.color);
+        }
+
+        return Style.EMPTY;
+    }
+
+    private static void addRebornTooltipAtTop(List<Component> tooltip) {
+        Component rebornText = Component.translatable("enchantment.rechantment.reborn")
+                .withStyle(Style.EMPTY.withColor(ChatFormatting.WHITE).withBold(true));
+        String rebornTextString = rebornText.getString();
+        boolean alreadyPresent = tooltip.stream().anyMatch(component -> component.getString().equalsIgnoreCase(rebornTextString));
+        if (alreadyPresent) {
+            return;
+        }
+
+        int rebornInsertIndex = Math.min(1, tooltip.size());
+        tooltip.add(rebornInsertIndex, rebornText);
     }
 
 
@@ -450,4 +493,3 @@ public class ModGenericEvents {
         stack.remove(ModDataComponents.ANNOUNCE_ON_FOUND);
     }
 }
-
