@@ -92,7 +92,12 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
         hoverables.add(new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(1),BookRarityProperties.getAllProperties()[1].iconResourceLocation,leftPos + 150, topPos + 44));
         hoverables.add(new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(2),BookRarityProperties.getAllProperties()[2].iconResourceLocation, leftPos + 43,  topPos + 41));
         hoverables.add(new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(3),BookRarityProperties.getAllProperties()[3].iconResourceLocation, leftPos + 116, topPos + 41));
-        hoverables.add(new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(4),BookRarityProperties.getAllProperties()[4].iconResourceLocation,  leftPos + 79, topPos + 38));
+
+        HoverableWithTooltipGuiRenderable animatedLegendaryHoverable = new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(4),BookRarityProperties.getAllProperties()[4].iconResourceLocation,  leftPos + 79, topPos + 38);
+        animatedLegendaryHoverable.setAnimatedData(new HoverableGuiRenderable.AnimatedTextureData(
+                16, 16, 16, 112, 3, 7, true
+        ));
+        hoverables.add(animatedLegendaryHoverable);
 
         // Diffuse textures for line shader effect.
         // Indices are offset by 1 for efficiency; empty/no effect is index zero.
