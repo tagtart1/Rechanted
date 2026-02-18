@@ -36,6 +36,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.TASTY_GEM.get());
                         output.accept(ModItems.CLONE_GEM.get());
                         output.accept(ModItems.WARP_GEM.get());
+                        output.accept(ModItems.LUCKY_GEM.get());
                         output.accept(ModItems.SMITHING_GEM.get());
                         output.accept(ModItems.MYSTERIOUS_BOOK.get());
 

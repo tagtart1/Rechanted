@@ -188,6 +188,24 @@
       "chars": [
         "瞗"
       ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rechantment:icons/item_spear.png",
+      "ascent": 8,
+      "height": 11,
+      "chars": [
+        "瞙"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "rechantment:icons/item_mace.png",
+      "ascent": 8,
+      "height": 11,
+      "chars": [
+        "瞘"
+      ]
     }
   ]
 }

@@ -90,19 +90,19 @@
       }
     ]
   },
-  "gem_pending": {
-    "subtitles": "sounds.rechantment.gem_pending",
+  "item_pending": {
+    "subtitles": "sounds.rechantment.item_pending",
     "sounds": [
       {
-        "name": "rechantment:gem_pending_ominous"
+        "name": "rechantment:item_pending_ominous"
       }
     ]
   },
-  "gem_earned": {
-    "subtitles": "sounds.rechantment.gem_earned",
+  "item_earned": {
+    "subtitles": "sounds.rechantment.item_earned",
     "sounds": [
       {
-        "name": "rechantment:gem_earned_wow"
+        "name": "rechantment:item_earned_wow"
       }
     ]
   }

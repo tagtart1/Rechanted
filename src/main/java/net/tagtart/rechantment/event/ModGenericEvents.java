@@ -7,6 +7,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
@@ -30,6 +31,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.AnvilUpdateEvent;
 import net.neoforged.neoforge.event.GrindstoneEvent;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
@@ -45,7 +47,7 @@ import net.tagtart.rechantment.block.ModBlocks;
 import net.tagtart.rechantment.block.entity.RechantmentTableBlockEntity;
 import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.config.RechantmentCommonConfigs;
-import net.tagtart.rechantment.enchantment.ModEnchantments;
+import net.tagtart.rechantment.event.enchantment.TelekinesisEnchantmentHandler;
 import net.tagtart.rechantment.enchantment.custom.InquisitiveEnchantmentEffect;
 import net.tagtart.rechantment.item.ModItems;
 import net.tagtart.rechantment.networking.data.OpenEnchantTableScreenC2SPayload;
@@ -59,6 +61,7 @@ import java.util.List;
 
 @EventBusSubscriber(modid = Rechantment.MOD_ID)
 public class ModGenericEvents {
+    private static final String ENCHANTMENT_DESCRIPTIONS_MOD_ID = "enchdesc";
 
     @SubscribeEvent
     public static void register(RegisterPayloadHandlersEvent event) {
@@ -166,8 +169,6 @@ public class ModGenericEvents {
         if (event.getEntity() == null)
             return;
 
-        RegistryAccess registryAccess = event.getEntity().registryAccess();
-
         if (stack.getItem() instanceof EnchantedBookItem) {
             tooltip.add(Component.literal("Vanilla books have been disabled.").withStyle(ChatFormatting.RED));
         }
@@ -175,8 +176,16 @@ public class ModGenericEvents {
         else if (stack.isEnchanted()) {
 
             ItemEnchantments enchantments = stack.get(DataComponents.ENCHANTMENTS);
+            if (enchantments == null || enchantments.isEmpty()) {
+                if (stack.getOrDefault(ModDataComponents.REBORN, false)) {
+                    addRebornTooltipAtTop(tooltip);
+                }
+                return;
+            }
+
             List<Object2IntMap.Entry<Holder<Enchantment>>> enchantsSorted = new ArrayList<>(enchantments.entrySet());
-            Holder<Enchantment> rebornEnchantment = UtilFunctions.getEnchantmentReferenceIfPresent(registryAccess, ModEnchantments.REBORN);
+            boolean hasRebornState = stack.getOrDefault(ModDataComponents.REBORN, false);
+            boolean hasEnchantmentDescriptions = hasEnchantmentDescriptionsLoaded();
 
             enchantsSorted.sort((component1, component2) -> {
                 String enchantmentRaw1 = component1.getKey().unwrapKey().get().location().toString();
@@ -192,10 +201,6 @@ public class ModGenericEvents {
                 if (rarity1 == null && component1.getKey().is(EnchantmentTags.CURSE)) {
                     rarityValue1 = 99.0f;
                 }
-                else if (rarity1 == null && component1.getKey() == rebornEnchantment) {
-                    rarityValue1 = 100f;
-
-                }
                 else if (rarity1 != null) {
 
                     rarityValue1 = rarity1.rarity;
@@ -203,10 +208,6 @@ public class ModGenericEvents {
 
                 if (rarity2 == null && component2.getKey().is(EnchantmentTags.CURSE)) {
                     rarityValue2 = 99.0f;
-                }
-                else if (rarity2 == null && component2.getKey() == rebornEnchantment) {
-                    rarityValue1 = 100f;
-
                 }
                 else if (rarity2 != null) {
                     rarityValue2 = rarity2.rarity;
@@ -216,61 +217,100 @@ public class ModGenericEvents {
                 return Float.compare(rarityValue2, rarityValue1);
             });
 
-            // First pass:
-            // Only replace line indices that match an enchantment's translated name.
-            // This is technically a foolproof way of doing this but is very slow and I hate to do it like this.
-            // If there's a better way to accomplish the same thing then this def should be refactored.
-            int enchantmentTooltipsStartIndex = tooltip.size();
-            for(int i = 1; i <= enchantsSorted.size(); i++) {
+            if (hasEnchantmentDescriptions) {
+                // Compatibility path:
+                // Keep rarity/curse coloring, but do not reorder lines to avoid index conflicts with Enchantment Descriptions.
+                Set<Integer> consumedIndices = new HashSet<>();
+                for (Object2IntMap.Entry<Holder<Enchantment>> entry : enchantsSorted) {
+                    Component fullEnchantName = Enchantment.getFullname(entry.getKey(), enchantments.getLevel(entry.getKey()));
+                    String translatedString = fullEnchantName.getString();
 
-                Object2IntMap.Entry<Holder<Enchantment>> entry = enchantsSorted.get(i - 1);
+                    for (int tooltipIndex = 0; tooltipIndex < tooltip.size(); tooltipIndex++) {
+                        if (consumedIndices.contains(tooltipIndex)) {
+                            continue;
+                        }
 
-                Component fullEnchantName = Enchantment.getFullname(entry.getKey(), enchantments.getLevel(entry.getKey()));
-
-
-                MutableComponent translatedText = Component.translatable(fullEnchantName.getString());
-                String translatedString = translatedText.getString(); // avoid redundant toString calls below
-                Optional<Component> replacedComponent = tooltip.stream().filter((text) -> {
-                    String existingTranslated = text.getString();
-                    if (existingTranslated.equalsIgnoreCase(translatedString)) {
-                        return true;
+                        if (tooltip.get(tooltipIndex).getString().equalsIgnoreCase(translatedString)) {
+                            tooltip.set(tooltipIndex, fullEnchantName.copy().withStyle(getStyleForEnchantment(entry.getKey())));
+                            consumedIndices.add(tooltipIndex);
+                            break;
+                        }
                     }
-                    return false;
-                }).findFirst();
-                if (replacedComponent.isPresent()) {
-                    int replaceIndex = tooltip.indexOf(replacedComponent.get());
-                    enchantmentTooltipsStartIndex = Math.min(replaceIndex, enchantmentTooltipsStartIndex);
+                }
+            }
+            else {
+                // First pass:
+                // Only replace line indices that match an enchantment's translated name.
+                // This is technically a foolproof way of doing this but is very slow and I hate to do it like this.
+                // If there's a better way to accomplish the same thing then this def should be refactored.
+                int enchantmentTooltipsStartIndex = tooltip.size();
+                for (int i = 1; i <= enchantsSorted.size(); i++) {
+
+                    Object2IntMap.Entry<Holder<Enchantment>> entry = enchantsSorted.get(i - 1);
+                    Component fullEnchantName = Enchantment.getFullname(entry.getKey(), enchantments.getLevel(entry.getKey()));
+                    String translatedString = fullEnchantName.getString();
+                    Optional<Component> replacedComponent = tooltip.stream().filter((text) -> {
+                        String existingTranslated = text.getString();
+                        if (existingTranslated.equalsIgnoreCase(translatedString)) {
+                            return true;
+                        }
+                        return false;
+                    }).findFirst();
+                    if (replacedComponent.isPresent()) {
+                        int replaceIndex = tooltip.indexOf(replacedComponent.get());
+                        enchantmentTooltipsStartIndex = Math.min(replaceIndex, enchantmentTooltipsStartIndex);
+                    }
+                }
+
+                // Second pass:
+                // Now actually replace tooltips of enchantments in our desired order.
+                int replacementIndex = enchantmentTooltipsStartIndex;
+                for (int i = 1; i <= enchantsSorted.size(); i++) {
+                    Object2IntMap.Entry<Holder<Enchantment>> entry = enchantsSorted.get(i - 1);
+                    Component fullEnchantName = Enchantment.getFullname(entry.getKey(), enchantments.getLevel(entry.getKey()));
+                    tooltip.set(replacementIndex++, fullEnchantName.copy().withStyle(getStyleForEnchantment(entry.getKey())));
                 }
             }
 
-            // Second pass:
-            // Now actually replace tooltips of enchantments in our desired order.
-            int replacementIndex = enchantmentTooltipsStartIndex;
-            for(int i = 1; i <= enchantsSorted.size(); i++) {
-
-                Object2IntMap.Entry<Holder<Enchantment>> entry = enchantsSorted.get(i - 1);
-                String enchantmentRaw = entry.getKey().unwrapKey().get().location().toString();
-                BookRarityProperties rarityProperties = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw);
-
-                Style style = Style.EMPTY;
-                if (entry.getKey().is(EnchantmentTags.CURSE)) {
-                    style = Style.EMPTY.withColor(ChatFormatting.RED);
-                }
-
-                else if (entry.getKey() == rebornEnchantment) {
-                    style = Style.EMPTY.withColor(ChatFormatting.WHITE).withBold(true);
-                }
-
-                else if (rarityProperties != null) {
-                    style = Style.EMPTY.withColor(rarityProperties.color);
-                }
-
-                Component fullEnchantName = Enchantment.getFullname(entry.getKey(), enchantments.getLevel(entry.getKey()));
-                tooltip.set(replacementIndex++, Component.translatable(fullEnchantName.getString()).withStyle((style)));
+            if (hasRebornState) {
+                addRebornTooltipAtTop(tooltip);
             }
+        } else if (stack.getOrDefault(ModDataComponents.REBORN, false)) {
+            addRebornTooltipAtTop(tooltip);
         }
 
 
+    }
+
+    private static boolean hasEnchantmentDescriptionsLoaded() {
+        return ModList.get().isLoaded(ENCHANTMENT_DESCRIPTIONS_MOD_ID);
+    }
+
+    private static Style getStyleForEnchantment(Holder<Enchantment> enchantmentHolder) {
+        if (enchantmentHolder.is(EnchantmentTags.CURSE)) {
+            return Style.EMPTY.withColor(ChatFormatting.RED);
+        }
+
+        String enchantmentRaw = enchantmentHolder.unwrapKey().get().location().toString();
+        BookRarityProperties rarityProperties = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw);
+        if (rarityProperties != null) {
+            return Style.EMPTY.withColor(rarityProperties.color);
+        }
+
+        return Style.EMPTY;
+    }
+
+    private static void addRebornTooltipAtTop(List<Component> tooltip) {
+        Component rebornText = Component.translatable("enchantment.rechantment.reborn")
+                .withStyle(Style.EMPTY.withColor(ChatFormatting.WHITE).withBold(true));
+        String rebornTextString = rebornText.getString();
+        boolean alreadyPresent = tooltip.stream().anyMatch(component -> component.getString().equalsIgnoreCase(rebornTextString));
+        if (alreadyPresent) {
+            return;
+        }
+
+        int rebornInsertIndex = Math.min(1, tooltip.size());
+        tooltip.add(rebornInsertIndex, rebornText);
     }
 
 
@@ -282,19 +322,12 @@ public class ModGenericEvents {
 
        if ((event.getSource().getEntity() instanceof Player player)) {
            ItemStack weapon = player.getMainHandItem();
-           int telepathyEnchantment = UtilFunctions.getEnchantmentFromItem("rechantment:telepathy", weapon, event.getEntity().registryAccess());
-           if (telepathyEnchantment == 0) return;
+           int telekinesisEnchantment = UtilFunctions.getEnchantmentFromItem("rechantment:telekinesis", weapon, event.getEntity().registryAccess());
+           if (telekinesisEnchantment == 0) return;
 
-           Collection<ItemEntity> items = event.getDrops();
-
-           for (ItemEntity item : items) {
-               if (!player.addItem(item.getItem())) {
-                   ItemStack itemToDrop = item.getItem();
-                   player.drop(itemToDrop, false);
-               }
+           for (ItemEntity item : event.getDrops()) {
+               TelekinesisEnchantmentHandler.markItemEntityForTelekinesis(item, player);
            }
-
-           event.setCanceled(true);
         }
     }
 
@@ -304,7 +337,7 @@ public class ModGenericEvents {
         if (event.getAttackingPlayer() == null) return;
         ItemStack weapon = event.getAttackingPlayer().getMainHandItem();
         int inquisitiveEnchantmentLevel = UtilFunctions.getEnchantmentFromItem("rechantment:inquisitive", weapon, event.getAttackingPlayer().registryAccess());
-        int telepathyEnchantment = UtilFunctions.getEnchantmentFromItem("rechantment:telepathy", weapon, event.getAttackingPlayer().registryAccess());
+        int telekinesisEnchantment = UtilFunctions.getEnchantmentFromItem("rechantment:telekinesis", weapon, event.getAttackingPlayer().registryAccess());
 
         int expToDrop = event.getDroppedExperience();
 
@@ -312,10 +345,19 @@ public class ModGenericEvents {
             expToDrop = (int)InquisitiveEnchantmentEffect.trueProcess(inquisitiveEnchantmentLevel, RandomSource.create(), (float)expToDrop);
         }
 
-        if (telepathyEnchantment != 0) {
+        if (telekinesisEnchantment != 0) {
             Player player = event.getAttackingPlayer();
-            ExperienceOrb expOrb = new ExperienceOrb(event.getAttackingPlayer().level(), player.getX(), player.getY(), player.getZ(), expToDrop);
-            event.getAttackingPlayer().level().addFreshEntity(expOrb);
+            if (expToDrop > 0) {
+                ExperienceOrb expOrb = new ExperienceOrb(
+                        event.getAttackingPlayer().level(),
+                        event.getEntity().getX(),
+                        event.getEntity().getY() + 0.5D,
+                        event.getEntity().getZ(),
+                        expToDrop
+                );
+                TelekinesisEnchantmentHandler.markExperienceOrbForTelekinesis(expOrb, player);
+                event.getAttackingPlayer().level().addFreshEntity(expOrb);
+            }
             event.setDroppedExperience(0);
         } else {
             event.setDroppedExperience(expToDrop);
@@ -332,45 +374,6 @@ public class ModGenericEvents {
             event.setCanceled(true);
         }
     }
-
-    // TODO: Reimplement when enchantment system is ported.
-    //  This one specifically also needs port from tags to data components figured out
-//        @SubscribeEvent
-//        public static void onPickup(ItemEntityPickupEvent event) {
-//            ItemStack pStack = event.getItemEntity().getItem();
-//            if (!(event.getPlayer().level() instanceof ServerLevel level)) return;
-//            if (!pStack.hasTag()) return;
-//            CompoundTag tag = pStack.getTag();
-//            if (tag == null) return;
-//            boolean shouldAnnounce = tag.getBoolean("Announce");
-//            if (!shouldAnnounce) return;
-//
-//            tag.remove("Announce");
-//            int successRate = tag.getInt("SuccessRate");
-//            String enchantmentRaw = tag.getCompound("Enchantment").getString("id");
-//            Style displayHoverStyle = pStack.getDisplayName().getStyle();
-//            String displayNameString;
-//            StringBuilder sb = new StringBuilder(pStack.getDisplayName().getString());
-//            sb.delete(0, 3);
-//            sb.deleteCharAt(sb.length() - 1);
-//            displayNameString = sb.toString();
-//            Component playerName = event.getPlayer().getDisplayName();
-//            BookRarityProperties bookProps = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw);
-//            if (bookProps == null) return;
-//
-//            for (ServerPlayer otherPlayer : level.players()) {
-//                otherPlayer.sendSystemMessage(Component.literal(playerName.getString() + " found ")
-//                        .append(Component.literal(displayNameString).withStyle(displayHoverStyle.withColor(bookProps.color).withUnderlined(true)))
-//                        .append(" at ")
-//                        .append(Component.literal(successRate + "%").withStyle(Style.EMPTY.withColor(bookProps.color)))
-//                        .append("!"));
-//            }
-//
-//            level.playSound(null, event.getPlayer().getOnPos(), SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.PLAYERS, 1f, 1f);
-//
-//
-//
-//        }
 
     @SubscribeEvent
     public static void onGrindstoneChange(GrindstoneEvent.OnPlaceItem event) {
@@ -427,9 +430,11 @@ public class ModGenericEvents {
         Inventory inventory = player.getInventory();
         for (ItemStack stack : inventory.items) {
             announceFoundBook(player, stack);
+            announceFoundGem(player, stack);
         }
         for (ItemStack stack : inventory.offhand) {
             announceFoundBook(player, stack);
+            announceFoundGem(player, stack);
         }
     }
 
@@ -462,6 +467,9 @@ public class ModGenericEvents {
         if (bookProps != null) {
             enchantStyle = enchantStyle.withColor(bookProps.color).withUnderlined(true);
         }
+        enchantStyle = enchantStyle.withHoverEvent(new HoverEvent(
+                HoverEvent.Action.SHOW_ITEM,
+                new HoverEvent.ItemStackInfo(stack.copyWithCount(1))));
 
         Component enchantName = Enchantment.getFullname(enchantmentHolder, enchantmentLevel).copy().withStyle(enchantStyle);
         Component playerName = player.getDisplayName();
@@ -489,5 +497,43 @@ public class ModGenericEvents {
         }
 
         stack.remove(ModDataComponents.ANNOUNCE_ON_FOUND);
+    }
+
+    private static void announceFoundGem(Player player, ItemStack stack) {
+        if (stack.isEmpty()) {
+            return;
+        }
+
+        if (!stack.getOrDefault(ModDataComponents.SHOULD_ANNOUNCE_GEM, false)) {
+            return;
+        }
+
+        Style gemStyle = Style.EMPTY.withColor(ChatFormatting.AQUA).withUnderlined(true);
+        if (stack.is(ModItems.SHINY_CHANCE_GEM.get())) {
+            gemStyle = gemStyle.withColor(ChatFormatting.LIGHT_PURPLE);
+        } 
+
+        gemStyle = gemStyle.withHoverEvent(new HoverEvent(
+                HoverEvent.Action.SHOW_ITEM,
+                new HoverEvent.ItemStackInfo(stack.copyWithCount(1))));
+
+        Component gemName = stack.getHoverName().copy().withStyle(gemStyle);
+        Component playerName = player.getDisplayName();
+
+        MutableComponent message = Component.empty()
+                .append(playerName)
+                .append(Component.literal(" found a "))
+                .append(gemName)
+                .append(Component.literal("!"));
+
+        if (player.level() instanceof ServerLevel level) {
+            for (Player otherPlayer : level.players()) {
+                otherPlayer.sendSystemMessage(message);
+            }
+
+            level.playSound(null, player.getOnPos(), SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1f, 1f);
+        }
+
+        stack.remove(ModDataComponents.SHOULD_ANNOUNCE_GEM);
     }
 }

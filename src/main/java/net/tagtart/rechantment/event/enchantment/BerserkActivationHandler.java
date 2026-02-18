@@ -1,10 +1,15 @@
-  package net.tagtart.rechantment.event.enchantment;
+package net.tagtart.rechantment.event.enchantment;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -14,6 +19,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.effect.ModEffects;
 import net.tagtart.rechantment.enchantment.ModEnchantments;
@@ -49,13 +55,12 @@ public class BerserkActivationHandler {
                 BERSERK_DURATION,
                 0,
                 false, // ambient
-                true,  // visible particles
+                false, // visible particles
                 true   // show icon
         );
         player.addEffect(berserkEffect);
 
-        // Display action bar message
-        player.displayClientMessage(Component.literal("Berserk!"), true);
+        announceBerserkProc(player);
 
         Rechantment.LOGGER.info("Berserk activated for {} (missing {} health)", 
                 player.getName().getString(), missingHealth);
@@ -100,16 +105,29 @@ public class BerserkActivationHandler {
                 BERSERK_DURATION,
                 0,
                 false, // ambient
-                true,  // visible particles
+                false, // visible particles
                 true   // show icon
         );
         player.addEffect(berserkEffect);
-        
-        // Display action bar message
-        player.displayClientMessage(Component.literal("Berserk has activated!"), true);
+
+        announceBerserkProc(player);
         
         Rechantment.LOGGER.info("Berserk auto-activated for {} after cooldown (missing {} health)", 
                 player.getName().getString(), missingHealth);
+    }
+
+    @SubscribeEvent
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
+        Player player = event.getEntity();
+        if (!(player.level() instanceof ServerLevel level)) {
+            return;
+        }
+
+        if (!player.hasEffect(ModEffects.BERSERK_EFFECT)) {
+            return;
+        }
+
+        spawnBerserkParticles(level, player);
     }
 
     /**
@@ -141,6 +159,28 @@ public class BerserkActivationHandler {
     private static boolean hasBerserkOnItem(ItemStack stack, Holder<Enchantment> berserkHolder) {
         if (stack.isEmpty()) return false;
         return stack.getEnchantmentLevel(berserkHolder) > 0;
+    }
+
+    private static void spawnBerserkParticles(ServerLevel level, Player player) {
+        double centerX = player.getX();
+        double centerY = player.getY() + player.getBbHeight() - .25;
+        double centerZ = player.getZ();
+        double randomX = level.random.nextDouble() * 0.2D;
+        double randomZ = level.random.nextDouble() * 0.2D;
+
+        if (level.random.nextBoolean()) {
+            randomX = -randomX;
+        }
+        if (level.random.nextBoolean()) {
+            randomZ = -randomZ;
+        }
+
+        level.sendParticles(ParticleTypes.CRIMSON_SPORE, centerX + randomX, centerY, centerZ + randomZ, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+    }
+
+    private static void announceBerserkProc(ServerPlayer player) {
+        player.playNotifySound(SoundEvents.FIRE_EXTINGUISH, SoundSource.PLAYERS, 0.8F, 1.0F);
+        player.displayClientMessage(Component.literal("Berserk!").withStyle(ChatFormatting.DARK_RED), true);
     }
 }
 

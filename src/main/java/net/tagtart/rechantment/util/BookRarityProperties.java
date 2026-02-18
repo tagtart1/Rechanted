@@ -9,9 +9,16 @@ import net.tagtart.rechantment.config.RechantmentCommonConfigs;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 public class BookRarityProperties {
+
+    public enum BonusPoolEntryType {
+        MYSTERIOUS_BOOK,
+        COMMON_GEM_POOL,
+        RARE_GEM_POOL
+    }
 
     public String key;
     public float rarity;
@@ -27,7 +34,10 @@ public class BookRarityProperties {
     public int requiredBookShelves;
     public int requiredLapis;
     public Block floorBlock;
-    public double rerollGemChance;
+    public double bonusItemRollChance;
+    public int bonusItemMysteriousBookWeight;
+    public int bonusItemCommonGemPoolWeight;
+    public int bonusItemRareGemPoolWeight;
     public int minGrindstoneXP;
     public int maxGrindstoneXP;
     public List<EnchantmentPoolEntry> enchantmentPool;
@@ -65,6 +75,29 @@ public class BookRarityProperties {
         }
 
         throw new IllegalStateException("Failed to select an enchantment based on weight.\nEnsure Rechantment config is set up properly.");
+    }
+
+    public Optional<BonusPoolEntryType> getRandomBonusPoolEntryWeighted(Random random) {
+        int totalWeight = bonusItemMysteriousBookWeight + bonusItemCommonGemPoolWeight + bonusItemRareGemPoolWeight;
+        if (totalWeight <= 0) {
+            return Optional.empty();
+        }
+
+        int randomWeight = random.nextInt(totalWeight);
+        if (randomWeight < bonusItemMysteriousBookWeight) {
+            return Optional.of(BonusPoolEntryType.MYSTERIOUS_BOOK);
+        }
+
+        randomWeight -= bonusItemMysteriousBookWeight;
+        if (randomWeight < bonusItemCommonGemPoolWeight) {
+            return Optional.of(BonusPoolEntryType.COMMON_GEM_POOL);
+        }
+
+        if (bonusItemRareGemPoolWeight > 0) {
+            return Optional.of(BonusPoolEntryType.RARE_GEM_POOL);
+        }
+
+        return Optional.empty();
     }
 
     // For caching the weight sum later.
@@ -128,7 +161,10 @@ public class BookRarityProperties {
         simpleProperties.floorBreakChance =     RechantmentCommonConfigs.RARITY_0_FLOOR_BREAK_CHANCE.get();
         simpleProperties.requiredBookShelves =  RechantmentCommonConfigs.RARITY_0_REQUIRED_BOOKSHELVES.get();
         simpleProperties.requiredLapis =        RechantmentCommonConfigs.RARITY_0_REQUIRED_LAPIS.get();
-        simpleProperties.rerollGemChance =      RechantmentCommonConfigs.RARITY_0_REROLL_GEM_CHANCE.get();
+        simpleProperties.bonusItemRollChance =  RechantmentCommonConfigs.RARITY_0_BONUS_ITEM_ROLL_CHANCE.get();
+        simpleProperties.bonusItemMysteriousBookWeight = RechantmentCommonConfigs.RARITY_0_BONUS_ITEM_MYSTERIOUS_BOOK_WEIGHT.get();
+        simpleProperties.bonusItemCommonGemPoolWeight = RechantmentCommonConfigs.RARITY_0_BONUS_ITEM_COMMON_GEM_POOL_WEIGHT.get();
+        simpleProperties.bonusItemRareGemPoolWeight = RechantmentCommonConfigs.RARITY_0_BONUS_ITEM_RARE_GEM_POOL_WEIGHT.get();
         simpleProperties.minGrindstoneXP =      RechantmentCommonConfigs.RARITY_0_GRINDSTONE_XP_MIN.get();
         simpleProperties.maxGrindstoneXP =      RechantmentCommonConfigs.RARITY_0_GRINDSTONE_XP_MAX.get();
         simpleProperties.enchantmentPool =      EnchantmentPoolEntry.listFromString(RechantmentCommonConfigs.RARITY_0_ENCHANTMENTS.get());
@@ -152,7 +188,10 @@ public class BookRarityProperties {
         uniqueProperties.floorBreakChance =     RechantmentCommonConfigs.RARITY_1_FLOOR_BREAK_CHANCE.get();
         uniqueProperties.requiredLapis =        RechantmentCommonConfigs.RARITY_1_REQUIRED_LAPIS.get();
         uniqueProperties.requiredBookShelves =  RechantmentCommonConfigs.RARITY_1_REQUIRED_BOOKSHELVES.get();
-        uniqueProperties.rerollGemChance =      RechantmentCommonConfigs.RARITY_1_REROLL_GEM_CHANCE.get();
+        uniqueProperties.bonusItemRollChance =  RechantmentCommonConfigs.RARITY_1_BONUS_ITEM_ROLL_CHANCE.get();
+        uniqueProperties.bonusItemMysteriousBookWeight = RechantmentCommonConfigs.RARITY_1_BONUS_ITEM_MYSTERIOUS_BOOK_WEIGHT.get();
+        uniqueProperties.bonusItemCommonGemPoolWeight = RechantmentCommonConfigs.RARITY_1_BONUS_ITEM_COMMON_GEM_POOL_WEIGHT.get();
+        uniqueProperties.bonusItemRareGemPoolWeight = RechantmentCommonConfigs.RARITY_1_BONUS_ITEM_RARE_GEM_POOL_WEIGHT.get();
         uniqueProperties.minGrindstoneXP =      RechantmentCommonConfigs.RARITY_1_GRINDSTONE_XP_MIN.get();
         uniqueProperties.maxGrindstoneXP =      RechantmentCommonConfigs.RARITY_1_GRINDSTONE_XP_MAX.get();
         uniqueProperties.enchantmentPool =      EnchantmentPoolEntry.listFromString(RechantmentCommonConfigs.RARITY_1_ENCHANTMENTS.get());
@@ -178,7 +217,10 @@ public class BookRarityProperties {
         eliteProperties.floorBreakChance =     RechantmentCommonConfigs.RARITY_2_FLOOR_BREAK_CHANCE.get();
         eliteProperties.requiredBookShelves =  RechantmentCommonConfigs.RARITY_2_REQUIRED_BOOKSHELVES.get();
         eliteProperties.requiredLapis =        RechantmentCommonConfigs.RARITY_2_REQUIRED_LAPIS.get();
-        eliteProperties.rerollGemChance =      RechantmentCommonConfigs.RARITY_2_REROLL_GEM_CHANCE.get();
+        eliteProperties.bonusItemRollChance =  RechantmentCommonConfigs.RARITY_2_BONUS_ITEM_ROLL_CHANCE.get();
+        eliteProperties.bonusItemMysteriousBookWeight = RechantmentCommonConfigs.RARITY_2_BONUS_ITEM_MYSTERIOUS_BOOK_WEIGHT.get();
+        eliteProperties.bonusItemCommonGemPoolWeight = RechantmentCommonConfigs.RARITY_2_BONUS_ITEM_COMMON_GEM_POOL_WEIGHT.get();
+        eliteProperties.bonusItemRareGemPoolWeight = RechantmentCommonConfigs.RARITY_2_BONUS_ITEM_RARE_GEM_POOL_WEIGHT.get();
         eliteProperties.minGrindstoneXP =      RechantmentCommonConfigs.RARITY_2_GRINDSTONE_XP_MIN.get();
         eliteProperties.maxGrindstoneXP =      RechantmentCommonConfigs.RARITY_2_GRINDSTONE_XP_MAX.get();
         eliteProperties.enchantmentPool =      EnchantmentPoolEntry.listFromString(RechantmentCommonConfigs.RARITY_2_ENCHANTMENTS.get());
@@ -202,7 +244,10 @@ public class BookRarityProperties {
         ultimateProperties.floorBreakChance =     RechantmentCommonConfigs.RARITY_3_FLOOR_BREAK_CHANCE.get();
         ultimateProperties.requiredBookShelves =  RechantmentCommonConfigs.RARITY_3_REQUIRED_BOOKSHELVES.get();
         ultimateProperties.requiredLapis =        RechantmentCommonConfigs.RARITY_3_REQUIRED_LAPIS.get();
-        ultimateProperties.rerollGemChance =      RechantmentCommonConfigs.RARITY_3_REROLL_GEM_CHANCE.get();
+        ultimateProperties.bonusItemRollChance =  RechantmentCommonConfigs.RARITY_3_BONUS_ITEM_ROLL_CHANCE.get();
+        ultimateProperties.bonusItemMysteriousBookWeight = RechantmentCommonConfigs.RARITY_3_BONUS_ITEM_MYSTERIOUS_BOOK_WEIGHT.get();
+        ultimateProperties.bonusItemCommonGemPoolWeight = RechantmentCommonConfigs.RARITY_3_BONUS_ITEM_COMMON_GEM_POOL_WEIGHT.get();
+        ultimateProperties.bonusItemRareGemPoolWeight = RechantmentCommonConfigs.RARITY_3_BONUS_ITEM_RARE_GEM_POOL_WEIGHT.get();
         ultimateProperties.minGrindstoneXP =      RechantmentCommonConfigs.RARITY_3_GRINDSTONE_XP_MIN.get();
         ultimateProperties.maxGrindstoneXP =      RechantmentCommonConfigs.RARITY_3_GRINDSTONE_XP_MAX.get();
         ultimateProperties.enchantmentPool =      EnchantmentPoolEntry.listFromString(RechantmentCommonConfigs.RARITY_3_ENCHANTMENTS.get());
@@ -227,7 +272,10 @@ public class BookRarityProperties {
         legendaryProperties.floorBreakChance =     RechantmentCommonConfigs.RARITY_4_FLOOR_BREAK_CHANCE.get();
         legendaryProperties.requiredBookShelves =  RechantmentCommonConfigs.RARITY_4_REQUIRED_BOOKSHELVES.get();
         legendaryProperties.requiredLapis =        RechantmentCommonConfigs.RARITY_4_REQUIRED_LAPIS.get();
-        legendaryProperties.rerollGemChance =      RechantmentCommonConfigs.RARITY_4_REROLL_GEM_CHANCE.get();
+        legendaryProperties.bonusItemRollChance =  RechantmentCommonConfigs.RARITY_4_BONUS_ITEM_ROLL_CHANCE.get();
+        legendaryProperties.bonusItemMysteriousBookWeight = RechantmentCommonConfigs.RARITY_4_BONUS_ITEM_MYSTERIOUS_BOOK_WEIGHT.get();
+        legendaryProperties.bonusItemCommonGemPoolWeight = RechantmentCommonConfigs.RARITY_4_BONUS_ITEM_COMMON_GEM_POOL_WEIGHT.get();
+        legendaryProperties.bonusItemRareGemPoolWeight = RechantmentCommonConfigs.RARITY_4_BONUS_ITEM_RARE_GEM_POOL_WEIGHT.get();
         legendaryProperties.minGrindstoneXP =      RechantmentCommonConfigs.RARITY_4_GRINDSTONE_XP_MIN.get();
         legendaryProperties.maxGrindstoneXP =      RechantmentCommonConfigs.RARITY_4_GRINDSTONE_XP_MAX.get();
         legendaryProperties.enchantmentPool =      EnchantmentPoolEntry.listFromString(RechantmentCommonConfigs.RARITY_4_ENCHANTMENTS.get());

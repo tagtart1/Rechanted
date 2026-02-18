@@ -1,8 +1,6 @@
 package net.tagtart.rechantment.screen;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -10,16 +8,9 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.minecraft.world.level.block.entity.EnchantingTableBlockEntity;
-import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.tagtart.rechantment.Rechantment;
-import net.tagtart.rechantment.attachments.ModAttachments;
 import net.tagtart.rechantment.block.ModBlocks;
 import net.tagtart.rechantment.block.entity.RechantmentTableBlockEntity;
 
@@ -40,7 +31,7 @@ public class RechantmentTableMenu extends AbstractContainerMenu {
     public final RechantmentTableBlockEntity blockEntity;
     private final Level level;
 
-    public final DataSlot gemEarnedEffectQueued = DataSlot.standalone();
+    public final DataSlot bonusEarnedEffectQueued = DataSlot.standalone();
 
     public RechantmentTableMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
         this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()));
@@ -57,7 +48,7 @@ public class RechantmentTableMenu extends AbstractContainerMenu {
 
         this.addSlot(new LapisSlot(blockEntity.getItemHandler(), 0, 80, 87));
 
-        addDataSlot(gemEarnedEffectQueued);
+        addDataSlot(bonusEarnedEffectQueued);
     }
 
     private static final int HOTBAR_SLOT_COUNT = 9;

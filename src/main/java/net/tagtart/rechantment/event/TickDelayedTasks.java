@@ -20,8 +20,16 @@ public class TickDelayedTasks {
 
     public static final HashSet<TickDelayedTask> enqueuedTasks = new HashSet<>();
 
-    public static void EnqueueItemForRebirth(ServerPlayer player, ItemStack rebornItem, int inventorySlot, boolean isOffhand) {
-        enqueuedTasks.add(new EnqueuedRebirthEvent(player, rebornItem, inventorySlot, isOffhand));
+    public static void EnqueueItemForRebirth(ServerPlayer player, ItemStack rebornItem, int inventorySlot, boolean isOffhand, EquipmentSlot equipmentSlot) {
+        Rechantment.LOGGER.info(
+                "Rebirth enqueue task: player={}, item={}, slot={}, inventorySlot={}, offhand={}",
+                player.getName().getString(),
+                rebornItem,
+                equipmentSlot,
+                inventorySlot,
+                isOffhand
+        );
+        enqueuedTasks.add(new EnqueuedRebirthEvent(player, rebornItem, inventorySlot, isOffhand, equipmentSlot));
     }
 
     // NOTE: If rebirth isn't working properly, can try making this a ServerTickEvent.Pre.
@@ -53,31 +61,49 @@ public class TickDelayedTasks {
         public int inventorySlot;
         public ServerPlayer player;
         public ItemStack rebornItem;
+        public EquipmentSlot equipmentSlot;
 
-        public EnqueuedRebirthEvent(ServerPlayer player, ItemStack rebornItem, int inventorySlot, boolean isOffhand) {
+        public EnqueuedRebirthEvent(ServerPlayer player, ItemStack rebornItem, int inventorySlot, boolean isOffhand, EquipmentSlot equipmentSlot) {
             super(1);
             this.inventorySlot = inventorySlot;
             this.player = player;
             this.rebornItem = rebornItem;
             this.isOffhand = isOffhand;
+            this.equipmentSlot = equipmentSlot;
         }
 
         @Override
         public void onTicksDelayElapsed() {
+            Rechantment.LOGGER.info(
+                    "Rebirth execute task: player={}, item={}, slot={}, inventorySlot={}, offhand={}",
+                    player.getName().getString(),
+                    this.rebornItem,
+                    this.equipmentSlot,
+                    this.inventorySlot,
+                    this.isOffhand
+            );
             UtilFunctions.triggerRebirthClientEffects(player, (ServerLevel) player.level(), this.rebornItem.getItem().getDefaultInstance());
 
             if (this.isOffhand) {
                 player.getInventory().offhand.set(0, this.rebornItem);
+                Rechantment.LOGGER.info("Rebirth execute route: offhand");
+            }
+            else if (this.equipmentSlot != null) {
+                player.setItemSlot(this.equipmentSlot, this.rebornItem);
+                Rechantment.LOGGER.info("Rebirth execute route: explicit equipment slot {}", this.equipmentSlot);
             }
             else if (this.rebornItem.getItem() instanceof ArmorItem armorItem) {
                 EquipmentSlot armorSlot = armorItem.getEquipmentSlot();
                 player.setItemSlot(armorSlot, this.rebornItem);
+                Rechantment.LOGGER.info("Rebirth execute route: inferred armor slot {}", armorSlot);
             }
             else if (this.inventorySlot != -1) {
                 player.getInventory().setItem(this.inventorySlot, this.rebornItem);
+                Rechantment.LOGGER.info("Rebirth execute route: inventory slot {}", this.inventorySlot);
             }
             else {
                 player.drop(this.rebornItem, false); // Drop the item if the slot is occupied
+                Rechantment.LOGGER.info("Rebirth execute route: dropped item");
             }
         }
     }

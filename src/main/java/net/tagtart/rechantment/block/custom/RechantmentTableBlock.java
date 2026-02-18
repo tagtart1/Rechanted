@@ -87,12 +87,12 @@ public class RechantmentTableBlock extends BaseEntityBlock {
                 if (pRandom.nextInt(16) == 0 && rechantment$isValidBookShelf(pLevel, pPos, blockpos)) {
 
                     float yOffset = 2.0f;
-                    if (rbe.tableState == RechantmentTableBlockEntity.CustomRechantmentTableState.GemPending) {
+                    if (rbe.tableState == RechantmentTableBlockEntity.CustomRechantmentTableState.BonusPending) {
                         long gameTime = Minecraft.getInstance().level.getGameTime();
-                        long stateStartTime = gameTime - (RechantmentTableBlockEntity.GEM_PENDING_ANIMATION_LENGTH_TICKS - rbe.currentStateTimeRemaining);
+                        long stateStartTime = gameTime - (RechantmentTableBlockEntity.BONUS_PENDING_ANIMATION_LENGTH_TICKS - rbe.currentStateTimeRemaining);
                         float time = (gameTime - stateStartTime);
 
-                        yOffset += AnimHelper.evaluateKeyframes(RechantmentTableRenderer.GEM_PENDING_Y_TRANSLATION_KEYFRAMES, time);
+                        yOffset += AnimHelper.evaluateKeyframes(RechantmentTableRenderer.BONUS_PENDING_Y_TRANSLATION_KEYFRAMES, time);
                     }
                     pLevel.addParticle(ParticleTypes.ENCHANT, (double)pPos.getX() + 0.5, (double)pPos.getY() + (double)yOffset, (double)pPos.getZ() + 0.5, (blockpos.getX() + pRandom.nextDouble()) - 0.5, (double)(blockpos.getY() - pRandom.nextDouble() - 1.0), (blockpos.getZ() + pRandom.nextDouble()) - 0.5);
                 }

@@ -54,14 +54,11 @@ public class ModEnchantments {
     public static final ResourceKey<Enchantment> VEIN_MINER = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "vein_miner"));
 
-    public static final ResourceKey<Enchantment> TELEPATHY = ResourceKey.create(Registries.ENCHANTMENT,
-            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "telepathy"));
+    public static final ResourceKey<Enchantment> TELEKINESIS = ResourceKey.create(Registries.ENCHANTMENT,
+            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "telekinesis"));
 
     public static final ResourceKey<Enchantment> REBIRTH =ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "rebirth"));
-
-    public static final ResourceKey<Enchantment> REBORN =ResourceKey.create(Registries.ENCHANTMENT,
-            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "reborn"));
 
     public static final ResourceKey<Enchantment> SPRING = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "spring"));
@@ -232,7 +229,7 @@ public class ModEnchantments {
                 Enchantment.dynamicCost(60, 20),
                 2, EquipmentSlotGroup.MAINHAND)));
 
-        register(context, TELEPATHY, Enchantment.enchantment(Enchantment.definition(
+        register(context, TELEKINESIS, Enchantment.enchantment(Enchantment.definition(
                 items.getOrThrow(ModItemTagsProvider.DIGGER_ITEM),
                 items.getOrThrow(ModItemTagsProvider.DIGGER_ITEM),
                 5,
@@ -242,21 +239,13 @@ public class ModEnchantments {
                 2, EquipmentSlotGroup.MAINHAND)));
 
         register(context, REBIRTH, Enchantment.enchantment(Enchantment.definition(
-                items.getOrThrow(Tags.Items.TOOLS),
-                items.getOrThrow(Tags.Items.TOOLS),
-                5,
-                3,
-                Enchantment.dynamicCost(10, 20),
-                Enchantment.dynamicCost(60, 20),
-                2, EquipmentSlotGroup.MAINHAND)).exclusiveWith(HolderSet.direct(enchantments.getOrThrow(REBORN))));
-
-        register(context, REBORN, Enchantment.enchantment(Enchantment.definition(
-                items.getOrThrow(Tags.Items.TOOLS),
+                items.getOrThrow(ModItemTagsProvider.REBIRTH_ENCHANTABLE),
+                items.getOrThrow(ModItemTagsProvider.REBIRTH_ENCHANTABLE),
                 5,
                 1,
                 Enchantment.dynamicCost(10, 20),
                 Enchantment.dynamicCost(60, 20),
-                2, EquipmentSlotGroup.MAINHAND)).exclusiveWith(HolderSet.direct(enchantments.getOrThrow(REBIRTH))));
+                2, EquipmentSlotGroup.ANY)));
 
         register(context, SPRING, Enchantment.enchantment(Enchantment.definition(
                 items.getOrThrow(ItemTags.LEG_ARMOR_ENCHANTABLE),
@@ -292,3 +281,4 @@ public class ModEnchantments {
         registry.register(key, builder.build(key.location()));
     }
 }
+

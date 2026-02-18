@@ -53,43 +53,43 @@ public class RechantmentTableRenderer implements BlockEntityRenderer<Rechantment
     private final BookModel bookModel;
 
     // --- GEM PENDING KEYFRAMES ---
-    public static final ArrayList<AnimHelper.FloatKeyframe> GEM_PENDING_Y_TRANSLATION_KEYFRAMES = new ArrayList<>(List.of(
+    public static final ArrayList<AnimHelper.FloatKeyframe> BONUS_PENDING_Y_TRANSLATION_KEYFRAMES = new ArrayList<>(List.of(
             new AnimHelper.FloatKeyframe(0f, 0f, AnimHelper::easeOutBack),
             new AnimHelper.FloatKeyframe(110f, 1.15f, AnimHelper::linear)
     ));
 
-    public static final ArrayList<AnimHelper.FloatKeyframe> GEM_PENDING_Y_ROTATION_KEYFRAMES = new ArrayList<>(List.of(
+    public static final ArrayList<AnimHelper.FloatKeyframe> BONUS_PENDING_Y_ROTATION_KEYFRAMES = new ArrayList<>(List.of(
             new AnimHelper.FloatKeyframe(0f, 0f, AnimHelper::easeInOutQuad),
             new AnimHelper.FloatKeyframe(100.0f, (float)Math.PI * 20.2f, AnimHelper::easeInOutBack),
             new AnimHelper.FloatKeyframe(110.0f, (float)Math.PI * 20.0f, AnimHelper::linear)
     ));
 
-    public static final ArrayList<AnimHelper.FloatKeyframe> GEM_PENDING_Z_DEG_ROTATION_KEYFRAMES = new ArrayList<>(List.of(
+    public static final ArrayList<AnimHelper.FloatKeyframe> BONUS_PENDING_Z_DEG_ROTATION_KEYFRAMES = new ArrayList<>(List.of(
             new AnimHelper.FloatKeyframe(0f, -70f, AnimHelper::linear),
             new AnimHelper.FloatKeyframe(45.0f, 0f, AnimHelper::linear)
     ));
 
 
-    public static final ArrayList<AnimHelper.FloatKeyframe> GEM_PENDING_BOOK_OPEN_KEYFRAMES = new ArrayList<>(List.of(
+    public static final ArrayList<AnimHelper.FloatKeyframe> BONUS_PENDING_BOOK_OPEN_KEYFRAMES = new ArrayList<>(List.of(
             new AnimHelper.FloatKeyframe(0f, 1.0f, AnimHelper::linear),
             new AnimHelper.FloatKeyframe(115.0f, 1.0f, AnimHelper::easeInBack),
             new AnimHelper.FloatKeyframe(129.0f, 0.0f, AnimHelper::easeOutBack)
     ));
 
     // --- GEM EARNED KEYFRAMES ---
-    public static  final ArrayList<AnimHelper.FloatKeyframe> GEM_EARNED_Y_TRANSLATION_KEYFRAMES = new ArrayList<>(List.of(
-            new AnimHelper.FloatKeyframe(8f, GEM_PENDING_Y_TRANSLATION_KEYFRAMES.getLast().value, AnimHelper::easeInBack),   // So it starts at same y-offset last anim. ended.
+    public static  final ArrayList<AnimHelper.FloatKeyframe> BONUS_EARNED_Y_TRANSLATION_KEYFRAMES = new ArrayList<>(List.of(
+            new AnimHelper.FloatKeyframe(8f, BONUS_PENDING_Y_TRANSLATION_KEYFRAMES.getLast().value, AnimHelper::easeInBack),   // So it starts at same y-offset last anim. ended.
             new AnimHelper.FloatKeyframe(21.0f, 0f, AnimHelper::linear)
     ));
 
-    public static final ArrayList<AnimHelper.FloatKeyframe> GEM_EARNED_BOOK_OPEN_KEYFRAMES = new ArrayList<>(List.of(
+    public static final ArrayList<AnimHelper.FloatKeyframe> BONUS_EARNED_BOOK_OPEN_KEYFRAMES = new ArrayList<>(List.of(
             new AnimHelper.FloatKeyframe(0f, 0.0f, AnimHelper::easeOutBack),
             new AnimHelper.FloatKeyframe(8.0f, 1.0f, AnimHelper::linear),
             new AnimHelper.FloatKeyframe(17.0f, 0.4f, AnimHelper::linear),
             new AnimHelper.FloatKeyframe(20.0f, 1.0f, AnimHelper::easeInBack)
     ));
 
-    public static final ArrayList<AnimHelper.FloatKeyframe> GEM_EARNED_Z_DEG_ROTATION_KEYFRAMES = new ArrayList<>(List.of(
+    public static final ArrayList<AnimHelper.FloatKeyframe> BONUS_EARNED_Z_DEG_ROTATION_KEYFRAMES = new ArrayList<>(List.of(
             new AnimHelper.FloatKeyframe(0f, 0f, AnimHelper::easeInOutQuad),
             new AnimHelper.FloatKeyframe(20.0f, -60f, AnimHelper::linear)
     ));
@@ -133,15 +133,15 @@ public class RechantmentTableRenderer implements BlockEntityRenderer<Rechantment
             this.bookModel.setupAnim(time, Mth.clamp(rightPageFlipAmount, 0.0F, 1.0F), Mth.clamp(leftPageFlipAmount, 0.0F, 1.0F), f6);
         }
 
-        if (blockEntity.tableState == RechantmentTableBlockEntity.CustomRechantmentTableState.GemPending) {
+        if (blockEntity.tableState == RechantmentTableBlockEntity.CustomRechantmentTableState.BonusPending) {
 
-            long stateStartTime = gameTime - (RechantmentTableBlockEntity.GEM_PENDING_ANIMATION_LENGTH_TICKS - blockEntity.currentStateTimeRemaining);
+            long stateStartTime = gameTime - (RechantmentTableBlockEntity.BONUS_PENDING_ANIMATION_LENGTH_TICKS - blockEntity.currentStateTimeRemaining);
             float time = (gameTime + partialTick - stateStartTime);
 
-            float yOffset = AnimHelper.evaluateKeyframes(GEM_PENDING_Y_TRANSLATION_KEYFRAMES, time);
-            float yRotationOffset = AnimHelper.evaluateKeyframes(GEM_PENDING_Y_ROTATION_KEYFRAMES, time);
-            float zRotationOffset = AnimHelper.evaluateKeyframes(GEM_PENDING_Z_DEG_ROTATION_KEYFRAMES, time);
-            float bookOpenOffset = AnimHelper.evaluateKeyframes(GEM_PENDING_BOOK_OPEN_KEYFRAMES, time);
+            float yOffset = AnimHelper.evaluateKeyframes(BONUS_PENDING_Y_TRANSLATION_KEYFRAMES, time);
+            float yRotationOffset = AnimHelper.evaluateKeyframes(BONUS_PENDING_Y_ROTATION_KEYFRAMES, time);
+            float zRotationOffset = AnimHelper.evaluateKeyframes(BONUS_PENDING_Z_DEG_ROTATION_KEYFRAMES, time);
+            float bookOpenOffset = AnimHelper.evaluateKeyframes(BONUS_PENDING_BOOK_OPEN_KEYFRAMES, time);
             float facingRotation = getCorrectBookFacingYRotation(blockEntity);
 
             //System.out.println(yOffset);
@@ -155,14 +155,14 @@ public class RechantmentTableRenderer implements BlockEntityRenderer<Rechantment
             this.bookModel.render(poseStack, vertexconsumer, packedLight, packedOverlay, -1);
         }
 
-        if (blockEntity.tableState == RechantmentTableBlockEntity.CustomRechantmentTableState.GemEarned) {
+        if (blockEntity.tableState == RechantmentTableBlockEntity.CustomRechantmentTableState.BonusEarned) {
 
-            long stateStartTime = gameTime - (RechantmentTableBlockEntity.GEM_EARNED_ANIMATION_LENGTH_TICKS - blockEntity.currentStateTimeRemaining);
+            long stateStartTime = gameTime - (RechantmentTableBlockEntity.BONUS_EARNED_ANIMATION_LENGTH_TICKS - blockEntity.currentStateTimeRemaining);
             float time = (gameTime + partialTick - stateStartTime);
 
-            float yOffset = AnimHelper.evaluateKeyframes(GEM_EARNED_Y_TRANSLATION_KEYFRAMES, time);
-            float zRotationOffset = AnimHelper.evaluateKeyframes(GEM_EARNED_Z_DEG_ROTATION_KEYFRAMES, time);
-            float bookOpenOffset = AnimHelper.evaluateKeyframes(GEM_EARNED_BOOK_OPEN_KEYFRAMES, time);
+            float yOffset = AnimHelper.evaluateKeyframes(BONUS_EARNED_Y_TRANSLATION_KEYFRAMES, time);
+            float zRotationOffset = AnimHelper.evaluateKeyframes(BONUS_EARNED_Z_DEG_ROTATION_KEYFRAMES, time);
+            float bookOpenOffset = AnimHelper.evaluateKeyframes(BONUS_EARNED_BOOK_OPEN_KEYFRAMES, time);
             float facingRotation = getCorrectBookFacingYRotation(blockEntity);
 
             poseStack.translate(0f, yOffset, 0f);

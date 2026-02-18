@@ -18,10 +18,14 @@ import net.tagtart.rechantment.util.UtilFunctions;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderable{
+public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderable {
 
-    private static final ResourceLocation TABLE_ENTRY_BOX_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "textures/gui/enchant_table_loot_pool_entry_box.png");
-    private static final ResourceLocation INFO_ICON_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "textures/gui/info_button.png");
+    private static final ResourceLocation TABLE_ENTRY_BOX_LOCATION = ResourceLocation
+            .fromNamespaceAndPath(Rechantment.MOD_ID, "textures/gui/enchant_table_loot_pool_entry_box.png");
+    private static final ResourceLocation INFO_ICON_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID,
+            "textures/gui/info_button.png");
+    private static final float ICON_DEFAULT_SCALE = 0.75f;
+    private static final float ICON_HORIZONTAL_PADDING = 8.0f;
 
     private ShaderInstance gridShader;
 
@@ -45,7 +49,8 @@ public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderabl
 
     public static float globalTimeElapsed = 0f; // Will be relative to the screen being used.
 
-    public HoverableLootTablePoolEntryRenderable(RechantmentTablePoolDisplayScreen pScreen, Font pFont, EnchantmentPoolEntry pPoolEntry, int pPropertiesIndex, int posX, int posY) {
+    public HoverableLootTablePoolEntryRenderable(RechantmentTablePoolDisplayScreen pScreen, Font pFont,
+            EnchantmentPoolEntry pPoolEntry, int pPropertiesIndex, int posX, int posY) {
         super(TABLE_ENTRY_BOX_LOCATION, posX, posY);
         propertiesIndex = pPropertiesIndex;
         screen = pScreen;
@@ -59,12 +64,13 @@ public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderabl
         renderDefaultTexture = false;
 
         // Position of this adjusts with text
-        nestedInfoHoverable = new HoverableWithTooltipGuiRenderable(this::infoIconTooltip, INFO_ICON_LOCATION, renderOffsetPosX, getEntryLabelOffsetY());
+        nestedInfoHoverable = new HoverableWithTooltipGuiRenderable(this::infoIconTooltip, INFO_ICON_LOCATION,
+                renderOffsetPosX, getEntryLabelOffsetY());
         nestedInfoHoverable.imageWidth = 9;
         nestedInfoHoverable.imageHeight = 9;
         nestedInfoHoverable.imageViewWidth = 9;
         nestedInfoHoverable.imageViewHeight = 9;
-        nestedInfoHoverable.tooltipEnabled = false;  // Manually rendering tooltip later due to scissoring conflicts.
+        nestedInfoHoverable.tooltipEnabled = false; // Manually rendering tooltip later due to scissoring conflicts.
 
         this.gridShader = ModShaders.ENCHANT_TABLE_LOOT_POOL_GRID_SHADER;
 
@@ -76,7 +82,8 @@ public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderabl
         ArrayList<Component> retVal = new ArrayList<>();
 
         String[] enchantmentInfo = poolEntry.enchantment.split(":");
-        Component translatable = Component.translatable("enchantment." + enchantmentInfo[0] + "." + enchantmentInfo[1] + ".description");
+        Component translatable = Component
+                .translatable("enchantment." + enchantmentInfo[0] + "." + enchantmentInfo[1] + ".desc");
         String resolvedText = translatable.getString();
         List<String> splitText = UtilFunctions.wrapText(resolvedText, 165);
         for (String line : splitText) {
@@ -87,7 +94,8 @@ public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderabl
     }
 
     protected void generatePoolEntryInfo() {
-        Holder.Reference<Enchantment> holder = UtilFunctions.getEnchantmentReferenceIfPresent(Minecraft.getInstance().player.registryAccess(), poolEntry.enchantment);
+        Holder.Reference<Enchantment> holder = UtilFunctions.getEnchantmentReferenceIfPresent(
+                Minecraft.getInstance().player.registryAccess(), poolEntry.enchantment);
 
         if (holder == null) {
             enchantment = null;
@@ -102,14 +110,15 @@ public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderabl
 
         String nameID = enchantment.description().getString();
         enchantmentName = Component.translatable(nameID).getString();
-        enchantmentDropRate = String.format("%6.2f%%", ((float)poolEntry.weight / getBookProperties().enchantmentPoolTotalWeights) * 100.0f);
+        enchantmentDropRate = String.format("%6.2f%%",
+                ((float) poolEntry.weight / getBookProperties().enchantmentPoolTotalWeights) * 100.0f);
         iconList = RechantmentBookItem.getApplicableIcons(holder).getString();
         for (int i = 0; i < poolEntry.levelWeights.size(); ++i) {
-            levelDropRates.add(String.format("%6.2f%%", ((float)poolEntry.levelWeights.get(i) / poolEntry.levelWeightsSum) * 100.0f));
+            levelDropRates.add(String.format("%6.2f%%",
+                    ((float) poolEntry.levelWeights.get(i) / poolEntry.levelWeightsSum) * 100.0f));
         }
         maxLevel = enchantment.getMaxLevel();
     }
-
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
@@ -119,11 +128,12 @@ public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderabl
     }
 
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        guiGraphics.blitSprite(renderTexture, imageWidth, imageHeight, 0, 0, renderOffsetPosX, renderOffsetPosY - scrollOffset, imageWidth, imageHeight);
+        guiGraphics.blitSprite(renderTexture, imageWidth, imageHeight, 0, 0, renderOffsetPosX,
+                renderOffsetPosY - scrollOffset, imageWidth, imageHeight);
 
         if (gridShader != null) {
             gridShader.safeGetUniform("Time").set(globalTimeElapsed);
-            gridShader.safeGetUniform("Resolution").set((float)imageWidth, (float)getEntryLabelBottomY());
+            gridShader.safeGetUniform("Resolution").set((float) imageWidth, (float) getEntryLabelBottomY());
 
             RenderSystem.setShader(() -> gridShader);
 
@@ -133,35 +143,54 @@ public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderabl
             gridShader.apply();
         }
 
-        UtilFunctions.fakeInnerBlit(guiGraphics, renderOffsetPosX, renderOffsetPosX + imageWidth, renderOffsetPosY - scrollOffset, (renderOffsetPosY - scrollOffset) + getEntryLabelBottomY(), 0,
+        UtilFunctions.fakeInnerBlit(guiGraphics, renderOffsetPosX, renderOffsetPosX + imageWidth,
+                renderOffsetPosY - scrollOffset, (renderOffsetPosY - scrollOffset) + getEntryLabelBottomY(), 0,
                 0.0f, 1.0f, 0.0f, 1.0f);
     }
 
     public void renderText(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
         guiGraphics.pose().pushPose();
-        float scaleFac = 0.75f;
-        float invScaleFac = 1.0f / scaleFac;
-        guiGraphics.pose().scale(scaleFac, scaleFac, scaleFac);
+        float labelScaleFac = 0.75f;
+        float invLabelScaleFac = 1.0f / labelScaleFac;
+        guiGraphics.pose().scale(labelScaleFac, labelScaleFac, labelScaleFac);
 
         int extraNameOffset = 0;
         if (displayShortenedVersion()) {
             extraNameOffset = 2;
         }
-        guiGraphics.drawString(renderFont, enchantmentName, (renderOffsetPosX + 3) * invScaleFac, (getEntryLabelOffsetY() + extraNameOffset) * invScaleFac, 0xFFFFFF, true);
-        renderFont.drawInBatch(enchantmentName, (renderOffsetPosX + 3) * invScaleFac, (getEntryLabelOffsetY() + extraNameOffset) * invScaleFac, 0xFFFFFF, true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
+        guiGraphics.drawString(renderFont, enchantmentName, (renderOffsetPosX + 3) * invLabelScaleFac,
+                (getEntryLabelOffsetY() + extraNameOffset) * invLabelScaleFac, 0xFFFFFF, true);
+        renderFont.drawInBatch(enchantmentName, (renderOffsetPosX + 3) * invLabelScaleFac,
+                (getEntryLabelOffsetY() + extraNameOffset) * invLabelScaleFac, 0xFFFFFF, true,
+                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
 
-        renderFont.drawInBatch(enchantmentDropRate, (renderOffsetPosX + 114) * invScaleFac, (getEntryLabelOffsetY() + extraNameOffset) * invScaleFac, 0xFFFFFF, true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
+        renderFont.drawInBatch(enchantmentDropRate, (renderOffsetPosX + 114) * invLabelScaleFac,
+                (getEntryLabelOffsetY() + extraNameOffset) * invLabelScaleFac, 0xFFFFFF, true,
+                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
         if (!displayShortenedVersion()) {
-            renderFont.drawInBatch("______________________________", (renderOffsetPosX + 3) * invScaleFac, (getEntryLabelOffsetY() + 2) * invScaleFac, 0xFFFFFF, true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
-            renderFont.drawInBatch("______________________________", (renderOffsetPosX + 4) * invScaleFac, (getEntryLabelOffsetY() + 2) * invScaleFac, 0xFFFFFF, true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
+            renderFont.drawInBatch("______________________________", (renderOffsetPosX + 3) * invLabelScaleFac,
+                    (getEntryLabelOffsetY() + 2) * invLabelScaleFac, 0xFFFFFF, true, guiGraphics.pose().last().pose(),
+                    guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
+            renderFont.drawInBatch("______________________________", (renderOffsetPosX + 4) * invLabelScaleFac,
+                    (getEntryLabelOffsetY() + 2) * invLabelScaleFac, 0xFFFFFF, true, guiGraphics.pose().last().pose(),
+                    guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
         }
-        renderFont.drawInBatch(iconList, (renderOffsetPosX + 2.7f) * invScaleFac, (getEntryLabelOffsetY() - 8) * invScaleFac, 0x222222, false, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
-        renderFont.drawInBatch(iconList, (renderOffsetPosX + 2.2f) * invScaleFac, (getEntryLabelOffsetY() - 9) * invScaleFac, 0xFFFFFF, false, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
         guiGraphics.pose().popPose();
 
+        float iconScaleFac = getIconScaleForEntry();
+        float invIconScaleFac = 1.0f / iconScaleFac;
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().scale(iconScaleFac, iconScaleFac, iconScaleFac);
+        renderFont.drawInBatch(iconList, (renderOffsetPosX + 2.7f) * invIconScaleFac,
+                (getEntryLabelOffsetY() - 8) * invIconScaleFac, 0x222222, false, guiGraphics.pose().last().pose(),
+                guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
+        renderFont.drawInBatch(iconList, (renderOffsetPosX + 2.2f) * invIconScaleFac,
+                (getEntryLabelOffsetY() - 9) * invIconScaleFac, 0xFFFFFF, false, guiGraphics.pose().last().pose(),
+                guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
+        guiGraphics.pose().popPose();
 
-        scaleFac = 0.5f;
-        invScaleFac = 1.0f / scaleFac;
+        float scaleFac = 0.5f;
+        float invScaleFac = 1.0f / scaleFac;
         if (!displayShortenedVersion()) {
 
             guiGraphics.pose().pushPose();
@@ -169,8 +198,14 @@ public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderabl
             for (int i = 0; i < levelDropRates.size(); ++i) {
 
                 String roman = UtilFunctions.intToRoman(poolEntry.potentialLevels.get(i)) + ":";
-                renderFont.drawInBatch(roman, (renderOffsetPosX + 5) * invScaleFac, (getEntryLabelOffsetY() + ((i + 2) * 5)) * invScaleFac, 0xFFFFFF, true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
-                renderFont.drawInBatch(levelDropRates.get(i), (renderOffsetPosX + 121) * invScaleFac, (getEntryLabelOffsetY() + ((i  + 2) * 5)) * invScaleFac, 0xFFFFFF, true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 0xF000F0);
+                renderFont.drawInBatch(roman, (renderOffsetPosX + 5) * invScaleFac,
+                        (getEntryLabelOffsetY() + ((i + 2) * 5)) * invScaleFac, 0xFFFFFF, true,
+                        guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0,
+                        0xF000F0);
+                renderFont.drawInBatch(levelDropRates.get(i), (renderOffsetPosX + 121) * invScaleFac,
+                        (getEntryLabelOffsetY() + ((i + 2) * 5)) * invScaleFac, 0xFFFFFF, true,
+                        guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0,
+                        0xF000F0);
             }
             guiGraphics.pose().popPose();
         }
@@ -179,14 +214,14 @@ public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderabl
         guiGraphics.disableScissor();
         float infoIconOffset = renderFont.width(enchantmentName) * 0.75f;
         nestedInfoHoverable.scaleFac = scaleFac;
-        nestedInfoHoverable.renderOffsetPosX = (int)((renderOffsetPosX + infoIconOffset + 4) * invScaleFac);
-        nestedInfoHoverable.renderOffsetPosY = (int)((getEntryLabelOffsetY() + extraNameOffset) * invScaleFac);
+        nestedInfoHoverable.renderOffsetPosX = (int) ((renderOffsetPosX + infoIconOffset + 4) * invScaleFac);
+        nestedInfoHoverable.renderOffsetPosY = (int) ((getEntryLabelOffsetY() + extraNameOffset) * invScaleFac);
         nestedInfoHoverable.renderCustomTooltip(guiGraphics, mouseX, mouseY);
         guiGraphics.flush();
-        guiGraphics.enableScissor(screen.getScissorMinX(), screen.getScissorMinY(), screen.getScissorMaxX(), screen.getScissorMaxY());
+        guiGraphics.enableScissor(screen.getScissorMinX(), screen.getScissorMinY(), screen.getScissorMaxX(),
+                screen.getScissorMaxY());
         nestedInfoHoverable.render(guiGraphics, mouseX, mouseY, delta);
     }
-
 
     private boolean displayShortenedVersion() {
         return levelDropRates.size() <= 1 && maxLevel <= 1;
@@ -207,6 +242,21 @@ public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderabl
 
     private BookRarityProperties getBookProperties() {
         return BookRarityProperties.getAllProperties()[propertiesIndex];
+    }
+
+    private float getIconScaleForEntry() {
+        if (iconList.isEmpty()) {
+            return ICON_DEFAULT_SCALE;
+        }
+
+        float maxIconWidth = imageWidth - ICON_HORIZONTAL_PADDING;
+        float iconWidth = renderFont.width(iconList) * ICON_DEFAULT_SCALE;
+        if (iconWidth <= maxIconWidth) {
+            return ICON_DEFAULT_SCALE;
+        }
+
+        float requiredScale = maxIconWidth / renderFont.width(iconList);
+        return Math.min(ICON_DEFAULT_SCALE, requiredScale);
     }
 
 }

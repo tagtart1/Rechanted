@@ -29,7 +29,7 @@ public class ModEffects {
             () -> new BlitzEffect(MobEffectCategory.NEUTRAL, 0x00FFFF));
 
     public static final Holder<MobEffect> BLITZ_COOLDOWN_EFFECT = MOB_EFFECTS.register("blitz_cooldown",
-            () -> new BlitzCooldownEffect(MobEffectCategory.NEUTRAL, 0x404040));
+            () -> new BlitzCooldownEffect(MobEffectCategory.NEUTRAL, 0x808080));
 
     public static final Holder<MobEffect> SATIATED_EFFECT = MOB_EFFECTS.register("satiated",
             () -> new SatiatedEffect(MobEffectCategory.BENEFICIAL, 0xAA330).withSoundOnAdded(ModSounds.SUPER_BURP.get()));

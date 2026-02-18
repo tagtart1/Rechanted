@@ -19,15 +19,19 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.tagtart.rechantment.component.ModDataComponents;
+import net.tagtart.rechantment.enchantment.ModEnchantments;
 import net.tagtart.rechantment.sound.ModSounds;
 import net.tagtart.rechantment.util.BookRarityProperties;
 import net.tagtart.rechantment.util.UtilFunctions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 public class RechantmentBookItem extends Item {
+    private static final String DEFAULT_BOOK_DESCRIPTION = "Mystical powers imbue this book granting its bearers power.";
+
     // Holds the item names for each icon on the tooltip
     public static final String[] BASE_ICON_ITEMS = {
             "minecraft:iron_helmet",
@@ -45,6 +49,8 @@ public class RechantmentBookItem extends Item {
             "minecraft:bow",
             "minecraft:crossbow",
             "minecraft:elytra",
+            "minecraft:iron_spear",
+            "minecraft:mace"
     };
 
     public RechantmentBookItem(Properties properties) {
@@ -54,19 +60,20 @@ public class RechantmentBookItem extends Item {
     @Override
     public @NotNull Component getName(ItemStack pStack) {
 
-        ItemEnchantments enchants  = pStack.get(DataComponents.STORED_ENCHANTMENTS);
-        if (enchants == null) return Component.literal("Empty book!");
-        if (enchants.entrySet().isEmpty()) return Component.literal("Invalid enchantment!");
+        ItemEnchantments enchants = pStack.get(DataComponents.STORED_ENCHANTMENTS);
+        if (enchants == null)
+            return Component.literal("Empty book!");
+        if (enchants.entrySet().isEmpty())
+            return Component.literal("Invalid enchantment!");
 
-
-        Holder<Enchantment> enchantmentHolder =  enchants.entrySet().iterator().next().getKey();
-        if (enchantmentHolder == null || enchants.entrySet().isEmpty()) return Component.literal("Invalid enchantment!");
+        Holder<Enchantment> enchantmentHolder = enchants.entrySet().iterator().next().getKey();
+        if (enchantmentHolder == null || enchants.entrySet().isEmpty())
+            return Component.literal("Invalid enchantment!");
 
         Enchantment enchantment = enchantmentHolder.value();
 
-        int enchantmentLevel =  enchants.entrySet().iterator().next().getIntValue();
+        int enchantmentLevel = enchants.entrySet().iterator().next().getIntValue();
         String enchantmentRaw = enchantmentHolder.unwrapKey().orElseThrow().location().toString();
-
 
         String[] enchantmentInfo = enchantmentRaw.split(":");
         String enchantmentSource = enchantmentInfo[0];
@@ -76,22 +83,20 @@ public class RechantmentBookItem extends Item {
         if (enchantRarityInfo == null)
             return Component.literal("Invalid enchantment!");
 
-        String romanLevel ="";
-
-        if (enchantment.getMaxLevel() != 1)
-            romanLevel = Component.translatable("enchantment.level." + enchantmentLevel).getString();
-
-        String enchantFormattedName = Component.translatable("enchantment." + enchantmentSource + "." + enchantmentName).getString();
+        String romanLevel = resolveEnchantmentLevelText(enchantment, enchantmentLevel);
+        String enchantFormattedName = resolveEnchantmentDisplayName(enchantmentSource, enchantmentName);
         String rarityIcon = Component.translatable("enchantment.rarity." + enchantRarityInfo.key).getString();
+        String fullName = romanLevel.isEmpty() ? enchantFormattedName : enchantFormattedName + " " + romanLevel;
 
         return Component.literal(rarityIcon + " ")
-                .append(Component.literal(enchantFormattedName + " " + romanLevel)
+                .append(Component.literal(fullName)
                         .withStyle(Style.EMPTY.withColor(enchantRarityInfo.color)));
 
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents,
+            TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
 
         int maxWidthTooltip = 165;
@@ -101,15 +106,18 @@ public class RechantmentBookItem extends Item {
         if (storedEnchant == null || storedEnchant.isEmpty()) {
             return;
         }
-        Holder<Enchantment> enchantmentHolder =  storedEnchant.entrySet().iterator().next().getKey();
-        String enchantmentRaw  = enchantmentHolder.unwrapKey().orElseThrow().location().toString();
+        Holder<Enchantment> enchantmentHolder = storedEnchant.entrySet().iterator().next().getKey();
+        String enchantmentRaw = enchantmentHolder.unwrapKey().orElseThrow().location().toString();
 
         String[] enchantmentInfo = enchantmentRaw.split(":");
 
         tooltipComponents.add(Component.literal(" "));
 
-        Component translatable = Component.translatable("enchantment." + enchantmentInfo[0] + "." + enchantmentInfo[1] + ".description");
-        String resolvedText = translatable.getString();
+        String descriptionKey = "enchantment." + enchantmentInfo[0] + "." + enchantmentInfo[1] + ".desc";
+        String resolvedText = Component.translatable(descriptionKey).getString();
+        if (resolvedText.equals(descriptionKey)) {
+            resolvedText = DEFAULT_BOOK_DESCRIPTION;
+        }
         List<String> splitText = UtilFunctions.wrapText(resolvedText, maxWidthTooltip);
         for (String line : splitText) {
             tooltipComponents.add(Component.literal(line.trim()));
@@ -118,7 +126,7 @@ public class RechantmentBookItem extends Item {
         tooltipComponents.add(Component.literal(" "));
 
         tooltipComponents.add(Component.literal("Success Rate: ")
-                .setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GREEN))  // Green for "Success Rate: "
+                .setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GREEN)) // Green for "Success Rate: "
                 .append(Component.literal(successRate + "%")
                         .setStyle(Style.EMPTY.withColor(ChatFormatting.WHITE))));
         tooltipComponents.add(Component.literal(" "));
@@ -135,7 +143,6 @@ public class RechantmentBookItem extends Item {
         return true;
     }
 
-
     @Override
     public int getMaxStackSize(ItemStack stack) {
         return 1;
@@ -146,13 +153,15 @@ public class RechantmentBookItem extends Item {
         return true;
     }
 
-
     @Override
     public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction action, Player player) {
         ItemStack itemToEnchantStack = slot.getItem();
 
-        boolean shouldAttemptEnchant = action == ClickAction.PRIMARY && (itemToEnchantStack.isEnchanted() || itemToEnchantStack.isEnchantable());
-        if (!shouldAttemptEnchant) { return false; }
+        boolean shouldAttemptEnchant = action == ClickAction.PRIMARY
+                && (itemToEnchantStack.isEnchanted() || itemToEnchantStack.isEnchantable());
+        if (!shouldAttemptEnchant) {
+            return false;
+        }
 
         if (player.getAbilities().instabuild) {
             return applyCreative(stack, itemToEnchantStack, player);
@@ -179,18 +188,28 @@ public class RechantmentBookItem extends Item {
 
         // Get the stored enchantment from the book using data components
         ItemEnchantments storedEnchants = stack.get(DataComponents.STORED_ENCHANTMENTS);
-        if (storedEnchants == null || storedEnchants.isEmpty()) return false;
+        if (storedEnchants == null || storedEnchants.isEmpty())
+            return false;
 
         // Get the first (and should be only) enchantment from the book
         var bookEnchantEntry = storedEnchants.entrySet().iterator().next();
         Holder<Enchantment> enchantmentHolder = bookEnchantEntry.getKey();
         int enchantmentLevel = bookEnchantEntry.getIntValue();
         Enchantment enchantment = enchantmentHolder.value();
+        boolean isRebirthBook = enchantmentHolder.unwrapKey().map(key -> key.equals(ModEnchantments.REBIRTH))
+                .orElse(false);
+
+        if (isRebirthBook && itemToEnchantStack.getOrDefault(ModDataComponents.REBORN, false)) {
+            sendClientMessage(player,
+                    Component.literal("This item has already been Reborn.").withStyle(ChatFormatting.RED));
+            return true;
+        }
 
         boolean canEnchantGeneral = itemToEnchantStack.supportsEnchantment(enchantmentHolder);
 
         // Get current enchantments on the target item
-        ItemEnchantments itemEnchants = itemToEnchantStack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+        ItemEnchantments itemEnchants = itemToEnchantStack.getOrDefault(DataComponents.ENCHANTMENTS,
+                ItemEnchantments.EMPTY);
         ItemEnchantments.Mutable mutableEnchants = new ItemEnchantments.Mutable(itemEnchants);
 
         if (canEnchantGeneral && !itemToEnchantStack.isEnchanted()) {
@@ -202,10 +221,12 @@ public class RechantmentBookItem extends Item {
             if (itemEnchants.getLevel(enchantmentHolder) > 0) {
                 int otherEnchantLevel = itemEnchants.getLevel(enchantmentHolder);
                 if (otherEnchantLevel == enchantment.getMaxLevel()) {
-                        sendClientMessage(player, Component.literal("This item already has this enchantment maxed!").withStyle(ChatFormatting.RED));
+                    sendClientMessage(player, Component.literal("This item already has this enchantment maxed!")
+                            .withStyle(ChatFormatting.RED));
 
                 } else if (enchantmentLevel < otherEnchantLevel) {
-                    sendClientMessage(player, Component.literal("This item already has this enchantment!").withStyle(ChatFormatting.RED));
+                    sendClientMessage(player,
+                            Component.literal("This item already has this enchantment!").withStyle(ChatFormatting.RED));
 
                 } else {
                     if (otherEnchantLevel == enchantmentLevel) {
@@ -221,7 +242,7 @@ public class RechantmentBookItem extends Item {
                 for (var otherEnchantEntry : itemEnchants.entrySet()) {
                     Holder<Enchantment> otherEnchantHolder = otherEnchantEntry.getKey();
                     Enchantment otherEnchantment = otherEnchantHolder.value();
-                            
+
                     if (!Enchantment.areCompatible(enchantmentHolder, otherEnchantHolder)) {
                         sendClientMessage(player, Component.translatable(enchantment.description().getString())
                                 .append(" is not compatible with ")
@@ -231,7 +252,7 @@ public class RechantmentBookItem extends Item {
                         break;
                     }
                 }
-                        
+
                 if (allCompatible) {
                     // Enchant good to go, enchant that thing!
                     mutableEnchants.set(enchantmentHolder, enchantmentLevel);
@@ -239,7 +260,8 @@ public class RechantmentBookItem extends Item {
                 }
             }
         } else {
-            sendClientMessage(player, Component.literal("Enchantment cannot be applied to this item").withStyle(ChatFormatting.RED));
+            sendClientMessage(player,
+                    Component.literal("Enchantment cannot be applied to this item").withStyle(ChatFormatting.RED));
         }
 
         return true;
@@ -257,7 +279,8 @@ public class RechantmentBookItem extends Item {
         } else {
             // Play bad sound
             playEnchantSound(player, level, ModSounds.ENCHANTED_BOOK_FAIL.get(), isCreative);
-            sendClientMessage(player, Component.literal("Enchantment failed to apply to item!").withStyle(ChatFormatting.RED));
+            sendClientMessage(player,
+                    Component.literal("Enchantment failed to apply to item!").withStyle(ChatFormatting.RED));
         }
         // Break the book regardless of success or not
         enchantedBook.shrink(1);
@@ -272,7 +295,6 @@ public class RechantmentBookItem extends Item {
         level.playSound(null, player.getOnPos(), soundEvent, SoundSource.PLAYERS, 1f, 1f);
     }
 
-
     private void sendClientMessage(Player pPlayer, Component textComponent) {
         pPlayer.sendSystemMessage(textComponent);
     }
@@ -281,7 +303,6 @@ public class RechantmentBookItem extends Item {
         Random random = new Random();
         return random.nextInt(100) < successRate;
     }
-    
 
     public static Component getApplicableIcons(Holder<Enchantment> enchantment) {
         if (enchantment == null) {
@@ -296,10 +317,56 @@ public class RechantmentBookItem extends Item {
                 String[] itemNameParts = itemName.split("[:_]");
                 String coreName = itemNameParts[itemNameParts.length - 1];
                 // Get the icon png from the translatable
-                text.append(Component.translatable("enchantment.icon." +coreName));
+                text.append(Component.translatable("enchantment.icon." + coreName));
             }
 
         }
         return text;
+    }
+
+    private static String resolveEnchantmentDisplayName(String enchantmentSource, String enchantmentName) {
+        String enchantmentTranslationKey = "enchantment." + enchantmentSource + "." + enchantmentName;
+        String translatedName = Component.translatable(enchantmentTranslationKey).getString();
+        if (!translatedName.equals(enchantmentTranslationKey)) {
+            return translatedName;
+        }
+
+        return fallbackEnchantmentName(enchantmentName);
+    }
+
+    private static String resolveEnchantmentLevelText(Enchantment enchantment, int enchantmentLevel) {
+        if (enchantment.getMaxLevel() == 1) {
+            return "";
+        }
+
+        String levelTranslationKey = "enchantment.level." + enchantmentLevel;
+        String translatedLevel = Component.translatable(levelTranslationKey).getString();
+        if (!translatedLevel.equals(levelTranslationKey)) {
+            return translatedLevel;
+        }
+
+        return UtilFunctions.intToRoman(enchantmentLevel);
+    }
+
+    private static String fallbackEnchantmentName(String enchantmentName) {
+        String[] segments = enchantmentName.split("_");
+        StringBuilder formattedName = new StringBuilder();
+        for (String segment : segments) {
+            if (segment.isEmpty()) {
+                continue;
+            }
+
+            if (!formattedName.isEmpty()) {
+                formattedName.append(" ");
+            }
+
+            String lowercaseSegment = segment.toLowerCase(Locale.ROOT);
+            formattedName.append(Character.toUpperCase(lowercaseSegment.charAt(0)));
+            if (lowercaseSegment.length() > 1) {
+                formattedName.append(lowercaseSegment.substring(1));
+            }
+        }
+
+        return formattedName.toString();
     }
 }
