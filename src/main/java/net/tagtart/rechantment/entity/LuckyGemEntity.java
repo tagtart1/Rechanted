@@ -240,7 +240,7 @@ public class LuckyGemEntity extends Entity implements ItemSupplier {
             double motionZ = Math.sin(randomAngle) * horizontalSpeed;
             rewardEntity.setDeltaMovement(motionX, motionY, motionZ);
             rewardEntity.getPersistentData().putBoolean(POP_REWARD_TRAIL_ACTIVE_KEY, true);
-            boolean isGemReward = rewardStack.is(ModItems.CHANCE_GEM.get());
+            boolean isGemReward = LuckyGemDropTable.isGemRewardItem(rewardStack);
             rewardEntity.getPersistentData().putBoolean(POP_REWARD_TRAIL_IS_GEM_KEY, isGemReward);
             if (isGemReward) {
                 rewardEntity.setGlowingTag(true);
