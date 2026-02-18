@@ -2,7 +2,6 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "bonus_rolls": 0.0,
       "conditions": [
         {
           "condition": "minecraft:survives_explosion"
@@ -11,7 +10,21 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "rechantment:rechantment_enchanting_table"
+          "name": "minecraft:enchanting_table"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:emerald"
         }
       ],
       "rolls": 1.0

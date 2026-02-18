@@ -1,7 +1,7 @@
 {
 	"format_version": "1.21.11",
 	"credit": "Made with Blockbench",
-	"parent": "rechantment:block/rechantment_enchanting_table",
+	"parent": "block/block",
 	"textures": {
 		"stand": "rechantment:block/table_lapis_stand",
 		"particle": "rechantment:block/table_bottom",
