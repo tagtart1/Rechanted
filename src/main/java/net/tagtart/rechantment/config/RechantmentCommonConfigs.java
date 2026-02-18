@@ -126,6 +126,14 @@ public class RechantmentCommonConfigs {
         public static final ModConfigSpec.DoubleValue SHINY_CHANCE_GEM_BREAK_CHANCE;
 
         public static final ModConfigSpec.ConfigValue<List<? extends String>> ANNOUNCEMENT_ENCHANTMENTS;
+        public static final ModConfigSpec.ConfigValue<? extends Boolean> ANNOUNCE_CHANCE_GEM;
+        public static final ModConfigSpec.ConfigValue<? extends Boolean> ANNOUNCE_SHINY_CHANCE_GEM;
+        public static final ModConfigSpec.ConfigValue<? extends Boolean> ANNOUNCE_RETURN_GEM;
+        public static final ModConfigSpec.ConfigValue<? extends Boolean> ANNOUNCE_TASTY_GEM;
+        public static final ModConfigSpec.ConfigValue<? extends Boolean> ANNOUNCE_WARP_GEM;
+        public static final ModConfigSpec.ConfigValue<? extends Boolean> ANNOUNCE_LUCKY_GEM;
+        public static final ModConfigSpec.ConfigValue<? extends Boolean> ANNOUNCE_CLONE_GEM;
+        public static final ModConfigSpec.ConfigValue<? extends Boolean> ANNOUNCE_SMITHING_GEM;
 
         public static final ModConfigSpec.ConfigValue<? extends Boolean> REMOVE_MENDING_ENABLED;
 
@@ -507,19 +515,6 @@ public class RechantmentCommonConfigs {
                 RARE_GEM_POOL = BUILDER.translation("config.rechantment.rare_gem_pool.title").defineList(
                                 "rare_gem_pool", rare_gem_pool_defaults, () -> "rechantment:shiny_chance_gem|35",
                                 s -> s instanceof String);
-                BUILDER.pop();
-
-                BUILDER.translation("config.rechantment.chance_gems.name").comment("Settings for Chance Gems")
-                                .push("Chance Gems");
-                BUILDER.comment("Chance for the shiny chance gem to shatter when applied.");
-                SHINY_CHANCE_GEM_BREAK_CHANCE = BUILDER
-                                .translation("config.rechantment.shiny_chance_gem_break_chance.title")
-                                .defineInRange("shiny_chance_gem_break_chance", 0.25, 0.0, 1.0);
-                BUILDER.pop();
-
-                BUILDER.translation("config.rechantment.announce_rare_drop_list.name")
-                                .comment("Settings for broadcasting rare enchantment drops to all players")
-                                .push("Announce Rare Drop List");
                 BUILDER.comment("The game will broadcast a message to all players if a player gets any listed enchantments within the level range to drop from the enchantment table",
                                 "Format: <enchantment>|<level-range>",
                                 "Example: minecraft:unbreaking|1-3");
@@ -529,6 +524,35 @@ public class RechantmentCommonConfigs {
                                 .defineList("announce_enchantments", announce_enchantments,
                                                 () -> "rechantment:sharpness|3-5", s -> s instanceof String);
 
+                BUILDER.translation("config.rechantment.announce_gem_drop_list.name")
+                                .comment("Settings for gem drop announcement toggles")
+                                .push("Announce Gem Drop List");
+                BUILDER.comment("Gem drop announcement toggles.");
+                ANNOUNCE_CHANCE_GEM = BUILDER.translation("config.rechantment.announce_chance_gem.title")
+                                .define("announce_chance_gem", true);
+                ANNOUNCE_SHINY_CHANCE_GEM = BUILDER.translation("config.rechantment.announce_shiny_chance_gem.title")
+                                .define("announce_shiny_chance_gem", true);
+                ANNOUNCE_RETURN_GEM = BUILDER.translation("config.rechantment.announce_return_gem.title")
+                                .define("announce_return_gem", true);
+                ANNOUNCE_TASTY_GEM = BUILDER.translation("config.rechantment.announce_tasty_gem.title")
+                                .define("announce_tasty_gem", true);
+                ANNOUNCE_WARP_GEM = BUILDER.translation("config.rechantment.announce_warp_gem.title")
+                                .define("announce_warp_gem", true);
+                ANNOUNCE_LUCKY_GEM = BUILDER.translation("config.rechantment.announce_lucky_gem.title")
+                                .define("announce_lucky_gem", true);
+                ANNOUNCE_CLONE_GEM = BUILDER.translation("config.rechantment.announce_clone_gem.title")
+                                .define("announce_clone_gem", true);
+                ANNOUNCE_SMITHING_GEM = BUILDER.translation("config.rechantment.announce_smithing_gem.title")
+                                .define("announce_smithing_gem", true);
+                BUILDER.pop();
+                BUILDER.pop();
+
+                BUILDER.translation("config.rechantment.chance_gems.name").comment("Settings for Chance Gems")
+                                .push("Chance Gems");
+                BUILDER.comment("Chance for the shiny chance gem to shatter when applied.");
+                SHINY_CHANCE_GEM_BREAK_CHANCE = BUILDER
+                                .translation("config.rechantment.shiny_chance_gem_break_chance.title")
+                                .defineInRange("shiny_chance_gem_break_chance", 0.25, 0.0, 1.0);
                 BUILDER.pop();
 
                 BUILDER.translation("config.rechantment.loot_table_enhancements.name").comment(

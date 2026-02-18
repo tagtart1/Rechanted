@@ -129,6 +129,20 @@ public class UtilFunctions {
         return false;
     }
 
+    public static boolean shouldAnnounceGemDrop(String gemTranslationKey) {
+        return switch (gemTranslationKey) {
+            case "item.rechantment.chance_gem" -> RechantmentCommonConfigs.ANNOUNCE_CHANCE_GEM.get();
+            case "item.rechantment.shiny_chance_gem" -> RechantmentCommonConfigs.ANNOUNCE_SHINY_CHANCE_GEM.get();
+            case "item.rechantment.return_gem" -> RechantmentCommonConfigs.ANNOUNCE_RETURN_GEM.get();
+            case "item.rechantment.tasty_gem" -> RechantmentCommonConfigs.ANNOUNCE_TASTY_GEM.get();
+            case "item.rechantment.warp_gem" -> RechantmentCommonConfigs.ANNOUNCE_WARP_GEM.get();
+            case "item.rechantment.lucky_gem" -> RechantmentCommonConfigs.ANNOUNCE_LUCKY_GEM.get();
+            case "item.rechantment.clone_gem" -> RechantmentCommonConfigs.ANNOUNCE_CLONE_GEM.get();
+            case "item.rechantment.smithing_gem" -> RechantmentCommonConfigs.ANNOUNCE_SMITHING_GEM.get();
+            default -> false;
+        };
+    }
+
     public static ItemStack rollModdedBook(RegistryAccess registryAccess) {
         ItemStack replacementBook = new ItemStack(ModItems.RECHANTMENT_BOOK.get());
         BookRarityProperties bookRarityProperties = BookRarityProperties.getRandomRarityWeighted();

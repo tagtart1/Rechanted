@@ -183,7 +183,12 @@ public record PlayerPurchaseEnchantedBookC2SPayload(int bookPropertiesIndex, Blo
                 if (random.nextDouble() < bookProperties.bonusItemRollChance) {
                     Optional<ItemStack> bonusItem = BonusItemResolver.resolveRandomBonusItem(bookProperties, random);
                     if (bonusItem.isPresent()) {
-                        enchTableEntity.startBonusPendingAnimation(bonusItem.get());
+                        ItemStack bonusStack = bonusItem.get();
+                        if (UtilFunctions.shouldAnnounceGemDrop(bonusStack.getDescriptionId())) {
+                            bonusStack.set(ModDataComponents.SHOULD_ANNOUNCE_GEM, true);
+                        }
+
+                        enchTableEntity.startBonusPendingAnimation(bonusStack);
 
                         if (player.containerMenu instanceof RechantmentTableMenu rechantmentTableMenu) {
                             rechantmentTableMenu.bonusEarnedEffectQueued.set(rechantmentTableMenu.bonusEarnedEffectQueued.get() + 1);

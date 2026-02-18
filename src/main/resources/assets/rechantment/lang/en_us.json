@@ -247,6 +247,8 @@
   "config.rechantment.bonus_item_pools.name": "Bonus Item Pools",
 
   "config.rechantment.announce_rare_drop_list.name": "Rare Drop Announcements",
+  "config.rechantment.announce_book_drop_list.name": "Book Drop Announcements",
+  "config.rechantment.announce_gem_drop_list.name": "Gem Drop Announcements",
 
   "config.rechantment.loot_table_enhancements.name": "Loot Table Enhancements",
   "config.rechantment.villager_trades.name": "Villager Trades",
@@ -408,6 +410,8 @@
 
   "config.rechantment.announce_rare_drop_list.title": "Rare Drop Announcements",
   "config.rechantment.announce_rare_drop_list.tooltip": "Configure which enchantments will be announced when found in loot",
+  "config.rechantment.announce_gem_drop_list.title": "Gem Drop Announcements",
+  "config.rechantment.announce_gem_drop_list.tooltip": "Configure which gems will be announced when found in loot",
 
   "config.rechantment.loot_table_enhancements.title": "Loot Table Enhancements",
   "config.rechantment.loot_table_enhancements.tooltip": "Modify how enchanted items spawn in world generation",
@@ -421,6 +425,16 @@
 
   "config.rechantment.announce_enchantments.title": "Announced Enchantments",
   "config.rechantment.announce_enchantments.tooltip": "Enchantments that will be announced when found in loot",
+  "config.rechantment.announce_chance_gem.title": "Announce Chance Gem",
+  "config.rechantment.announce_shiny_chance_gem.title": "Announce Shiny Chance Gem",
+  "config.rechantment.announce_return_gem.title": "Announce Return Gem",
+  "config.rechantment.announce_tasty_gem.title": "Announce Tasty Gem",
+  "config.rechantment.announce_warp_gem.title": "Announce Warp Gem",
+  "config.rechantment.announce_lucky_gem.title": "Announce Lucky Gem",
+  "config.rechantment.announce_clone_gem.title": "Announce Clone Gem",
+  "config.rechantment.announce_smithing_gem.title": "Announce Smithing Gem",
+  "config.rechantment.announce_gems.title": "Announced Gems",
+  "config.rechantment.announce_gems.tooltip": "Gems and whether each should be announced when found",
 
   "config.rechantment.replace_enchanted_loot.title": "Replace Enchanted Loot",
   "config.rechantment.replace_enchanted_loot.tooltip": "Replace enchanted items with Rechantment books",

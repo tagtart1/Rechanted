@@ -7,6 +7,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
@@ -429,9 +430,11 @@ public class ModGenericEvents {
         Inventory inventory = player.getInventory();
         for (ItemStack stack : inventory.items) {
             announceFoundBook(player, stack);
+            announceFoundGem(player, stack);
         }
         for (ItemStack stack : inventory.offhand) {
             announceFoundBook(player, stack);
+            announceFoundGem(player, stack);
         }
     }
 
@@ -464,6 +467,9 @@ public class ModGenericEvents {
         if (bookProps != null) {
             enchantStyle = enchantStyle.withColor(bookProps.color).withUnderlined(true);
         }
+        enchantStyle = enchantStyle.withHoverEvent(new HoverEvent(
+                HoverEvent.Action.SHOW_ITEM,
+                new HoverEvent.ItemStackInfo(stack.copyWithCount(1))));
 
         Component enchantName = Enchantment.getFullname(enchantmentHolder, enchantmentLevel).copy().withStyle(enchantStyle);
         Component playerName = player.getDisplayName();
@@ -491,5 +497,43 @@ public class ModGenericEvents {
         }
 
         stack.remove(ModDataComponents.ANNOUNCE_ON_FOUND);
+    }
+
+    private static void announceFoundGem(Player player, ItemStack stack) {
+        if (stack.isEmpty()) {
+            return;
+        }
+
+        if (!stack.getOrDefault(ModDataComponents.SHOULD_ANNOUNCE_GEM, false)) {
+            return;
+        }
+
+        Style gemStyle = Style.EMPTY.withColor(ChatFormatting.AQUA).withUnderlined(true);
+        if (stack.is(ModItems.SHINY_CHANCE_GEM.get())) {
+            gemStyle = gemStyle.withColor(ChatFormatting.LIGHT_PURPLE);
+        } 
+
+        gemStyle = gemStyle.withHoverEvent(new HoverEvent(
+                HoverEvent.Action.SHOW_ITEM,
+                new HoverEvent.ItemStackInfo(stack.copyWithCount(1))));
+
+        Component gemName = stack.getHoverName().copy().withStyle(gemStyle);
+        Component playerName = player.getDisplayName();
+
+        MutableComponent message = Component.empty()
+                .append(playerName)
+                .append(Component.literal(" found a "))
+                .append(gemName)
+                .append(Component.literal("!"));
+
+        if (player.level() instanceof ServerLevel level) {
+            for (Player otherPlayer : level.players()) {
+                otherPlayer.sendSystemMessage(message);
+            }
+
+            level.playSound(null, player.getOnPos(), SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1f, 1f);
+        }
+
+        stack.remove(ModDataComponents.SHOULD_ANNOUNCE_GEM);
     }
 }

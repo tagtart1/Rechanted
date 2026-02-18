@@ -29,7 +29,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.item.ModItems;
+import net.tagtart.rechantment.util.UtilFunctions;
 import org.joml.Vector3f;
 
 import java.util.List;
@@ -230,6 +232,10 @@ public class LuckyGemEntity extends Entity implements ItemSupplier {
         for (ItemStack rewardStack : LuckyGemDropTable.rollDrops(this.random)) {
             if (rewardStack.isEmpty()) {
                 continue;
+            }
+
+            if (UtilFunctions.shouldAnnounceGemDrop(rewardStack.getDescriptionId())) {
+                rewardStack.set(ModDataComponents.SHOULD_ANNOUNCE_GEM, true);
             }
 
             ItemEntity rewardEntity = new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), rewardStack);
