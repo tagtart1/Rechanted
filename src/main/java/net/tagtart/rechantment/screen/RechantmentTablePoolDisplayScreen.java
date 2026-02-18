@@ -112,6 +112,7 @@ public class RechantmentTablePoolDisplayScreen extends AbstractContainerScreen<R
 
         bookIcon = new HoverableWithTooltipGuiRenderable(this::getBookTooltipLines, BookRarityProperties.getAllProperties()[viewingPropertyIndex].iconResourceLocation, leftPos + 73, topPos + 23);
         bookIcon.onClickMouseEvent = this::onClickBookIconEvent;
+        updateIndexAnimationData();
         hoverables.add(bookIcon);
 
         // Hoverables that represent a loot table entry.
@@ -392,6 +393,8 @@ public class RechantmentTablePoolDisplayScreen extends AbstractContainerScreen<R
         index = index % BookRarityProperties.getAllProperties().length;
         viewingPropertyIndex = index;
 
+        updateIndexAnimationData();
+
         Minecraft.getInstance().player.playSound(SoundEvents.BOOK_PAGE_TURN, 0.5F, (float) UtilFunctions.remap(0.0, 1.0, 0.8, 1.2, viewingPropertyIndex / 5.0));
         bookIcon.renderTexture = BookRarityProperties.getAllProperties()[viewingPropertyIndex].iconResourceLocation;
         generateTableEntries();
@@ -399,6 +402,17 @@ public class RechantmentTablePoolDisplayScreen extends AbstractContainerScreen<R
 
     private BookRarityProperties getCurrentViewingProperties() {
         return BookRarityProperties.getAllProperties()[viewingPropertyIndex];
+    }
+
+    private void updateIndexAnimationData() {
+        if (viewingPropertyIndex == 4) {
+            bookIcon.setAnimatedData(new HoverableGuiRenderable.AnimatedTextureData(
+                    16, 16, 16, 112, 3, 7, true
+            ));
+        }
+        else {
+            bookIcon.setAnimatedData(null);
+        }
     }
 
     public int getScissorMinX() {

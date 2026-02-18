@@ -5,8 +5,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.InventoryMenu;
 import org.apache.logging.log4j.util.TriConsumer;
 
 import java.util.ArrayList;
@@ -15,7 +17,13 @@ import java.util.function.Consumer;
 
 public class HoverableGuiRenderable implements Renderable {
 
+
+    public record AnimatedTextureData(int frameWidth, int frameHeight, int textureWidth, int textureHeight, int ticksPerFrame, int frameCount, boolean verticalSheetDir) {
+
+    }
+
     protected ResourceLocation renderTexture;
+    protected AnimatedTextureData animatedTextureData = null;
 
     // Item icons are 16x16 by default, but these can be set to any
     // texture size. Entire image will render by default.
@@ -32,6 +40,8 @@ public class HoverableGuiRenderable implements Renderable {
     // UV offset for rendering
     protected int renderUVOffsetU = 0;
     protected int renderUVOffsetV = 0;
+
+    protected float timeElapsed = 0f;
 
     // A uniform scale factor in all axes
     public float scaleFac = 1.0f;
@@ -65,15 +75,35 @@ public class HoverableGuiRenderable implements Renderable {
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta)
     {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, renderTexture);
+        timeElapsed += delta;
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().scale(scaleFac, scaleFac, scaleFac);
 
-        if (renderDefaultTexture)
-            guiGraphics.blit(renderTexture, renderOffsetPosX, renderOffsetPosY, renderUVOffsetU, renderUVOffsetV, imageViewWidth, imageViewHeight, imageWidth, imageHeight);
+        if (renderDefaultTexture) {
+            if (animatedTextureData != null) {
+                float animationTick = timeElapsed;
+                int frame = (int)(animationTick / animatedTextureData.ticksPerFrame) % animatedTextureData.frameCount;
+
+                int frameU = (animatedTextureData.verticalSheetDir) ? 0 : frame * animatedTextureData.frameWidth;
+                int frameV = (!animatedTextureData.verticalSheetDir) ? 0 : frame * animatedTextureData.frameHeight;
+
+                guiGraphics.blit(
+                        renderTexture,
+                        renderOffsetPosX,
+                        renderOffsetPosY,
+                        renderUVOffsetU + frameU,
+                        renderUVOffsetV + frameV,
+                        animatedTextureData.frameWidth,
+                        animatedTextureData.frameHeight,
+                        animatedTextureData.textureWidth,
+                        animatedTextureData.textureHeight
+                );
+            }
+            else {
+                guiGraphics.blit(renderTexture, renderOffsetPosX, renderOffsetPosY, renderUVOffsetU, renderUVOffsetV, imageViewWidth, imageViewHeight, imageWidth, imageHeight);
+            }
+        }
 
         guiGraphics.pose().popPose();
 
@@ -90,6 +120,15 @@ public class HoverableGuiRenderable implements Renderable {
         }
 
         hoveredLastFrame = hoveredThisFrame;
+    }
+
+    public void setAnimatedData(AnimatedTextureData data) {
+        if (data == null) {
+            animatedTextureData = null;
+            return;
+        }
+
+        animatedTextureData = data;
     }
 
     protected void onHoverStart() {
