@@ -29,8 +29,8 @@ public class ModSounds {
     public static final Supplier<SoundEvent> SUPER_BURP = registerSoundEvents("super_burp");
     public static final Supplier<SoundEvent> ENDER_EYE_DEATH = registerSoundEvents("ender_eye_death");
 
-    public static final Supplier<SoundEvent> GEM_PENDING = registerSoundEvents("gem_pending");
-    public static final Supplier<SoundEvent> GEM_EARNED = registerSoundEvents("gem_earned");
+    public static final Supplier<SoundEvent> ITEM_PENDING = registerSoundEvents("item_pending");
+    public static final Supplier<SoundEvent> ITEM_EARNED = registerSoundEvents("item_earned");
 
 
     private static Supplier<SoundEvent> registerSoundEvents(String name) {

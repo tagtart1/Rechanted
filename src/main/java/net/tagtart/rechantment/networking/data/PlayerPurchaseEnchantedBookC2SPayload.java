@@ -27,6 +27,7 @@ import net.tagtart.rechantment.block.entity.RechantmentTableBlockEntity;
 import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.item.ModItems;
 import net.tagtart.rechantment.screen.RechantmentTableMenu;
+import net.tagtart.rechantment.util.BonusItemResolver;
 import net.tagtart.rechantment.util.BookRarityProperties;
 import net.tagtart.rechantment.util.EnchantmentPoolEntry;
 import net.tagtart.rechantment.util.UtilFunctions;
@@ -94,7 +95,7 @@ public record PlayerPurchaseEnchantedBookC2SPayload(int bookPropertiesIndex, Blo
             else if (!meetsBookshelfRequirement) failCase = PurchaseBookResultCase.INSUFFICIENT_BOOKS;
             else if (!meetsFloorBlocksRequirement) failCase = PurchaseBookResultCase.INSUFFICIENT_FLOOR;
             else if (!meetsLapisRequirement) failCase = PurchaseBookResultCase.INSUFFICIENT_LAPIS;
-            else if (!validEntityState) failCase = PurchaseBookResultCase.GEM_PENDING;
+            else if (!validEntityState) failCase = PurchaseBookResultCase.BONUS_PENDING;
 
             // At this point, should be good to go. Can destroy blocks and reward the book.
             else
@@ -179,22 +180,19 @@ public record PlayerPurchaseEnchantedBookC2SPayload(int bookPropertiesIndex, Blo
                 // Note: had to make the call to set the item directly in inventory to have announced message
                 player.getInventory().setItem(player.getInventory().getFreeSlot(), toGive);
 
-                // Roll for gem of chance
-                double gemOfChanceDropRate = bookProperties.rerollGemChance;
-                if (random.nextDouble() < gemOfChanceDropRate) {
+                if (random.nextDouble() < bookProperties.bonusItemRollChance) {
+                    Optional<ItemStack> bonusItem = BonusItemResolver.resolveRandomBonusItem(bookProperties, random);
+                    if (bonusItem.isPresent()) {
+                        enchTableEntity.startBonusPendingAnimation(bonusItem.get());
 
-                    ItemStack chanceGemToGive = new ItemStack(ModItems.CHANCE_GEM.get());
-                    enchTableEntity.startGemPendingAnimation(chanceGemToGive);
+                        if (player.containerMenu instanceof RechantmentTableMenu rechantmentTableMenu) {
+                            rechantmentTableMenu.bonusEarnedEffectQueued.set(rechantmentTableMenu.bonusEarnedEffectQueued.get() + 1);
+                            rechantmentTableMenu.broadcastChanges();
+                        }
 
-                    // If gem earned, send signal to menu to render the cool ass effect
-                    // in the screen's fbm shader.
-                    if (player.containerMenu instanceof RechantmentTableMenu rechantmentTableMenu) {
-                        rechantmentTableMenu.gemEarnedEffectQueued.set(rechantmentTableMenu.gemEarnedEffectQueued.get() + 1);
-                        rechantmentTableMenu.broadcastChanges();
+                        soundToPlay = SoundEvents.PLAYER_LEVELUP;
+                        player.sendSystemMessage(Component.translatable("message.rechantment.bonus_item_found").withStyle(ChatFormatting.GREEN));
                     }
-
-                    soundToPlay = SoundEvents.PLAYER_LEVELUP;
-                    player.sendSystemMessage(Component.literal("You found a Gem of Chance!").withStyle(ChatFormatting.GREEN));
                 }
 
                 level.playSound(null, payload.enchantTablePos, soundToPlay, SoundSource.BLOCKS, 1f, 1f);
@@ -226,8 +224,8 @@ private static void sendEnchantResultPlayerMessage(Player player, PurchaseBookRe
         case INSUFFICIENT_LAPIS:
             player.sendSystemMessage(Component.literal("Server desync error: Not enough lapis lazuli in enchantment table!"));
             break;
-        case GEM_PENDING:
-            player.sendSystemMessage(Component.literal("Server desync error: Can't purchase book while a gem is pending!"));
+        case BONUS_PENDING:
+            player.sendSystemMessage(Component.literal("Server desync error: Can't purchase book while a bonus item is pending!"));
             break;
     }
 

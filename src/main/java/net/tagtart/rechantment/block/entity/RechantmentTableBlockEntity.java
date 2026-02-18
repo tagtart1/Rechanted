@@ -45,16 +45,17 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
     // For super basic state-machine-esque logic; mainly allows the block renderer/clients to know
     // how to render the book based on custom logic happening server side.
     public enum CustomRechantmentTableState {
+        // Keep order stable for NBT ordinal compatibility.
         Normal,         // Normal state. In this state 99.99% of the time.
-        GemPending,     // Server rolled gem, book will begin floating up in the air before it's earned.
-        GemEarned,      // After gem pending is done, gem spawns and book floats back down to normal position.
+        BonusPending,     // Server rolled bonus item, book will begin floating up in the air before it's earned.
+        BonusEarned,      // After bonus pending is done, item spawns and book floats back down to normal position.
     }
 
-    public static final int GEM_PENDING_ANIMATION_LENGTH_TICKS = 130;
-    public static final int GEM_EARNED_ANIMATION_LENGTH_TICKS = 20;
+    public static final int BONUS_PENDING_ANIMATION_LENGTH_TICKS = 130;
+    public static final int BONUS_EARNED_ANIMATION_LENGTH_TICKS = 20;
 
-    public static final double GEM_EARNED_ITEM_SPAWN_Y_OFFSET = 1.5;
-    public static final double GEM_EARNED_ITEM_MOVE_SPEED_ON_SPAWN = 0.3;  // Speed gem will move when spawned by table; moves in facing direction of lapis holder.
+    public static final double BONUS_EARNED_ITEM_SPAWN_Y_OFFSET = 1.5;
+    public static final double BONUS_EARNED_ITEM_MOVE_SPEED_ON_SPAWN = 0.3;  // Speed item will move when spawned by table; moves in facing direction of lapis holder.
 
     private final ItemStackHandler itemHandler = new ItemStackHandler(1) {
 
@@ -75,7 +76,7 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
 
     public CustomRechantmentTableState tableState = CustomRechantmentTableState.Normal;
     public long currentStateTimeRemaining = 0;
-    private ItemStack pendingGemItem = ItemStack.EMPTY;
+    private ItemStack pendingBonusItem = ItemStack.EMPTY;
 
 
     public RechantmentTableBlockEntity(BlockPos pPos, BlockState pBlockState)
@@ -123,8 +124,8 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
         pTag.putInt("CustomTableState", tableState.ordinal());
         pTag.putLong("CurrentStateTimeRemaining", currentStateTimeRemaining);
 
-        if (pendingGemItem != ItemStack.EMPTY) {
-            pTag.put("PendingGem", pendingGemItem.save(registries));
+        if (pendingBonusItem != ItemStack.EMPTY) {
+            pTag.put("PendingBonus", pendingBonusItem.save(registries));
         }
     }
 
@@ -136,8 +137,11 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
         tableState = CustomRechantmentTableState.values()[pTag.getInt("CustomTableState")];
         currentStateTimeRemaining = pTag.getLong("CurrentStateTimeRemaining");
 
-        Optional<ItemStack> loadedGemItem = ItemStack.parse(registries, pTag.getCompound("PendingGem"));
-        loadedGemItem.ifPresent(itemStack -> pendingGemItem = itemStack);
+        Optional<ItemStack> loadedBonusItem = ItemStack.parse(registries, pTag.getCompound("PendingBonus"));
+        if (loadedBonusItem.isEmpty()) {
+            loadedBonusItem = ItemStack.parse(registries, pTag.getCompound("PendingGem"));
+        }
+        loadedBonusItem.ifPresent(itemStack -> pendingBonusItem = itemStack);
     }
 
     @Override
@@ -147,8 +151,11 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
         tableState = CustomRechantmentTableState.values()[pTag.getInt("CustomTableState")];
         currentStateTimeRemaining = pTag.getLong("CurrentStateTimeRemaining");
 
-        Optional<ItemStack> loadedGemItem = ItemStack.parse(lookupProvider, pTag.getCompound("PendingGem"));
-        loadedGemItem.ifPresent(itemStack -> pendingGemItem = itemStack);
+        Optional<ItemStack> loadedBonusItem = ItemStack.parse(lookupProvider, pTag.getCompound("PendingBonus"));
+        if (loadedBonusItem.isEmpty()) {
+            loadedBonusItem = ItemStack.parse(lookupProvider, pTag.getCompound("PendingGem"));
+        }
+        loadedBonusItem.ifPresent(itemStack -> pendingBonusItem = itemStack);
     }
 
     @Override
@@ -190,11 +197,11 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
                     soundLogicOnTick(pPos, pLevel);
                 }
                 break;
-            case GemPending:
+            case BonusPending:
 
                 if (pLevel instanceof ServerLevel serverLevel) {
 
-                    if (currentStateTimeRemaining == GEM_PENDING_ANIMATION_LENGTH_TICKS - 10) {
+                    if (currentStateTimeRemaining == BONUS_PENDING_ANIMATION_LENGTH_TICKS - 10) {
                         serverLevel.playSound(null, getBlockPos(), ModSounds.ENCHANT_TABLE_CLOSE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
                     }
 
@@ -203,7 +210,7 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
                     }
 
                     if (currentStateTimeRemaining % 15 == 0 && currentStateTimeRemaining > 15) {
-                        float elapsedFraction = (1.0f - ((float) currentStateTimeRemaining / GEM_PENDING_ANIMATION_LENGTH_TICKS));
+                        float elapsedFraction = (1.0f - ((float) currentStateTimeRemaining / BONUS_PENDING_ANIMATION_LENGTH_TICKS));
                         sendRainbowCircleParticles(
                                 serverLevel,
                                 new Vec3(0, 0.3f, 0),
@@ -218,15 +225,15 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
                     }
 
                     if (currentStateTimeRemaining <= 0) {
-                        completePendingGemAnimation();
+                        completePendingBonusAnimation();
                     }
                 }
                 break;
-            case GemEarned:
+            case BonusEarned:
 
                 if (pLevel instanceof ServerLevel serverLevel) {
                     if (currentStateTimeRemaining <= 0) {
-                        gemEarnedToDefaultState();
+                        bonusEarnedToDefaultState();
                     }
 
                     // Needs to play slightly before book lands instead of right when it does; feels off for some reason if not.
@@ -297,49 +304,49 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
         return getBlockState().getValue(BlockStateProperties.FACING).getCounterClockWise();
     }
 
-    // Starts the gem earning animation process; once this state is complete and GemEarned state
+    // Starts the bonus item animation process; once this state is complete and BonusEarned state
     // completes as well, the provided ItemStack will be spawned by the table.
-    public void startGemPendingAnimation(ItemStack bonusGem) {
+    public void startBonusPendingAnimation(ItemStack bonusItem) {
         if (level.isClientSide || tableState != CustomRechantmentTableState.Normal) return;
 
-        tableState = CustomRechantmentTableState.GemPending;
-        currentStateTimeRemaining = GEM_PENDING_ANIMATION_LENGTH_TICKS;
+        tableState = CustomRechantmentTableState.BonusPending;
+        currentStateTimeRemaining = BONUS_PENDING_ANIMATION_LENGTH_TICKS;
 
-        pendingGemItem = bonusGem.copy();
+        pendingBonusItem = bonusItem.copy();
 
-        level.playSound(null, getBlockPos(), ModSounds.GEM_PENDING.get(), SoundSource.BLOCKS, 1.5f, 1.1f);
+        level.playSound(null, getBlockPos(), ModSounds.ITEM_PENDING.get(), SoundSource.BLOCKS, 1.5f, 1.1f);
 
         setChanged();
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
 
-    // If state is GemPending, this will complete the animation and spawn pendingGemItem.
+    // If state is BonusPending, this will complete the animation and spawn pendingBonusItem.
     // The rendered book will return to its resting position.
-    public void completePendingGemAnimation() {
+    public void completePendingBonusAnimation() {
 
-        if (level.isClientSide || tableState != CustomRechantmentTableState.GemPending || pendingGemItem == ItemStack.EMPTY) return;
+        if (level.isClientSide || tableState != CustomRechantmentTableState.BonusPending || pendingBonusItem == ItemStack.EMPTY) return;
 
-        tableState = CustomRechantmentTableState.GemEarned;
-        currentStateTimeRemaining = GEM_EARNED_ANIMATION_LENGTH_TICKS;
+        tableState = CustomRechantmentTableState.BonusEarned;
+        currentStateTimeRemaining = BONUS_EARNED_ANIMATION_LENGTH_TICKS;
 
         ItemEntity item = new ItemEntity(
                 level,
                 worldPosition.getX() + 0.5,
-                worldPosition.getY() + GEM_EARNED_ITEM_SPAWN_Y_OFFSET,
+                worldPosition.getY() + BONUS_EARNED_ITEM_SPAWN_Y_OFFSET,
                 worldPosition.getZ() + 0.5,
-                pendingGemItem
+                pendingBonusItem
         );
         item.setDefaultPickUpDelay();
 
         Direction facing = getLapisHolderFacingDirection();
         Vec3 moveDir = new Vec3(facing.getStepX(), 0.2f, facing.getStepZ()).normalize();
-        moveDir = moveDir.scale(GEM_EARNED_ITEM_MOVE_SPEED_ON_SPAWN);
+        moveDir = moveDir.scale(BONUS_EARNED_ITEM_MOVE_SPEED_ON_SPAWN);
         item.setDeltaMovement(moveDir);
 
         ServerLevel serverLevel = (ServerLevel)level;
         serverLevel.addFreshEntity(item);
         serverLevel.playSound(null, getBlockPos(), SoundEvents.EXPERIENCE_BOTTLE_THROW, SoundSource.BLOCKS, 1.0f, 1.0f);
-        serverLevel.playSound(null, getBlockPos(), ModSounds.GEM_EARNED.get(), SoundSource.BLOCKS, 0.8f, 1.15f);
+        serverLevel.playSound(null, getBlockPos(), ModSounds.ITEM_EARNED.get(), SoundSource.BLOCKS, 0.8f, 1.15f);
 
         Vec3 yOffset = new Vec3(0, 1.5f, 0);
         sendRainbowCircleParticles(serverLevel, yOffset, RechantmentTableRenderer.UP,RechantmentTableRenderer.NORTH, 0.5f, 0.8f, 0.8f, 0.4f, 0);
@@ -348,21 +355,21 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
         //sendRainbowCircleParticles(serverLevel, yOffset, new Vec3(1, 1, 1).normalize(), new Vec3(1, -1, 1).normalize(), 0.7f, 0.8f, 0.8f, 0.7f, 0);
         //sendRainbowCircleParticles(serverLevel, yOffset, new Vec3(1, 1, -1).normalize(), new Vec3(1, 1, -1).normalize(), 0.7f, 0.9f, 0.9f, 0.8f, 0);
 
-        pendingGemItem = ItemStack.EMPTY;
+        pendingBonusItem = ItemStack.EMPTY;
 
         setChanged();
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
 
-    // If state is GemEarned, this will return the entity back to the default state.
-    public void gemEarnedToDefaultState() {
-        if (level.isClientSide || tableState != CustomRechantmentTableState.GemEarned) return;
+    // If state is BonusEarned, this will return the entity back to the default state.
+    public void bonusEarnedToDefaultState() {
+        if (level.isClientSide || tableState != CustomRechantmentTableState.BonusEarned) return;
 
         tableState = CustomRechantmentTableState.Normal;
         currentStateTimeRemaining = 0;  // Irrelevant for default state
         System.out.println(tableState);
 
-        pendingGemItem = ItemStack.EMPTY;
+        pendingBonusItem = ItemStack.EMPTY;
 
         setChanged();
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
