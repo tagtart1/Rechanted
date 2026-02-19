@@ -27,7 +27,7 @@ public record BlitzEnchantmentEffect() implements EnchantmentEntityEffect {
     private static final long FIRST_STACK_COMBO_WINDOW_MILLIS = 1250; // 1.25 seconds between hits for first stack
     private static final long ACTIVE_COMBO_WINDOW_MILLIS = 1500; // 1.5 seconds when Blitz is active
     private static final int COMBO_REQUIRED = 6; // Hits needed to activate
-    private static final int BLITZ_I_DURATION = 10 * 20; // 10 seconds in ticks
+    private static final int BLITZ_I_DURATION = 5 * 60 * 20; // 5 minutes in ticks
     private static final int BLITZ_II_DURATION = 12 * 20; // 12 seconds in ticks
     private static final int BLITZ_III_DURATION = 15 * 20; // 15 seconds in ticks
     private static final int MAX_BLITZ_STACKS = 3;
@@ -171,4 +171,3 @@ public record BlitzEnchantmentEffect() implements EnchantmentEntityEffect {
         };
     }
 }
-
