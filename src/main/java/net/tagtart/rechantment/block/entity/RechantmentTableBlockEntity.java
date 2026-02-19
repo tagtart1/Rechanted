@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -30,6 +31,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.tagtart.rechantment.block.renderer.RechantmentTableRenderer;
 import net.tagtart.rechantment.screen.RechantmentTableMenu;
+import net.tagtart.rechantment.event.ItemEntityTrailHandler;
 import net.tagtart.rechantment.sound.ModSounds;
 import net.tagtart.rechantment.util.BookRarityProperties;
 import net.tagtart.rechantment.util.UtilFunctions;
@@ -62,7 +64,7 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
     public static final int LIGHT_BONUS_EARNED_ANIMATION_LENGTH_TICKS = 20;
 
     public static final double LIGHT_BONUS_EARNED_ITEM_SPAWN_Y_OFFSET = .5;
-    public static final double LIGHT_BONUS_EARNED_ITEM_MOVE_SPEED_ON_SPAWN = 0.3;  // Speed item will move when spawned by table; moves in facing direction of lapis holder.
+    public static final double LIGHT_BONUS_EARNED_ITEM_MOVE_SPEED_ON_SPAWN = 0.42;  // Slightly faster so light bonus drops don't stall near the table.
     public static final float LIGHT_BONUS_EARNED_ITEM_LAUNCH_Y_BIAS = 1.8f;  // Higher value = higher arc; reduces horizontal distance due normalize().
 
     private final ItemStackHandler itemHandler = new ItemStackHandler(1) {
@@ -408,6 +410,12 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
         Vec3 moveDir = new Vec3(facing.getStepX(), 0.2f, facing.getStepZ()).normalize();
         moveDir = moveDir.scale(BONUS_EARNED_ITEM_MOVE_SPEED_ON_SPAWN);
         item.setDeltaMovement(moveDir);
+        ItemEntityTrailHandler.enableTrailUntilGround(
+                item,
+                ParticleTypes.ENCHANT,
+                1,
+                2
+        );
 
         ServerLevel serverLevel = (ServerLevel)level;
         serverLevel.addFreshEntity(item);
@@ -444,6 +452,12 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
         Vec3 moveDir = new Vec3(facing.getStepX(), LIGHT_BONUS_EARNED_ITEM_LAUNCH_Y_BIAS, facing.getStepZ()).normalize();
         moveDir = moveDir.scale(LIGHT_BONUS_EARNED_ITEM_MOVE_SPEED_ON_SPAWN);
         item.setDeltaMovement(moveDir);
+        ItemEntityTrailHandler.enableTrailUntilGround(
+                item,
+                ParticleTypes.ENCHANT,
+                1,
+                2
+        );
 
         ServerLevel serverLevel = (ServerLevel)level;
         serverLevel.addFreshEntity(item);
