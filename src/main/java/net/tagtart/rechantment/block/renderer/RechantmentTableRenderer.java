@@ -94,6 +94,23 @@ public class RechantmentTableRenderer implements BlockEntityRenderer<Rechantment
             new AnimHelper.FloatKeyframe(20.0f, -60f, AnimHelper::linear)
     ));
 
+    public static final ArrayList<AnimHelper.FloatKeyframe> LIGHT_BONUS_PENDING_BOOK_OPEN_KEYFRAMES = new ArrayList<>(List.of(
+            new AnimHelper.FloatKeyframe(0f, 1.0f, AnimHelper::linear),
+            new AnimHelper.FloatKeyframe(25.0f, 0.0f, AnimHelper::easeOutBack)
+    ));
+
+    public static final ArrayList<AnimHelper.FloatKeyframe> LIGHT_BONUS_PENDING_Z_DEG_ROTATION_KEYFRAMES = new ArrayList<>(List.of(
+            new AnimHelper.FloatKeyframe(0f, -70f, AnimHelper::linear)
+    ));
+
+
+    public static final ArrayList<AnimHelper.FloatKeyframe> LIGHT_BONUS_EARNED_BOOK_OPEN_KEYFRAMES = new ArrayList<>(List.of(
+            new AnimHelper.FloatKeyframe(0f, 0.0f, AnimHelper::easeOutBack),
+            new AnimHelper.FloatKeyframe(8.0f, 1.0f, AnimHelper::linear),
+            new AnimHelper.FloatKeyframe(16.0f, 0.4f, AnimHelper::linear),
+            new AnimHelper.FloatKeyframe(19.0f, 1.0f, AnimHelper::easeInBack)
+    ));
+
     public RechantmentTableRenderer(BlockEntityRendererProvider.Context context) {
         this.bookModel = new BookModel(context.bakeLayer(ModelLayers.BOOK));
     }
@@ -172,6 +189,39 @@ public class RechantmentTableRenderer implements BlockEntityRenderer<Rechantment
             this.bookModel.setupAnim(time, 0f, 0f, bookOpenOffset);
             VertexConsumer vertexconsumer = BOOK_LOCATION.buffer(bufferSource, RenderType::entitySolid);
             this.bookModel.render(poseStack, vertexconsumer, packedLight, packedOverlay, -1);
+        }
+
+        if (blockEntity.tableState == RechantmentTableBlockEntity.CustomRechantmentTableState.LightBonusPending) {
+            long stateStartTime = gameTime - (RechantmentTableBlockEntity.LIGHT_BONUS_PENDING_ANIMATION_LENGTH_TICKS - blockEntity.currentStateTimeRemaining);
+            float time = (gameTime + partialTick - stateStartTime);
+
+            float bookOpenOffset = AnimHelper.evaluateKeyframes(LIGHT_BONUS_PENDING_BOOK_OPEN_KEYFRAMES, time);
+            float zRotationOffset = AnimHelper.evaluateKeyframes(LIGHT_BONUS_PENDING_Z_DEG_ROTATION_KEYFRAMES, time);
+            float facingRotation = getCorrectBookFacingYRotation(blockEntity);
+
+            poseStack.mulPose(Axis.YP.rotation(facingRotation));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(100.0F));
+
+
+            this.bookModel.setupAnim(time, 0, 0, bookOpenOffset);
+            VertexConsumer vertexconsumer = BOOK_LOCATION.buffer(bufferSource, RenderType::entitySolid);
+            this.bookModel.render(poseStack, vertexconsumer, packedLight, packedOverlay, -1);
+        }
+
+        if (blockEntity.tableState == RechantmentTableBlockEntity.CustomRechantmentTableState.LightBonusEarned) {
+            long stateStartTime = gameTime - (RechantmentTableBlockEntity.LIGHT_BONUS_EARNED_ANIMATION_LENGTH_TICKS - blockEntity.currentStateTimeRemaining);
+            float time = (gameTime + partialTick - stateStartTime);
+
+            float bookOpenOffset = AnimHelper.evaluateKeyframes(LIGHT_BONUS_EARNED_BOOK_OPEN_KEYFRAMES, time);
+            float facingRotation = getCorrectBookFacingYRotation(blockEntity);
+
+            poseStack.mulPose(Axis.YP.rotation(facingRotation));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(100.0F));
+
+            this.bookModel.setupAnim(time, 0, 0, bookOpenOffset);
+            VertexConsumer vertexconsumer = BOOK_LOCATION.buffer(bufferSource, RenderType::entitySolid);
+            this.bookModel.render(poseStack, vertexconsumer, packedLight, packedOverlay, -1);
+
         }
 
         VertexConsumer vertexconsumer = BOOK_LOCATION.buffer(bufferSource, RenderType::entitySolid);

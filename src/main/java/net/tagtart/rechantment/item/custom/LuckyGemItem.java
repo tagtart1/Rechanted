@@ -14,6 +14,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.tagtart.rechantment.entity.LuckyGemEntity;
 import net.tagtart.rechantment.util.UtilFunctions;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -43,6 +44,11 @@ public class LuckyGemItem extends Item {
     @Override
     public int getMaxStackSize(ItemStack stack) {
         return 1;
+    }
+
+    @Override
+    public boolean isFoil(@NotNull ItemStack stack) {
+        return true;
     }
 
     @Override

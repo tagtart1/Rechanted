@@ -26,6 +26,7 @@ import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.block.entity.RechantmentTableBlockEntity;
 import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.item.ModItems;
+import net.tagtart.rechantment.item.custom.MysteriousBookItem;
 import net.tagtart.rechantment.screen.RechantmentTableMenu;
 import net.tagtart.rechantment.util.BonusItemResolver;
 import net.tagtart.rechantment.util.BookRarityProperties;
@@ -187,8 +188,12 @@ public record PlayerPurchaseEnchantedBookC2SPayload(int bookPropertiesIndex, Blo
                         if (UtilFunctions.shouldAnnounceGemDrop(bonusStack.getDescriptionId())) {
                             bonusStack.set(ModDataComponents.SHOULD_ANNOUNCE_GEM, true);
                         }
-
-                        enchTableEntity.startBonusPendingAnimation(bonusStack);
+                        // If it's a book do the basic animation else do the special gem animation
+                        if (bonusItem.get().getItem() instanceof MysteriousBookItem) {
+                            enchTableEntity.startLightBonusPendingAnimatoin(bonusStack);
+                        } else {
+                            enchTableEntity.startBonusPendingAnimation(bonusStack);
+                        }
 
                         if (player.containerMenu instanceof RechantmentTableMenu rechantmentTableMenu) {
                             rechantmentTableMenu.bonusEarnedEffectQueued.set(rechantmentTableMenu.bonusEarnedEffectQueued.get() + 1);

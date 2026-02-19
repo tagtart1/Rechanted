@@ -34,7 +34,6 @@ import net.tagtart.rechantment.sound.ModSounds;
 import net.tagtart.rechantment.util.BookRarityProperties;
 import net.tagtart.rechantment.util.UtilFunctions;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 import oshi.util.tuples.Pair;
 
 import java.util.Optional;
@@ -49,6 +48,8 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
         Normal,         // Normal state. In this state 99.99% of the time.
         BonusPending,     // Server rolled bonus item, book will begin floating up in the air before it's earned.
         BonusEarned,      // After bonus pending is done, item spawns and book floats back down to normal position.
+        LightBonusPending, // Server rolled a bonus item that is not deserving of a crazy anim, book will close then open
+        LightBonusEarned, // After light bonus pending is done, item spawns and book simply closes
     }
 
     public static final int BONUS_PENDING_ANIMATION_LENGTH_TICKS = 130;
@@ -56,6 +57,13 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
 
     public static final double BONUS_EARNED_ITEM_SPAWN_Y_OFFSET = 1.5;
     public static final double BONUS_EARNED_ITEM_MOVE_SPEED_ON_SPAWN = 0.3;  // Speed item will move when spawned by table; moves in facing direction of lapis holder.
+
+    public static final int LIGHT_BONUS_PENDING_ANIMATION_LENGTH_TICKS = 130;
+    public static final int LIGHT_BONUS_EARNED_ANIMATION_LENGTH_TICKS = 20;
+
+    public static final double LIGHT_BONUS_EARNED_ITEM_SPAWN_Y_OFFSET = .5;
+    public static final double LIGHT_BONUS_EARNED_ITEM_MOVE_SPEED_ON_SPAWN = 0.3;  // Speed item will move when spawned by table; moves in facing direction of lapis holder.
+    public static final float LIGHT_BONUS_EARNED_ITEM_LAUNCH_Y_BIAS = 1.8f;  // Higher value = higher arc; reduces horizontal distance due normalize().
 
     private final ItemStackHandler itemHandler = new ItemStackHandler(1) {
 
@@ -233,7 +241,7 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
 
                 if (pLevel instanceof ServerLevel serverLevel) {
                     if (currentStateTimeRemaining <= 0) {
-                        bonusEarnedToDefaultState();
+                        returnToDefaultState();
                     }
 
                     // Needs to play slightly before book lands instead of right when it does; feels off for some reason if not.
@@ -241,7 +249,50 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
                         level.playSound(null, getBlockPos(), ModSounds.ENCHANT_TABLE_CLOSE.get(), SoundSource.BLOCKS, 1.5f, 1.0f);
                     }
                 }
+                break;
 
+            case LightBonusPending:
+                if (pLevel instanceof ServerLevel serverLevel) {
+                    if (currentStateTimeRemaining == LIGHT_BONUS_PENDING_ANIMATION_LENGTH_TICKS - 10) {
+                        serverLevel.playSound(null, getBlockPos(), ModSounds.ENCHANT_TABLE_CLOSE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+                    }
+
+                    if (currentStateTimeRemaining % 10 == 0 && currentStateTimeRemaining > 80) {
+                        serverLevel.playSound(null, getBlockPos(), ModSounds.ENCHANT_TABLE_OPEN.get(), SoundSource.BLOCKS, 1.0f, 1.1f);
+                    }
+
+                    if (currentStateTimeRemaining % 15 == 0 && currentStateTimeRemaining > 15) {
+                        float elapsedFraction = (1.0f - ((float) currentStateTimeRemaining / LIGHT_BONUS_PENDING_ANIMATION_LENGTH_TICKS));
+                        sendRainbowCircleParticles(
+                                serverLevel,
+                                new Vec3(0, 0.3f, 0),
+                                RechantmentTableRenderer.UP,
+                                RechantmentTableRenderer.NORTH,
+                                0.8f * elapsedFraction,
+                                0.9f,
+                                Mth.clamp(elapsedFraction + 0.4f, 0.0f, 1.0f),
+                                elapsedFraction + 0.1f,
+                                0
+                        );
+                    }
+
+                    if (currentStateTimeRemaining <= 0) {
+                        completeLightPendingBonusAnimation();
+                    }
+                }
+                break;
+
+            case LightBonusEarned:
+                if (pLevel instanceof ServerLevel) {
+                    if (currentStateTimeRemaining <= 0) {
+                        returnToDefaultState();
+                    }
+
+                    // Needs to play slightly before book lands instead of right when it does; feels off for some reason if not.
+                    if (currentStateTimeRemaining == 2) {
+                        level.playSound(null, getBlockPos(), ModSounds.ENCHANT_TABLE_CLOSE.get(), SoundSource.BLOCKS, 1.5f, 1.0f);
+                    }
+                }
                 break;
         }
     }
@@ -320,6 +371,21 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
 
+    public void startLightBonusPendingAnimatoin(ItemStack bonusItem) {
+        if (level.isClientSide || tableState != CustomRechantmentTableState.Normal) return;
+
+        tableState = CustomRechantmentTableState.LightBonusPending;
+        currentStateTimeRemaining = LIGHT_BONUS_PENDING_ANIMATION_LENGTH_TICKS;
+
+        pendingBonusItem = bonusItem.copy();
+
+        level.playSound(null, getBlockPos(), ModSounds.ITEM_PENDING.get(), SoundSource.BLOCKS, 1.5f, 1.1f);
+
+        setChanged();
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+
+    }
+
     // If state is BonusPending, this will complete the animation and spawn pendingBonusItem.
     // The rendered book will return to its resting position.
     public void completePendingBonusAnimation() {
@@ -352,8 +418,37 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
         sendRainbowCircleParticles(serverLevel, yOffset, RechantmentTableRenderer.UP,RechantmentTableRenderer.NORTH, 0.5f, 0.8f, 0.8f, 0.4f, 0);
         sendRainbowCircleParticles(serverLevel, yOffset, RechantmentTableRenderer.NORTH, new Vec3(1, 0, 0), 0.7f, 0.8f, 0.9f, 0.5f, 0);
         sendRainbowCircleParticles(serverLevel, yOffset, new Vec3(1, 0, 0),RechantmentTableRenderer.UP, 0.9f, 0.9f, 0.95f, 0.6f, 0);
-        //sendRainbowCircleParticles(serverLevel, yOffset, new Vec3(1, 1, 1).normalize(), new Vec3(1, -1, 1).normalize(), 0.7f, 0.8f, 0.8f, 0.7f, 0);
-        //sendRainbowCircleParticles(serverLevel, yOffset, new Vec3(1, 1, -1).normalize(), new Vec3(1, 1, -1).normalize(), 0.7f, 0.9f, 0.9f, 0.8f, 0);
+        pendingBonusItem = ItemStack.EMPTY;
+
+        setChanged();
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+    }
+
+    public void completeLightPendingBonusAnimation() {
+
+        if (level.isClientSide || tableState != CustomRechantmentTableState.LightBonusPending || pendingBonusItem == ItemStack.EMPTY) return;
+
+        tableState = CustomRechantmentTableState.LightBonusEarned;
+        currentStateTimeRemaining = LIGHT_BONUS_EARNED_ANIMATION_LENGTH_TICKS;
+
+        ItemEntity item = new ItemEntity(
+                level,
+                worldPosition.getX() + 0.5,
+                worldPosition.getY() + LIGHT_BONUS_EARNED_ITEM_SPAWN_Y_OFFSET,
+                worldPosition.getZ() + 0.5,
+                pendingBonusItem
+        );
+        item.setDefaultPickUpDelay();
+
+        Direction facing = getLapisHolderFacingDirection();
+        Vec3 moveDir = new Vec3(facing.getStepX(), LIGHT_BONUS_EARNED_ITEM_LAUNCH_Y_BIAS, facing.getStepZ()).normalize();
+        moveDir = moveDir.scale(LIGHT_BONUS_EARNED_ITEM_MOVE_SPEED_ON_SPAWN);
+        item.setDeltaMovement(moveDir);
+
+        ServerLevel serverLevel = (ServerLevel)level;
+        serverLevel.addFreshEntity(item);
+        serverLevel.playSound(null, getBlockPos(), SoundEvents.EXPERIENCE_BOTTLE_THROW, SoundSource.BLOCKS, 1.0f, 1.0f);
+        serverLevel.playSound(null, getBlockPos(), ModSounds.ITEM_EARNED.get(), SoundSource.BLOCKS, 0.8f, 1.15f);
 
         pendingBonusItem = ItemStack.EMPTY;
 
@@ -362,8 +457,8 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
     }
 
     // If state is BonusEarned, this will return the entity back to the default state.
-    public void bonusEarnedToDefaultState() {
-        if (level.isClientSide || tableState != CustomRechantmentTableState.BonusEarned) return;
+    public void returnToDefaultState() {
+        if (level.isClientSide || (tableState != CustomRechantmentTableState.BonusEarned && tableState != CustomRechantmentTableState.LightBonusEarned)) return;
 
         tableState = CustomRechantmentTableState.Normal;
         currentStateTimeRemaining = 0;  // Irrelevant for default state
