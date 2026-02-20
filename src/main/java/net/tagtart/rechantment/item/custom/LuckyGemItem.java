@@ -33,11 +33,19 @@ public class LuckyGemItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         Component itemDescription = Component.translatable("item.rechantment.lucky_gem.desc");
+        Component loreDescription = Component.translatable("item.rechantment.lucky_gem.desc_lore");
         tooltipComponents.add(Component.literal(" "));
 
         List<String> splitText = UtilFunctions.wrapText(itemDescription.getString(), MAX_TOOLTIP_WIDTH);
         for (String s : splitText) {
             tooltipComponents.add(Component.literal(s.trim()));
+        }
+
+        tooltipComponents.add(Component.literal(" "));
+
+        List<String> splitLoreText = UtilFunctions.wrapText(loreDescription.getString(), MAX_TOOLTIP_WIDTH);
+        for (String s : splitLoreText) {
+            tooltipComponents.add(Component.literal(s.trim()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
         }
     }
 

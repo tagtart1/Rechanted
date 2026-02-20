@@ -54,25 +54,33 @@
 
   "item.rechantment.chance_gem": "Chance Gem",
   "item.rechantment.chance_gem.desc": "Randomizes the success rate on an enchanted book.",
+  "item.rechantment.chance_gem.desc_lore": "Legend has it, it can alter fate itself.",
   "item.rechantment.shiny_chance_gem": "Shiny Chance Gem",
   "item.rechantment.shiny_chance_gem.desc": "Randomizes the success rate on an enchanted book. Its shimmer seems boundless.",
+  "item.rechantment.shiny_chance_gem.desc_lore": "You hold a thread of fate itself, use it wisely, it won't last forever.",
 
   "item.rechantment.return_gem": "Return Gem",
   "item.rechantment.return_gem.desc": "Safely teleport to your current respawn point.",
+  "item.rechantment.return_gem.desc_lore": "This gem fills you with a sense of overwhelming safety. You will be warm again.",
 
   "item.rechantment.tasty_gem": "Tasty Gem",
   "item.rechantment.tasty_gem.desc": "Consume to prevent hunger loss except when healing, and slowly regenerate health.",
+  "item.rechantment.tasty_gem.desc_lore": "Infused with the essence of all the meals in the world.",
 
   "item.rechantment.warp_gem": "Warp Gem",
   "item.rechantment.warp_gem.desc": "Can be thrown for safe teleportation. The gem is unstable and has undefined effects and durability.",
+  "item.rechantment.warp_gem.desc_lore": "You feel a soul trapped inside yearning for freedom.",
   "item.rechantment.lucky_gem": "Lucky Gem",
   "item.rechantment.lucky_gem.desc": "Launches forward where you aim and hangs in the air. It feels like a promise of something bigger.",
+  "item.rechantment.lucky_gem.desc_lore": "A kings ransom to any who utilize this gem. Are ya feeling lucky?",
 
   "item.rechantment.clone_gem": "Clone Gem",
   "item.rechantment.clone_gem.desc": "Becomes a clone of ANY enchanted book that has not been cloned before and is not itself a clone.",
+  "item.rechantment.clone_gem.desc_lore": "This gem has an unending need to create, but is only capable of mimicry.",
 
   "item.rechantment.smithing_gem": "Smithing Gem",
   "item.rechantment.smithing_gem.desc": "Can be used to forge Netherite gear.",
+  "item.rechantment.smithing_gem.desc_lore": "You feel the never ending heat of the nether burn within.",
 
   "enchantment.rechantment.thunder_strike": "Thunder Strike",
   "enchantment.rechantment.thunder_strike.desc": "Chance to summon lightning to strike your targets.",
