@@ -399,7 +399,7 @@ public class LuckyGemEntity extends Entity implements ItemSupplier {
                 }
             } else {
                 if (this.life == DIVE_PHASE_START_TICK) {
-                    this.playSound(SoundEvents.BREEZE_WHIRL, 1.0F, 1.0F);
+                    this.playSound(SoundEvents.BREEZE_SHOOT, 1.0F, 1.0F);
                 }
                 vec3 = new Vec3(0.0D, DIVE_VERTICAL_VELOCITY, 0.0D);
                 this.setDeltaMovement(vec3);

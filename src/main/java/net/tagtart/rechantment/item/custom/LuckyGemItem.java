@@ -61,7 +61,7 @@ public class LuckyGemItem extends Item {
                 player.getZ(),
                 SoundEvents.ENDER_EYE_LAUNCH,
                 SoundSource.NEUTRAL,
-                0.5F,
+                1F,
                 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F)
         );
 
