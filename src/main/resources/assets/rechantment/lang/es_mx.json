@@ -391,6 +391,8 @@
   "config.rechantment.exclude_lower_tier_loot.tooltip": "No afectar equipo de oro, cuero, piedra ni madera",
   "config.rechantment.nerf_fishing_loot.title": "Nerfear botín de pesca",
   "config.rechantment.nerf_fishing_loot.tooltip": "Haz que el botín de pesca tenga encantamientos más débiles",
+  "config.rechantment.world_loot_gem_drop_chance.title": "Probabilidad de gema en botín del mundo",
+  "config.rechantment.world_loot_gem_drop_chance.tooltip": "Probabilidad de que los libros de botín reemplazados salgan como una gema aleatoria",
   "config.rechantment.modify_villager_trades.title": "Modificar intercambios de aldeanos",
   "config.rechantment.mysterious_book_emerald_cost.title": "Costo en esmeraldas del Libro Misterioso",
   "config.rechantment.nerf_enabled.title": "Nerfeo de Fortuna activado",

@@ -43,8 +43,20 @@ import oshi.util.tuples.Pair;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class UtilFunctions {
+    private static final List<Supplier<Item>> WORLD_LOOT_GEM_ITEMS = List.of(
+            ModItems.CHANCE_GEM,
+            ModItems.SHINY_CHANCE_GEM,
+            ModItems.RETURN_GEM,
+            ModItems.TASTY_GEM,
+            ModItems.WARP_GEM,
+            ModItems.LUCKY_GEM,
+            ModItems.CLONE_GEM,
+            ModItems.SMITHING_GEM
+    );
+
     // Utility method to wrap text into lines
     public static List<String> wrapText(String text, int maxWidth) {
         List<String> lines = new ArrayList<>();
@@ -143,13 +155,25 @@ public class UtilFunctions {
         };
     }
 
-    public static ItemStack rollModdedBook(RegistryAccess registryAccess) {
+    public static ItemStack rollModdedBook(RegistryAccess registryAccess, boolean allowWorldLootGemDrops) {
+        Random random = new Random();
+
+        if (allowWorldLootGemDrops) {
+            double gemChance = RechantmentCommonConfigs.WORLD_LOOT_GEM_DROP_CHANCE.get();
+            if (gemChance > 0.0 && random.nextDouble() < gemChance) {
+                ItemStack rolledGem = rollUniformWorldLootGem(random);
+                if (UtilFunctions.shouldAnnounceGemDrop(rolledGem.getDescriptionId())) {
+                    rolledGem.set(ModDataComponents.SHOULD_ANNOUNCE_GEM, true);
+                }
+                return rolledGem;
+            }
+        }
+
         ItemStack replacementBook = new ItemStack(ModItems.RECHANTMENT_BOOK.get());
         BookRarityProperties bookRarityProperties = BookRarityProperties.getRandomRarityWeighted();
         EnchantmentPoolEntry randomEnchantment = bookRarityProperties.getRandomEnchantmentWeighted();
         int enchantmentLevel = randomEnchantment.getRandomEnchantLevelWeighted();
 
-        Random random = new Random();
         int successRate = random.nextInt(bookRarityProperties.minSuccess, bookRarityProperties.maxSuccess);
 
         Holder.Reference<Enchantment> enchantment = UtilFunctions.getEnchantmentReferenceIfPresent(
@@ -171,6 +195,11 @@ public class UtilFunctions {
         }
 
         return replacementBook;
+    }
+
+    private static ItemStack rollUniformWorldLootGem(Random random) {
+        Supplier<Item> gemSupplier = WORLD_LOOT_GEM_ITEMS.get(random.nextInt(WORLD_LOOT_GEM_ITEMS.size()));
+        return new ItemStack(gemSupplier.get());
     }
 
     // Forms a bounding box around the provided position by offsetting the corners by the provided offset values,

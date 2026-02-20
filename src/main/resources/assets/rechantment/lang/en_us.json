@@ -444,6 +444,8 @@
   "config.rechantment.exclude_lower_tier_loot.tooltip": "Don't affect gold, leather, stone, wood gear",
   "config.rechantment.nerf_fishing_loot.title": "Nerf Fishing Loot",
   "config.rechantment.nerf_fishing_loot.tooltip": "Make fishing loot have weaker enchantments",
+  "config.rechantment.world_loot_gem_drop_chance.title": "World Loot Gem Drop Chance",
+  "config.rechantment.world_loot_gem_drop_chance.tooltip": "Chance for replaced world-loot books to roll into a random gem instead",
   "config.rechantment.modify_villager_trades.title": "Modify Villager Trades",
   "config.rechantment.mysterious_book_emerald_cost.title": "Mysterious Book Emerald Cost",
 

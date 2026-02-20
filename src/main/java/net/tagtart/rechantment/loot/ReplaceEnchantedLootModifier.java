@@ -69,7 +69,7 @@ public class ReplaceEnchantedLootModifier extends LootModifier {
                 continue;
             }
 
-            generatedLoot.set(i, UtilFunctions.rollModdedBook(context.getLevel().registryAccess()));
+            generatedLoot.set(i, UtilFunctions.rollModdedBook(context.getLevel().registryAccess(), true));
         }
 
         return generatedLoot;

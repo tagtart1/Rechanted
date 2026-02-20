@@ -140,6 +140,7 @@ public class RechantmentCommonConfigs {
         public static final ModConfigSpec.ConfigValue<? extends Boolean> REPLACE_ENCHANTED_LOOT;
         public static final ModConfigSpec.ConfigValue<? extends Boolean> EXCLUDE_LOWER_TIER_LOOT;
         public static final ModConfigSpec.ConfigValue<? extends Boolean> NERF_FISHING_LOOT;
+        public static final ModConfigSpec.DoubleValue WORLD_LOOT_GEM_DROP_CHANCE;
         public static final ModConfigSpec.ConfigValue<? extends Boolean> MODIFY_VILLAGER_TRADES;
         public static final ModConfigSpec.IntValue VILLAGER_MYSTERIOUS_BOOK_EMERALD_COST;
         // Fortune nerf configs
@@ -581,6 +582,10 @@ public class RechantmentCommonConfigs {
                 BUILDER.comment("Without this enabled, fishing loot becomes an overpowered source for enchanted books with REPLACE_ENCHANTED_LOOT");
                 NERF_FISHING_LOOT = BUILDER.translation("config.rechantment.nerf_fishing_loot.title")
                                 .define("nerf_fishing_loot", true);
+                BUILDER.comment("Chance for replaced world loot books to become a random gem instead.");
+                BUILDER.comment("Set to 0 to disable. Gems from this roll are uniform across all mod gems.");
+                WORLD_LOOT_GEM_DROP_CHANCE = BUILDER.translation("config.rechantment.world_loot_gem_drop_chance.title")
+                                .defineInRange("world_loot_gem_drop_chance", 0.0, 0.0, 1.0);
 
                 BUILDER.translation("config.rechantment.villager_trades.name")
                                 .comment("Settings that control villager trade modifications").push("Villager Trades");
