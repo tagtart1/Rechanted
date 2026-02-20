@@ -13,11 +13,15 @@ import org.joml.Vector3f;
 
 @EventBusSubscriber(modid = Rechantment.MOD_ID)
 public class BlitzActiveOrbHandler {
-    private static final int ORBIT_CYCLE_TICKS = 3 * 20; // One full circle every 3 seconds.
+    private static final int ORBIT_CYCLE_TICKS = 2 * 20; // One full circle every 2 seconds.
     private static final float ORBIT_RADIUS = 0.85F;
     private static final float ORB_SCALE = 0.9F;
     private static final float TORSO_HEIGHT_FACTOR = 0.55F;
+    private static final float CYAN_PARTICLE_CHANCE = 1.0F / 3.0F;
     private static final Vector3f WHITE = new Vector3f(1.0F, 1.0F, 1.0F);
+    private static final Vector3f LIGHT_CYAN = new Vector3f(0.60F, 0.95F, 1.0F);
+    private static final DustParticleOptions WHITE_DUST = new DustParticleOptions(WHITE, ORB_SCALE);
+    private static final DustParticleOptions LIGHT_CYAN_DUST = new DustParticleOptions(LIGHT_CYAN, ORB_SCALE);
 
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
@@ -46,8 +50,10 @@ public class BlitzActiveOrbHandler {
         double centerX = player.getX();
         double centerZ = player.getZ();
         double y = player.getY() + (player.getBbHeight() * TORSO_HEIGHT_FACTOR);
-        DustParticleOptions particle = new DustParticleOptions(WHITE, ORB_SCALE);
         for (int i = 0; i < orbCount; i++) {
+            DustParticleOptions particle = player.getRandom().nextFloat() < CYAN_PARTICLE_CHANCE
+                    ? LIGHT_CYAN_DUST
+                    : WHITE_DUST;
             float angle = baseAngle + (angleStep * i);
             double x = centerX + Math.cos(angle) * ORBIT_RADIUS;
             double z = centerZ + Math.sin(angle) * ORBIT_RADIUS;
