@@ -1,15 +1,18 @@
 package net.tagtart.rechantment.util;
 
 import com.mojang.blaze3d.vertex.*;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.*;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -78,6 +81,41 @@ public class UtilFunctions {
         }
 
         return lines;
+    }
+
+    public static List<Component> getIncompatibilityTooltipLines(Holder<Enchantment> enchantment, Item.TooltipContext context) {
+        if (enchantment == null || context == null) {
+            return List.of();
+        }
+
+        return getIncompatibilityTooltipLines(enchantment, context.registries());
+    }
+
+    public static List<Component> getIncompatibilityTooltipLines(Holder<Enchantment> enchantment, HolderLookup.Provider registryAccess) {
+        if (enchantment == null || registryAccess == null) {
+            return List.of();
+        }
+
+        List<Holder<Enchantment>> incompatibleEnchantments = getIncompatibleEnchantments(enchantment, registryAccess);
+        if (incompatibleEnchantments.isEmpty()) {
+            return List.of();
+        }
+
+        List<Component> tooltipLines = new ArrayList<>();
+        if (!Screen.hasShiftDown()) {
+            tooltipLines.add(Component.literal("Hold ").withStyle(ChatFormatting.GRAY)
+                    .append(Component.literal("Shift").withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC))
+                    .append(Component.literal(" for more info").withStyle(ChatFormatting.GRAY)));
+            return tooltipLines;
+        }
+
+        tooltipLines.add(Component.literal("Incompatible with:").withStyle(ChatFormatting.RED));
+        for (Holder<Enchantment> incompatible : incompatibleEnchantments) {
+            tooltipLines.add(Component.literal("- ").withStyle(ChatFormatting.RED)
+                    .append(incompatible.value().description().copy().withStyle(ChatFormatting.RED)));
+        }
+
+        return tooltipLines;
     }
 
 
@@ -382,6 +420,33 @@ public class UtilFunctions {
         int dz = pos.getZ();
 
         return dx * dx + dy * dy + dz * dz;
+    }
+
+    private static List<Holder<Enchantment>> getIncompatibleEnchantments(Holder<Enchantment> enchantment, HolderLookup.Provider registryAccess) {
+        Optional<? extends HolderLookup.RegistryLookup<Enchantment>> enchantmentRegistryOptional = registryAccess.lookup(Registries.ENCHANTMENT);
+        if (enchantmentRegistryOptional.isEmpty()) {
+            return List.of();
+        }
+
+        List<Holder<Enchantment>> incompatibles = new ArrayList<>();
+        HolderLookup.RegistryLookup<Enchantment> enchantmentRegistry = enchantmentRegistryOptional.get();
+        enchantmentRegistry.listElements().forEach((otherEnchantmentHolder) -> {
+            if (enchantment.equals(otherEnchantmentHolder)) {
+                return;
+            }
+
+            boolean compatibleForward = Enchantment.areCompatible(enchantment, otherEnchantmentHolder);
+            boolean compatibleReverse = Enchantment.areCompatible(otherEnchantmentHolder, enchantment);
+            if (!compatibleForward || !compatibleReverse) {
+                incompatibles.add(otherEnchantmentHolder);
+            }
+        });
+
+        incompatibles.sort(Comparator.comparing(
+                incompatEnchantment -> incompatEnchantment.value().description().getString(),
+                String.CASE_INSENSITIVE_ORDER));
+
+        return incompatibles;
     }
 
 

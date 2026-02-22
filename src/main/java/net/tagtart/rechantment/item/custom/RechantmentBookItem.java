@@ -136,6 +136,12 @@ public class RechantmentBookItem extends Item {
 
         tooltipComponents.add(getApplicableIcons(enchantmentHolder));
 
+        List<Component> incompatibilityTooltipLines = UtilFunctions.getIncompatibilityTooltipLines(enchantmentHolder, context);
+        if (!incompatibilityTooltipLines.isEmpty()) {
+            tooltipComponents.add(Component.literal(" "));
+            tooltipComponents.addAll(incompatibilityTooltipLines);
+        }
+
     }
 
     @Override

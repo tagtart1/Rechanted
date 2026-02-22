@@ -27,9 +27,7 @@ public record BlitzEnchantmentEffect() implements EnchantmentEntityEffect {
     private static final long FIRST_STACK_COMBO_WINDOW_MILLIS = 1250; // 1.25 seconds between hits for first stack
     private static final long ACTIVE_COMBO_WINDOW_MILLIS = 1500; // 1.5 seconds when Blitz is active
     private static final int COMBO_REQUIRED = 6; // Hits needed to activate
-    private static final int BLITZ_I_DURATION = 10 * 20; // 10 seconds in ticks
-    private static final int BLITZ_II_DURATION = 12 * 20; // 12 seconds in ticks
-    private static final int BLITZ_III_DURATION = 15 * 20; // 15 seconds in ticks
+    private static final int BLITZ_DURATION_TICKS = 15 * 20; // 15 seconds in ticks for all Blitz stacks
     private static final int MAX_BLITZ_STACKS = 3;
 
     public static final MapCodec<BlitzEnchantmentEffect> CODEC = MapCodec
@@ -91,7 +89,7 @@ public record BlitzEnchantmentEffect() implements EnchantmentEntityEffect {
                 // Activate Blitz
                 MobEffectInstance blitzEffect = new MobEffectInstance(
                         ModEffects.BLITZ_EFFECT,
-                        getBlitzDurationTicksForAmplifier(amplifierToApply),
+                        BLITZ_DURATION_TICKS,
                         amplifierToApply, // will display as Blitz I, II, III
                         false, // ambient
                         false, // visible particles
@@ -161,13 +159,5 @@ public record BlitzEnchantmentEffect() implements EnchantmentEntityEffect {
     @Override
     public MapCodec<? extends EnchantmentEntityEffect> codec() {
         return CODEC;
-    }
-
-    private static int getBlitzDurationTicksForAmplifier(int amplifier) {
-        return switch (amplifier) {
-            case 0 -> BLITZ_I_DURATION;
-            case 1 -> BLITZ_II_DURATION;
-            default -> BLITZ_III_DURATION;
-        };
     }
 }
