@@ -14,6 +14,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
@@ -185,6 +187,16 @@ public class ReturnGemItem extends Item {
         ReturnGemBeamEntity newEntity = new ReturnGemBeamEntity(ModEntities.RETURN_GEM_BEAM_ENTITY.get(), player.level());
         newEntity.setPlayer(player);
         newEntity.setPos(new Vec3(player.getX(), player.getY() - 10.0, player.getZ()));
+
+        // Resistance IV while the return beam is active (consumption -> teleport window).
+        player.addEffect(new MobEffectInstance(
+                MobEffects.DAMAGE_RESISTANCE,
+                ReturnGemBeamEntity.BEAM_DURATION_TICKS,
+                3,
+                false,
+                false,
+                true
+        ));
 
         player.level().addFreshEntity(newEntity);
         aliveTransitions.put(player.getUUID(), new ReturnGemTransition(newEntity, transition));
