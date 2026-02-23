@@ -16,7 +16,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.tagtart.rechantment.component.ModDataComponents;
-import net.tagtart.rechantment.config.RechantmentCommonConfigs;
 import net.tagtart.rechantment.sound.ModSounds;
 import net.tagtart.rechantment.util.BookRarityProperties;
 import net.tagtart.rechantment.util.UtilFunctions;
@@ -26,6 +25,9 @@ import java.util.List;
 import java.util.Random;
 
 public class ShinyChanceGemItem extends Item {
+    private static final float BREAK_CHANCE_SECOND_USE = 0.10f;
+    private static final float BREAK_CHANCE_THIRD_PLUS = 0.25f;
+
     public ShinyChanceGemItem(Properties properties) {
         super(properties);
     }
@@ -110,7 +112,8 @@ public class ShinyChanceGemItem extends Item {
             rerollSuccessRate(otherItemStack, appliedBookProperties, rand);
 
             if (!player.level().isClientSide) {
-                boolean shouldShatter = shouldShatter(rand);
+                int nextUseCount = stack.getOrDefault(ModDataComponents.SHINY_CHANCE_GEM_USES, 0) + 1;
+                boolean shouldShatter = shouldShatter(rand, nextUseCount);
                 if (shouldShatter) {
                     stack.shrink(1);
 
@@ -120,6 +123,7 @@ public class ShinyChanceGemItem extends Item {
                     player.sendSystemMessage(Component.literal("Rerolled, but the Shiny Chance Gem has shattered!")
                             .withStyle(ChatFormatting.RED));
                 } else {
+                    stack.set(ModDataComponents.SHINY_CHANCE_GEM_USES, nextUseCount);
                     // On Apply
                     player.sendSystemMessage(Component.literal("Rerolled!").withStyle(ChatFormatting.GREEN));
 
@@ -146,8 +150,20 @@ public class ShinyChanceGemItem extends Item {
         return true;
     }
 
-    private static boolean shouldShatter(Random rand) {
-        return rand.nextDouble() < RechantmentCommonConfigs.SHINY_CHANCE_GEM_BREAK_CHANCE.get();
+    private static boolean shouldShatter(Random rand, int useNumber) {
+        return rand.nextDouble() < getBreakChanceForUse(useNumber);
+    }
+
+    private static float getBreakChanceForUse(int useNumber) {
+        if (useNumber <= 1) {
+            return 0.0f;
+        }
+
+        if (useNumber == 2) {
+            return BREAK_CHANCE_SECOND_USE;
+        }
+
+        return BREAK_CHANCE_THIRD_PLUS;
     }
 
     private void applyCreative(ItemStack stack, ItemStack otherItemStack, Player player) {
@@ -175,13 +191,15 @@ public class ShinyChanceGemItem extends Item {
         Random rand = new Random();
         rerollSuccessRate(otherItemStack, appliedBookProperties, rand);
 
-        boolean shouldShatter = shouldShatter(rand);
+        int nextUseCount = stack.getOrDefault(ModDataComponents.SHINY_CHANCE_GEM_USES, 0) + 1;
+        boolean shouldShatter = shouldShatter(rand, nextUseCount);
         if (shouldShatter) {
             stack.shrink(1);
             player.sendSystemMessage(Component.literal("Rerolled, but the Shiny Chance Gem has shattered!")
                     .withStyle(ChatFormatting.RED));
             player.playSound(SoundEvents.AMETHYST_BLOCK_BREAK, 4.0f, 1.0f);
         } else {
+            stack.set(ModDataComponents.SHINY_CHANCE_GEM_USES, nextUseCount);
             player.sendSystemMessage(Component.literal("Rerolled!")
                     .withStyle(ChatFormatting.GREEN));
             player.playSound(ModSounds.ENDER_EYE_DEATH.get(), 0.9f, 1.6f);
