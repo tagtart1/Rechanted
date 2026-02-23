@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "id": "rechantment:chance_gem"
+    },
+    "title": {
+      "text": "Rechantment"
+    },
+    "description": {
+      "text": "Discover the path of custom enchantments."
+    },
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "place_enchanting_table": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:block_state_property",
+            "block": "minecraft:enchanting_table"
+          }
+        ]
+      }
+    }
+  }
+}
