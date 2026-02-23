@@ -46,7 +46,7 @@ public class RechantmentTableMenu extends AbstractContainerMenu {
         addPlayerInventory(inv);
         addPlayerHotbar(inv);
 
-        this.addSlot(new LapisSlot(blockEntity.getItemHandler(), 0, 80, 87));
+        this.addSlot(new LapisSlot(blockEntity.getItemHandler(), 0, 90, 88));
 
         addDataSlot(bonusEarnedEffectQueued);
     }
@@ -105,14 +105,14 @@ public class RechantmentTableMenu extends AbstractContainerMenu {
     private void addPlayerInventory(Inventory playerInventory) {
         for (int i = 0; i < 3; ++i) {
             for (int l = 0; l < 9; ++l) {
-                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 8 + l * 18, 135 + i * 18));
+                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 18 + l * 18, 137 + i * 18));
             }
         }
     }
 
     private void addPlayerHotbar(Inventory playerInventory) {
         for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 193));
+            this.addSlot(new Slot(playerInventory, i, 18 + i * 18, 195));
         }
     }
 }

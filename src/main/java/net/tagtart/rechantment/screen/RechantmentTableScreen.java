@@ -80,20 +80,20 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
         this.titleLabelY = 10000;
 
         // Why isn't there an easy to just read these from the PNG?
-        this.imageWidth = 176;
-        this.imageHeight = 217;
+        this.imageWidth = 196;
+        this.imageHeight = 219;
 
         this.leftPos = (width - imageWidth) / 2;
         this.topPos = (height - imageHeight) / 2;
 
         hoverables = new ArrayList<>();
 
-        hoverables.add(new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(0), BookRarityProperties.getAllProperties()[0].iconResourceLocation, leftPos + 10, topPos + 44));
-        hoverables.add(new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(1),BookRarityProperties.getAllProperties()[1].iconResourceLocation,leftPos + 150, topPos + 44));
-        hoverables.add(new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(2),BookRarityProperties.getAllProperties()[2].iconResourceLocation, leftPos + 43,  topPos + 41));
-        hoverables.add(new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(3),BookRarityProperties.getAllProperties()[3].iconResourceLocation, leftPos + 116, topPos + 41));
+        hoverables.add(new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(0), BookRarityProperties.getAllProperties()[0].iconResourceLocation, leftPos + 19, topPos + 45));
+        hoverables.add(new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(1),BookRarityProperties.getAllProperties()[1].iconResourceLocation,leftPos + 159, topPos + 45));
+        hoverables.add(new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(2),BookRarityProperties.getAllProperties()[2].iconResourceLocation, leftPos + 52,  topPos + 42));
+        hoverables.add(new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(3),BookRarityProperties.getAllProperties()[3].iconResourceLocation, leftPos + 127, topPos + 41));
 
-        HoverableWithTooltipGuiRenderable animatedLegendaryHoverable = new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(4),BookRarityProperties.getAllProperties()[4].iconResourceLocation,  leftPos + 79, topPos + 38);
+        HoverableWithTooltipGuiRenderable animatedLegendaryHoverable = new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(4),BookRarityProperties.getAllProperties()[4].iconResourceLocation,  leftPos + 90, topPos + 39);
         animatedLegendaryHoverable.setAnimatedData(new HoverableGuiRenderable.AnimatedTextureData(
                 16, 16, 16, 112, 3, 7, true
         ));
