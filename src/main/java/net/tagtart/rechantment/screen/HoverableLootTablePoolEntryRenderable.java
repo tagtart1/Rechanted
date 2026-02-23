@@ -90,6 +90,23 @@ public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderabl
             retVal.add(Component.literal(line.trim()));
         }
 
+        Holder.Reference<Enchantment> enchantmentHolder = UtilFunctions.getEnchantmentReferenceIfPresent(
+                Minecraft.getInstance().player.registryAccess(),
+                poolEntry.enchantment
+        );
+        if (enchantmentHolder == null) {
+            return retVal;
+        }
+
+        List<Component> incompatibilityTooltipLines = UtilFunctions.getIncompatibilityTooltipLines(
+                enchantmentHolder,
+                Minecraft.getInstance().player.registryAccess()
+        );
+        if (!incompatibilityTooltipLines.isEmpty()) {
+            retVal.add(Component.literal(" "));
+            retVal.addAll(incompatibilityTooltipLines);
+        }
+
         return retVal;
     }
 

@@ -136,6 +136,12 @@ public class RechantmentBookItem extends Item {
 
         tooltipComponents.add(getApplicableIcons(enchantmentHolder));
 
+        List<Component> incompatibilityTooltipLines = UtilFunctions.getIncompatibilityTooltipLines(enchantmentHolder, context);
+        if (!incompatibilityTooltipLines.isEmpty()) {
+            tooltipComponents.add(Component.literal(" "));
+            tooltipComponents.addAll(incompatibilityTooltipLines);
+        }
+
     }
 
     @Override
@@ -243,7 +249,9 @@ public class RechantmentBookItem extends Item {
                     Holder<Enchantment> otherEnchantHolder = otherEnchantEntry.getKey();
                     Enchantment otherEnchantment = otherEnchantHolder.value();
 
-                    if (!Enchantment.areCompatible(enchantmentHolder, otherEnchantHolder)) {
+                    boolean compatibleForward = Enchantment.areCompatible(enchantmentHolder, otherEnchantHolder);
+                    boolean compatibleReverse = Enchantment.areCompatible(otherEnchantHolder, enchantmentHolder);
+                    if (!compatibleForward || !compatibleReverse) {
                         sendClientMessage(player, Component.translatable(enchantment.description().getString())
                                 .append(" is not compatible with ")
                                 .append(Component.translatable(otherEnchantment.description().getString()))

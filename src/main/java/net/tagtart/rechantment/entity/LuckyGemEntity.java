@@ -30,6 +30,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.tagtart.rechantment.component.ModDataComponents;
+import net.tagtart.rechantment.event.ItemEntityTrailHandler;
 import net.tagtart.rechantment.item.ModItems;
 import net.tagtart.rechantment.util.UtilFunctions;
 import org.joml.Vector3f;
@@ -62,8 +63,6 @@ public class LuckyGemEntity extends Entity implements ItemSupplier {
     private static final float VERTICAL_RISE_NOTE_START_PITCH = 0.90F;
     private static final float VERTICAL_RISE_NOTE_PITCH_STEP = 0.12F;
     private static final float VERTICAL_RISE_NOTE_MAX_PITCH = 2.00F;
-    public static final String POP_REWARD_TRAIL_ACTIVE_KEY = "rechantment_pop_reward_trail_active";
-    public static final String POP_REWARD_TRAIL_IS_GEM_KEY = "rechantment_pop_reward_trail_is_gem";
     private static final DustParticleOptions TRAIL_GREEN_DUST = new DustParticleOptions(
             new Vector3f(0.25F, 0.92F, 0.20F), 1.0F);
     private static final DustParticleOptions TRAIL_YELLOW_DUST = new DustParticleOptions(
@@ -245,9 +244,12 @@ public class LuckyGemEntity extends Entity implements ItemSupplier {
             double motionY = 0.82D; // Raised arc to throw rewards about 1-2 blocks higher.
             double motionZ = Math.sin(randomAngle) * horizontalSpeed;
             rewardEntity.setDeltaMovement(motionX, motionY, motionZ);
-            rewardEntity.getPersistentData().putBoolean(POP_REWARD_TRAIL_ACTIVE_KEY, true);
             boolean isGemReward = LuckyGemDropTable.isGemRewardItem(rewardStack);
-            rewardEntity.getPersistentData().putBoolean(POP_REWARD_TRAIL_IS_GEM_KEY, isGemReward);
+            ItemEntityTrailHandler.enableTrailUntilGround(
+                    rewardEntity,
+                    isGemReward ? ParticleTypes.FLAME : ParticleTypes.FIREWORK,
+                    isGemReward ? 1 : 2,
+                    2);
             if (isGemReward) {
                 rewardEntity.setGlowingTag(true);
             }
@@ -397,7 +399,7 @@ public class LuckyGemEntity extends Entity implements ItemSupplier {
                 }
             } else {
                 if (this.life == DIVE_PHASE_START_TICK) {
-                    this.playSound(SoundEvents.BREEZE_WHIRL, 1.0F, 1.0F);
+                    this.playSound(SoundEvents.BREEZE_SHOOT, 1.0F, 1.0F);
                 }
                 vec3 = new Vec3(0.0D, DIVE_VERTICAL_VELOCITY, 0.0D);
                 this.setDeltaMovement(vec3);

@@ -38,6 +38,9 @@ public class ModDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> REBORN = register("reborn",
             builder -> builder.persistent(Codec.BOOL));
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> SHINY_CHANCE_GEM_USES = register("shiny_chance_gem_uses",
+            builder -> builder.persistent(Codec.INT));
+
     private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register (String name, UnaryOperator<DataComponentType.Builder<T>> builderOperator) {
         return DATA_COMPONENT_TYPES.register(name, () -> builderOperator.apply(DataComponentType.builder()).build());
     }

@@ -1,0 +1,23 @@
+{
+  "parent": "rechantment:upgrade_enchanting_table",
+  "display": {
+    "icon": {
+      "id": "rechantment:rechantment_enchanting_table"
+    },
+    "title": {
+      "text": "Rechantment 3"
+    },
+    "description": {
+      "text": "Power the enchanting table with 9 mineral blocks and some bookshelves."
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "power_up_enchanting_table": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

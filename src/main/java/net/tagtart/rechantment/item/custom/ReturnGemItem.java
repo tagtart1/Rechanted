@@ -14,6 +14,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
@@ -51,14 +53,23 @@ public class ReturnGemItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         Component itemDescription = Component.translatable("item.rechantment.return_gem.desc");
+        Component loreDescription = Component.translatable("item.rechantment.return_gem.desc_lore");
 
         String itemDescriptionString = itemDescription.getString();
+        String loreDescriptionString = loreDescription.getString();
 
         tooltipComponents.add(Component.literal(" "));
 
         List<String> splitText = UtilFunctions.wrapText(itemDescriptionString, MAX_TOOLTIP_WIDTH);
         for (String s : splitText) {
             tooltipComponents.add(Component.literal(s.trim()));
+        }
+
+        tooltipComponents.add(Component.literal(" "));
+
+        List<String> splitLoreText = UtilFunctions.wrapText(loreDescriptionString, MAX_TOOLTIP_WIDTH);
+        for (String s : splitLoreText) {
+            tooltipComponents.add(Component.literal(s.trim()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
         }
     }
 
@@ -176,6 +187,16 @@ public class ReturnGemItem extends Item {
         ReturnGemBeamEntity newEntity = new ReturnGemBeamEntity(ModEntities.RETURN_GEM_BEAM_ENTITY.get(), player.level());
         newEntity.setPlayer(player);
         newEntity.setPos(new Vec3(player.getX(), player.getY() - 10.0, player.getZ()));
+
+        // Resistance IV while the return beam is active (consumption -> teleport window).
+        player.addEffect(new MobEffectInstance(
+                MobEffects.DAMAGE_RESISTANCE,
+                ReturnGemBeamEntity.BEAM_DURATION_TICKS,
+                3,
+                false,
+                false,
+                true
+        ));
 
         player.level().addFreshEntity(newEntity);
         aliveTransitions.put(player.getUUID(), new ReturnGemTransition(newEntity, transition));

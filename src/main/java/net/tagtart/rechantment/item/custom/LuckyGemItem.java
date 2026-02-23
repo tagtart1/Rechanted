@@ -14,6 +14,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.tagtart.rechantment.entity.LuckyGemEntity;
 import net.tagtart.rechantment.util.UtilFunctions;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -32,17 +33,30 @@ public class LuckyGemItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         Component itemDescription = Component.translatable("item.rechantment.lucky_gem.desc");
+        Component loreDescription = Component.translatable("item.rechantment.lucky_gem.desc_lore");
         tooltipComponents.add(Component.literal(" "));
 
         List<String> splitText = UtilFunctions.wrapText(itemDescription.getString(), MAX_TOOLTIP_WIDTH);
         for (String s : splitText) {
             tooltipComponents.add(Component.literal(s.trim()));
         }
+
+        tooltipComponents.add(Component.literal(" "));
+
+        List<String> splitLoreText = UtilFunctions.wrapText(loreDescription.getString(), MAX_TOOLTIP_WIDTH);
+        for (String s : splitLoreText) {
+            tooltipComponents.add(Component.literal(s.trim()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+        }
     }
 
     @Override
     public int getMaxStackSize(ItemStack stack) {
         return 1;
+    }
+
+    @Override
+    public boolean isFoil(@NotNull ItemStack stack) {
+        return true;
     }
 
     @Override
@@ -55,7 +69,7 @@ public class LuckyGemItem extends Item {
                 player.getZ(),
                 SoundEvents.ENDER_EYE_LAUNCH,
                 SoundSource.NEUTRAL,
-                0.5F,
+                1F,
                 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F)
         );
 

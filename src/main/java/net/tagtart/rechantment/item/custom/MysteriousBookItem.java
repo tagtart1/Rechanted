@@ -46,7 +46,7 @@ public class MysteriousBookItem extends Item {
         }
 
         if (level instanceof ServerLevel serverLevel) {
-            ItemStack rolledBook = UtilFunctions.rollModdedBook(level.registryAccess());
+            ItemStack rolledBook = UtilFunctions.rollModdedBook(level.registryAccess(), false);
             DustParticleOptions revealDust = getRevealDust(rolledBook);
 
             Vec3 look = player.getLookAngle();

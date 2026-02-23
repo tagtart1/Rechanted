@@ -5,6 +5,8 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.entity.projectile.SpectralArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -17,23 +19,29 @@ import net.tagtart.rechantment.util.UtilFunctions;
 public class VolleyEnchantmentHandler {
     private static final float FAN_ANGLE_DEG = 7.0f;
     private static final double[][] CHANCES = {
-            {0.25, 0.15, 0.10, 0.10, 0.02, 0.005}, // Level 1
-            {0.30, 0.20, 0.15, 0.15, 0.03, 0.01}, // Level 2
-            {0.40, 0.30, 0.20, 0.20, 0.04, 0.02}  // Level 3
+            { 0.25, 0.15, 0.10, 0.10, 0.02, 0.005 }, // Level 1
+            { 0.30, 0.20, 0.15, 0.15, 0.03, 0.01 }, // Level 2
+            { 0.40, 0.30, 0.20, 0.20, 0.04, 0.02 } // Level 3
     };
 
     @SubscribeEvent
     public static void onEntityJoinLevel(EntityJoinLevelEvent event) {
-        if (!(event.getLevel() instanceof ServerLevel level)) return;
-        if (event.loadedFromDisk()) return;
-        if (!(event.getEntity() instanceof AbstractArrow baseArrow)) return;
-        if (baseArrow.getTags().contains("volley_extra")) return;
+        if (!(event.getLevel() instanceof ServerLevel level))
+            return;
+        if (event.loadedFromDisk())
+            return;
+        if (!(event.getEntity() instanceof AbstractArrow baseArrow))
+            return;
+        if (baseArrow.getTags().contains("volley_extra"))
+            return;
 
         Entity owner = baseArrow.getOwner();
-        if (!(owner instanceof LivingEntity shooter)) return;
+        if (!(owner instanceof LivingEntity shooter))
+            return;
 
         int volleyLevel = getVolleyLevel(shooter);
-        if (volleyLevel <= 0) return;
+        if (volleyLevel <= 0)
+            return;
 
         spawnExtraArrows(level, baseArrow, shooter, volleyLevel);
     }
@@ -47,8 +55,7 @@ public class VolleyEnchantmentHandler {
             mainLevel = UtilFunctions.getEnchantmentFromItem(
                     "rechantment:volley",
                     mainHand,
-                    shooter.registryAccess()
-            );
+                    shooter.registryAccess());
         }
 
         int offhandLevel = 0;
@@ -56,16 +63,18 @@ public class VolleyEnchantmentHandler {
             offhandLevel = UtilFunctions.getEnchantmentFromItem(
                     "rechantment:volley",
                     offhand,
-                    shooter.registryAccess()
-            );
+                    shooter.registryAccess());
         }
 
         return Math.max(mainLevel, offhandLevel);
     }
 
-    public static void spawnExtraArrows(ServerLevel level, AbstractArrow baseArrow, LivingEntity shooter, int enchLevel) {
-        if (baseArrow.getTags().contains("volley_extra")) return;
-        if (enchLevel <= 0) return;
+    public static void spawnExtraArrows(ServerLevel level, AbstractArrow baseArrow, LivingEntity shooter,
+            int enchLevel) {
+        if (baseArrow.getTags().contains("volley_extra"))
+            return;
+        if (enchLevel <= 0)
+            return;
 
         int levelIndex = Math.min(enchLevel, CHANCES.length) - 1;
 
@@ -78,7 +87,8 @@ public class VolleyEnchantmentHandler {
             }
         }
 
-        if (extraArrowsToFire <= 0) return;
+        if (extraArrowsToFire <= 0)
+            return;
 
         Rechantment.LOGGER.info("Extra arrows to fire: {}", extraArrowsToFire);
 
@@ -93,8 +103,9 @@ public class VolleyEnchantmentHandler {
 
         boolean mirrorFan = (extraArrowsToFire % 2 == 1) && level.random.nextBoolean();
         for (int i = 0; i < extraArrowsToFire; i++) {
-            AbstractArrow extra = (AbstractArrow) baseArrow.getType().create(level);
-            if (extra == null) continue;
+            AbstractArrow extra = createExtraArrowWithVanillaWeaponData(level, shooter, baseArrow);
+            if (extra == null)
+                continue;
 
             Rechantment.LOGGER.info("Fire Extra arrows to fire: {}", i + 1);
 
@@ -120,6 +131,24 @@ public class VolleyEnchantmentHandler {
 
             level.addFreshEntity(extra);
         }
+    }
+
+    private static AbstractArrow createExtraArrowWithVanillaWeaponData(ServerLevel level, LivingEntity shooter,
+            AbstractArrow baseArrow) {
+        ItemStack pickup = baseArrow.getPickupItemStackOrigin();
+        ItemStack weapon = baseArrow.getWeaponItem();
+
+        // These constructors populate AbstractArrow's firedFromWeapon field, which is
+        // what
+        // vanilla doKnockback reads for Punch/knockback behavior.
+        if (baseArrow instanceof Arrow) {
+            return new Arrow(level, shooter, pickup, weapon);
+        }
+        if (baseArrow instanceof SpectralArrow) {
+            return new SpectralArrow(level, shooter, pickup, weapon);
+        }
+
+        return (AbstractArrow) baseArrow.getType().create(level);
     }
 
     private static int getVolleyFanIndex(int arrowIndex, int extraArrowsToFire) {

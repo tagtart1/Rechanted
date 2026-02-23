@@ -7,6 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.SmithingTemplateItem;
 import net.minecraft.world.item.TooltipFlag;
+import net.tagtart.rechantment.util.UtilFunctions;
 
 import java.util.List;
 
@@ -74,8 +75,23 @@ public class SmithingGemItem extends SmithingTemplateItem {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        String itemDescriptionString = Component.translatable("item.rechantment.smithing_gem.desc").getString();
+        String loreDescriptionString = Component.translatable("item.rechantment.smithing_gem.desc_lore").getString();
+
         tooltipComponents.add(Component.literal(" "));
-        tooltipComponents.add(Component.translatable("item.rechantment.smithing_gem.desc").withStyle(ChatFormatting.WHITE));
+
+        List<String> splitText = UtilFunctions.wrapText(itemDescriptionString, 165);
+        for (String s : splitText) {
+            tooltipComponents.add(Component.literal(s.trim()).withStyle(ChatFormatting.WHITE));
+        }
+
+        tooltipComponents.add(Component.literal(" "));
+
+        List<String> splitLoreText = UtilFunctions.wrapText(loreDescriptionString, 165);
+        for (String s : splitLoreText) {
+            tooltipComponents.add(Component.literal(s.trim()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+        }
+
         tooltipComponents.add(Component.literal(" "));
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }

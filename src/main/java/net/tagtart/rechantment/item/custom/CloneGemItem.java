@@ -31,14 +31,23 @@ public class CloneGemItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         Component itemDescription = Component.translatable("item.rechantment.clone_gem.desc");
+        Component loreDescription = Component.translatable("item.rechantment.clone_gem.desc_lore");
 
         String itemDescriptionString = itemDescription.getString();
+        String loreDescriptionString = loreDescription.getString();
 
         tooltipComponents.add(Component.literal(" "));
 
         List<String> splitText = UtilFunctions.wrapText(itemDescriptionString, 165);
         for (String s : splitText) {
             tooltipComponents.add(Component.literal(s.trim()));
+        }
+
+        tooltipComponents.add(Component.literal(" "));
+
+        List<String> splitLoreText = UtilFunctions.wrapText(loreDescriptionString, 165);
+        for (String s : splitLoreText) {
+            tooltipComponents.add(Component.literal(s.trim()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
         }
 
         tooltipComponents.add(Component.literal(" "));

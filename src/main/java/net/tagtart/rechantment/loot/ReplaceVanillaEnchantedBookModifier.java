@@ -25,7 +25,7 @@ public class ReplaceVanillaEnchantedBookModifier extends LootModifier {
         for (int i = 0; i < generatedLoot.size(); ++i) {
             ItemStack itemStack = generatedLoot.get(i);
             if (itemStack.getItem() instanceof EnchantedBookItem) {
-                generatedLoot.set(i, UtilFunctions.rollModdedBook(context.getLevel().registryAccess()));
+                generatedLoot.set(i, UtilFunctions.rollModdedBook(context.getLevel().registryAccess(), true));
             }
         }
 

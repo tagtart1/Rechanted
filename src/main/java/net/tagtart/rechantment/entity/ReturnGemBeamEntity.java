@@ -17,7 +17,9 @@ public class ReturnGemBeamEntity extends Entity {
 
     public Player player = null;
 
-    private int ticksRemaining = 60;
+    public static final int BEAM_DURATION_TICKS = 60;
+
+    private int ticksRemaining = BEAM_DURATION_TICKS;
 
     public float glowRadius = 0.05f;
     public float beamRadius = 0.02f;

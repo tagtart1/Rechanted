@@ -1,0 +1,23 @@
+{
+  "parent": "rechantment:root",
+  "display": {
+    "icon": {
+      "id": "rechantment:rechantment_enchanting_table"
+    },
+    "title": {
+      "text": "Rechantment 2"
+    },
+    "description": {
+      "text": "Upgrade the enchanting table."
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "use_emerald_on_enchanting_table": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

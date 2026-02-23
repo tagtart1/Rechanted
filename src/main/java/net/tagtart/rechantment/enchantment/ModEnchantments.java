@@ -97,7 +97,6 @@ public class ModEnchantments {
                 2,
                 EquipmentSlotGroup.MAINHAND))
                 .exclusiveWith(enchantments.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
-                .exclusiveWith(HolderSet.direct(enchantments.getOrThrow(VOIDS_BANE)))
                 .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER,
                         EnchantmentTarget.VICTIM, new HellsFuryEnchantmentEffect(1, 1)));
 
@@ -111,7 +110,6 @@ public class ModEnchantments {
                 2,
                 EquipmentSlotGroup.MAINHAND))
                 .exclusiveWith(enchantments.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
-                .exclusiveWith(HolderSet.direct(enchantments.getOrThrow(HELLS_FURY)))
                 .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER,
                         EnchantmentTarget.VICTIM, new VoidsBaneEnchantmentEffect(1, 1)));
 
@@ -281,4 +279,3 @@ public class ModEnchantments {
         registry.register(key, builder.build(key.location()));
     }
 }
-
