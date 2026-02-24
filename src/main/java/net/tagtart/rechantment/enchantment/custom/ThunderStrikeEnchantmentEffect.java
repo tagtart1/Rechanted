@@ -30,9 +30,9 @@ public record ThunderStrikeEnchantmentEffect() implements EnchantmentEntityEffec
     // Maps enchantment level to a success rate of spawning lightning
     private static final List<Float> SUCCESS_RATES = Arrays.asList(
             0.10f,    // Level 1
-            1.00f,    // Level 2
-            0.17f,    // Level 3
-            0.20f     // Level 4
+            0.12f,    // Level 2
+            0.14f,    // Level 3
+            0.16f     // Level 4
     );
 
     @Override
