@@ -16,6 +16,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.block.custom.RechantmentTableBlock;
+import net.tagtart.rechantment.block.custom.RechantmentTrophyBlock;
 import net.tagtart.rechantment.item.ModItems;
 
 import java.util.function.Supplier;
@@ -42,6 +43,15 @@ public class ModBlocks {
     public static final DeferredBlock<Block> RECHANTMENT_TABLE_BLOCK = registerBlock(RECHANTMENT_TABLE_BLOCK_ITEM_NAME,
             () -> new RechantmentTableBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_RED)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .requiresCorrectToolForDrops()
+                    .lightLevel(state -> 7)
+                    .strength(5.0F, 1200.0F)
+            ));
+
+    public static final DeferredBlock<Block> RECHANTMENT_TROPHY_BLOCK = registerBlock("rechantment_trophy",
+            () -> new RechantmentTrophyBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BROWN)
                     .instrument(NoteBlockInstrument.BASEDRUM)
                     .requiresCorrectToolForDrops()
                     .lightLevel(state -> 7)

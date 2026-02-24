@@ -28,7 +28,9 @@ public class ModCreativeModeTabs {
             () -> CreativeModeTab.builder().icon(() -> new ItemStack(ModItems.CHANCE_GEM.get()))
                     .title(Component.translatable("creative.rechantment.title"))
                     .displayItems((itemDisplayParameters, output) -> {
+
                         output.accept(ModBlocks.RECHANTMENT_TABLE_BLOCK);
+                        output.accept(ModBlocks.RECHANTMENT_TROPHY_BLOCK);
 
                         output.accept(ModItems.CHANCE_GEM.get());
                         output.accept(ModItems.SHINY_CHANCE_GEM.get());

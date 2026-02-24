@@ -19,6 +19,11 @@ public class ModBlockEntities {
                     BlockEntityType.Builder.of(RechantmentTableBlockEntity::new,
                             ModBlocks.RECHANTMENT_TABLE_BLOCK.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RechantmentTrophyBlockEntity>> RECHANTMENT_TROPHY_BE =
+            BLOCK_ENTITIES.register("rechantment_trophy", () ->
+                    BlockEntityType.Builder.of(RechantmentTrophyBlockEntity::new,
+                            ModBlocks.RECHANTMENT_TROPHY_BLOCK.get()).build(null));
+
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register((eventBus));
     }
