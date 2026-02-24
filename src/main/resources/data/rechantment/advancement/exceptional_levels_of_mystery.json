@@ -1,0 +1,23 @@
+{
+  "parent": "rechantment:so_mysterious",
+  "display": {
+    "icon": {
+      "id": "rechantment:mysterious_book"
+    },
+    "title": {
+      "text": "Exceptional Levels of Mystery"
+    },
+    "description": {
+      "text": "Uncover the contents of ten Mysterious Books."
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "open_ten_mysterious_books": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.Stats;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -18,13 +19,16 @@ import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.item.ModItems;
 
 import java.util.ArrayList;
+import java.util.ArrayDeque;
 import java.util.HashSet;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 public final class AdvancementHelper {
     private static final ResourceLocation UPGRADE_ENCHANT_TABLE_ADVANCEMENT_ID = ResourceLocation
@@ -46,6 +50,24 @@ public final class AdvancementHelper {
     private static final ResourceLocation GEM_FROM_LUCKY_GEM_ADVANCEMENT_ID = ResourceLocation
             .fromNamespaceAndPath(Rechantment.MOD_ID, "gem_from_lucky_gem");
     private static final String GEM_FROM_LUCKY_GEM_CRITERION = "gem_from_lucky_gem";
+
+    private static final ResourceLocation UNBOXING_ADVANCEMENT_ID = ResourceLocation
+            .fromNamespaceAndPath(Rechantment.MOD_ID, "unboxing");
+    private static final String UNBOXING_CRITERION = "open_5_mysterious_books_in_10s";
+
+    private static final ResourceLocation SO_MYSTERIOUS_ADVANCEMENT_ID = ResourceLocation
+            .fromNamespaceAndPath(Rechantment.MOD_ID, "so_mysterious");
+    private static final String SO_MYSTERIOUS_CRITERION = "open_one_mysterious_book";
+
+    private static final ResourceLocation EXCEPTIONAL_LEVELS_OF_MYSTERY_ADVANCEMENT_ID = ResourceLocation
+            .fromNamespaceAndPath(Rechantment.MOD_ID, "exceptional_levels_of_mystery");
+    private static final String EXCEPTIONAL_LEVELS_OF_MYSTERY_CRITERION = "open_ten_mysterious_books";
+
+    private static final int SO_MYSTERIOUS_REQUIRED_OPENS = 1;
+    private static final int EXCEPTIONAL_LEVELS_OF_MYSTERY_REQUIRED_OPENS = 10;
+    private static final int UNBOXING_REQUIRED_OPENS = 5;
+    private static final long UNBOXING_WINDOW_TICKS = 200L;
+    private static final Map<UUID, ArrayDeque<Long>> UNBOXING_OPEN_TIMES_BY_PLAYER = new HashMap<>();
 
     private AdvancementHelper() {
     }
@@ -229,6 +251,58 @@ public final class AdvancementHelper {
         var advancement = level.getServer().getAdvancements().get(GEM_FROM_LUCKY_GEM_ADVANCEMENT_ID);
         if (advancement != null) {
             serverPlayer.getAdvancements().award(advancement, GEM_FROM_LUCKY_GEM_CRITERION);
+        }
+    }
+
+    public static void recordMysteriousBookOpenAndAward(Player player, ServerLevel level) {
+        if (!(player instanceof ServerPlayer serverPlayer)) {
+            return;
+        }
+
+        awardMysteriousBookUsageAdvancements(serverPlayer, level);
+
+        long currentGameTime = level.getGameTime();
+        long minAllowedTick = currentGameTime - UNBOXING_WINDOW_TICKS;
+
+        ArrayDeque<Long> openTimes = UNBOXING_OPEN_TIMES_BY_PLAYER.computeIfAbsent(
+                serverPlayer.getUUID(),
+                ignored -> new ArrayDeque<>());
+
+        while (!openTimes.isEmpty() && openTimes.peekFirst() < minAllowedTick) {
+            openTimes.pollFirst();
+        }
+
+        openTimes.addLast(currentGameTime);
+        if (openTimes.size() < UNBOXING_REQUIRED_OPENS) {
+            return;
+        }
+
+        var advancement = level.getServer().getAdvancements().get(UNBOXING_ADVANCEMENT_ID);
+        if (advancement != null) {
+            serverPlayer.getAdvancements().award(advancement, UNBOXING_CRITERION);
+        }
+        openTimes.clear();
+    }
+
+    public static void clearMysteriousBookOpenTracker(UUID playerId) {
+        UNBOXING_OPEN_TIMES_BY_PLAYER.remove(playerId);
+    }
+
+    private static void awardMysteriousBookUsageAdvancements(ServerPlayer player, ServerLevel level) {
+        int mysteriousBookUseCount = player.getStats().getValue(Stats.ITEM_USED.get(ModItems.MYSTERIOUS_BOOK.get()));
+
+        if (mysteriousBookUseCount >= SO_MYSTERIOUS_REQUIRED_OPENS) {
+            var advancement = level.getServer().getAdvancements().get(SO_MYSTERIOUS_ADVANCEMENT_ID);
+            if (advancement != null) {
+                player.getAdvancements().award(advancement, SO_MYSTERIOUS_CRITERION);
+            }
+        }
+
+        if (mysteriousBookUseCount >= EXCEPTIONAL_LEVELS_OF_MYSTERY_REQUIRED_OPENS) {
+            var advancement = level.getServer().getAdvancements().get(EXCEPTIONAL_LEVELS_OF_MYSTERY_ADVANCEMENT_ID);
+            if (advancement != null) {
+                player.getAdvancements().award(advancement, EXCEPTIONAL_LEVELS_OF_MYSTERY_CRITERION);
+            }
         }
     }
 }

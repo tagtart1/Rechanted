@@ -35,6 +35,7 @@ import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
@@ -416,6 +417,11 @@ public class ModGenericEvents {
                 event.getChunk().setBlockState(blockPos, ModBlocks.RECHANTMENT_TABLE_BLOCK.get().defaultBlockState(), false);
             }));
         }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+        AdvancementHelper.clearMysteriousBookOpenTracker(event.getEntity().getUUID());
     }
 
     @SubscribeEvent

@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.HumanoidArm;
@@ -18,6 +19,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.tagtart.rechantment.util.AdvancementHelper;
 import net.tagtart.rechantment.util.UtilFunctions;
 import net.tagtart.rechantment.util.BookRarityProperties;
 import net.tagtart.rechantment.sound.ModSounds;
@@ -64,8 +66,7 @@ public class MysteriousBookItem extends Item {
             Vec3 handCenter = player.getEyePosition().add(
                     look.scale(0.34)
                             .add(right.scale(0.30 * handSide))
-                            .add(ringUp.scale(-0.18))
-            );
+                            .add(ringUp.scale(-0.18)));
             Vec3 ringRight = right;
 
             int haloPoints = 14;
@@ -83,14 +84,15 @@ public class MysteriousBookItem extends Item {
                         0.0,
                         0.0,
                         0.0,
-                        0.0
-                );
+                        0.0);
             }
 
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
                     ModSounds.ENDER_EYE_DEATH.get(), SoundSource.PLAYERS, 0.9f, 1.6f);
 
             player.setItemInHand(usedHand, rolledBook);
+            player.awardStat(Stats.ITEM_USED.get(this));
+            AdvancementHelper.recordMysteriousBookOpenAndAward(player, serverLevel);
             return InteractionResultHolder.consume(rolledBook);
         }
 
@@ -98,7 +100,8 @@ public class MysteriousBookItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents,
+            TooltipFlag tooltipFlag) {
         int maxWidthTooltip = 165;
         Component itemDescription = Component.translatable("item.rechantment.mysterious_book.desc");
 
@@ -106,7 +109,8 @@ public class MysteriousBookItem extends Item {
 
         tooltipComponents.add(Component.literal(" "));
 
-        // Prevents the description text from making the tooltip go across the entire screen like a chump
+        // Prevents the description text from making the tooltip go across the entire
+        // screen like a chump
         List<String> splitText = UtilFunctions.wrapText(itemDescriptionString, maxWidthTooltip);
         for (String s : splitText) {
             tooltipComponents.add(Component.literal(s.trim()));
@@ -121,7 +125,6 @@ public class MysteriousBookItem extends Item {
     public boolean isFoil(@NotNull ItemStack stack) {
         return true;
     }
-
 
     @Override
     public int getMaxStackSize(ItemStack stack) {
