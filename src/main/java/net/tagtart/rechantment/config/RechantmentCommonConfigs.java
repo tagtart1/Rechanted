@@ -123,7 +123,6 @@ public class RechantmentCommonConfigs {
         public static final ModConfigSpec.ConfigValue<? extends String> GRINDSTONE_RESULT_ITEM;
         public static final ModConfigSpec.ConfigValue<List<? extends String>> COMMON_GEM_POOL;
         public static final ModConfigSpec.ConfigValue<List<? extends String>> RARE_GEM_POOL;
-        public static final ModConfigSpec.DoubleValue SHINY_CHANCE_GEM_BREAK_CHANCE;
 
         public static final ModConfigSpec.ConfigValue<List<? extends String>> ANNOUNCEMENT_ENCHANTMENTS;
         public static final ModConfigSpec.ConfigValue<? extends Boolean> ANNOUNCE_CHANCE_GEM;
@@ -546,14 +545,6 @@ public class RechantmentCommonConfigs {
                 ANNOUNCE_SMITHING_GEM = BUILDER.translation("config.rechantment.announce_smithing_gem.title")
                                 .define("announce_smithing_gem", true);
                 BUILDER.pop();
-                BUILDER.pop();
-
-                BUILDER.translation("config.rechantment.chance_gems.name").comment("Settings for Chance Gems")
-                                .push("Chance Gems");
-                BUILDER.comment("Chance for the shiny chance gem to shatter when applied.");
-                SHINY_CHANCE_GEM_BREAK_CHANCE = BUILDER
-                                .translation("config.rechantment.shiny_chance_gem_break_chance.title")
-                                .defineInRange("shiny_chance_gem_break_chance", 0.25, 0.0, 1.0);
                 BUILDER.pop();
 
                 BUILDER.translation("config.rechantment.loot_table_enhancements.name").comment(

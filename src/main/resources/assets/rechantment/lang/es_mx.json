@@ -377,8 +377,6 @@
   "config.rechantment.fortune_nerf.tooltip": "Controla cómo el encantamiento Fortuna afecta los drops de bloques",
   "config.rechantment.grindstone_result_item.title": "Objeto resultante de afiladora",
   "config.rechantment.grindstone_result_item.tooltip": "Objeto recibido al deshacer cualquier libro encantado",
-  "config.rechantment.shiny_chance_gem_break_chance.title": "Probabilidad de romper Gema de Probabilidad Brillante",
-  "config.rechantment.shiny_chance_gem_break_chance.tooltip": "Probabilidad de que la Gema de Probabilidad Brillante se rompa al aplicarse",
   "config.rechantment.announce_enchantments.title": "Encantamientos anunciados",
   "config.rechantment.announce_enchantments.tooltip": "Encantamientos que se anunciarán al encontrarse en botín",
   "config.rechantment.announce_chance_gem.title": "Anunciar Gema de Probabilidad",

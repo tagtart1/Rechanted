@@ -428,8 +428,6 @@
   "config.rechantment.fortune_nerf.tooltip": "Control how Fortune enchantment affects block drops",
   "config.rechantment.grindstone_result_item.title": "Grindstone Result Item",
   "config.rechantment.grindstone_result_item.tooltip": "Item received when grinding any enchanted book",
-  "config.rechantment.shiny_chance_gem_break_chance.title": "Shiny Chance Gem Break Chance",
-  "config.rechantment.shiny_chance_gem_break_chance.tooltip": "Chance for the shiny chance gem to shatter when applied",
 
   "config.rechantment.announce_enchantments.title": "Announced Enchantments",
   "config.rechantment.announce_enchantments.tooltip": "Enchantments that will be announced when found in loot",
