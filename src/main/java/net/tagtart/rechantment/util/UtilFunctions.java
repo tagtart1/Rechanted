@@ -38,6 +38,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.tagtart.rechantment.config.RechantmentCommonConfigs;
 import net.tagtart.rechantment.event.ParticleEmitter;
 import net.tagtart.rechantment.item.ModItems;
+import net.tagtart.rechantment.item.custom.WarpGemItem;
 import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.networking.data.TriggerRebirthItemEffectS2CPayload;
 import net.tagtart.rechantment.sound.CustomClientSoundInstanceHandler;
@@ -242,7 +243,9 @@ public class UtilFunctions {
 
     private static ItemStack rollUniformWorldLootGem(Random random) {
         Supplier<Item> gemSupplier = WORLD_LOOT_GEM_ITEMS.get(random.nextInt(WORLD_LOOT_GEM_ITEMS.size()));
-        return new ItemStack(gemSupplier.get());
+        ItemStack rolledGem = new ItemStack(gemSupplier.get());
+        WarpGemItem.initializeRandomizedDurability(rolledGem, random);
+        return rolledGem;
     }
 
     // Forms a bounding box around the provided position by offsetting the corners by the provided offset values,

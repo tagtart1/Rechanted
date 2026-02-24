@@ -7,6 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.config.RechantmentCommonConfigs;
 import net.tagtart.rechantment.item.ModItems;
+import net.tagtart.rechantment.item.custom.WarpGemItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +87,9 @@ public final class BonusItemResolver {
         for (int i = 0; i < weightedItems.size(); ++i) {
             cumulativeWeight += weights.get(i);
             if (randomWeight < cumulativeWeight) {
-                return Optional.of(new ItemStack(weightedItems.get(i)));
+                ItemStack rolledItem = new ItemStack(weightedItems.get(i));
+                WarpGemItem.initializeRandomizedDurability(rolledItem, random);
+                return Optional.of(rolledItem);
             }
         }
 

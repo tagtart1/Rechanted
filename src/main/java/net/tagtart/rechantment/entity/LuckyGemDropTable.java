@@ -5,6 +5,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.tagtart.rechantment.item.ModItems;
+import net.tagtart.rechantment.item.custom.WarpGemItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +73,9 @@ public final class LuckyGemDropTable {
 
         if (random.nextDouble() < BONUS_GEM_DROP_CHANCE) {
             Supplier<Item> randomGem = GEM_DROP_ITEMS.get(random.nextInt(GEM_DROP_ITEMS.size()));
-            drops.add(new ItemStack(randomGem.get(), 1));
+            ItemStack bonusGem = new ItemStack(randomGem.get(), 1);
+            WarpGemItem.initializeRandomizedDurability(bonusGem, random);
+            drops.add(bonusGem);
         }
 
         return drops;

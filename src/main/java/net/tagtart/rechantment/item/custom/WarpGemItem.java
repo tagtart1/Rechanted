@@ -18,6 +18,7 @@ import net.tagtart.rechantment.entity.ThrownWarpGemEntity;
 import net.tagtart.rechantment.util.UtilFunctions;
 
 import java.util.List;
+import java.util.Random;
 
 public class WarpGemItem  extends Item {
     private static final int TRUE_WARP_GEM_MAX_DURABILITY = 24;
@@ -92,9 +93,16 @@ public class WarpGemItem  extends Item {
     }
 
 
-    // Used for whenever a warp gem comes from the enchanting table and we want it to start with random damage
+    // Applies randomized starting durability for generated warp gem stacks.
     public static void initializeRandomizedDurability(ItemStack stack, RandomSource random) {
-        if (stack.isEmpty()) return;
+        if (stack.isEmpty() || !(stack.getItem() instanceof WarpGemItem)) return;
+        int remainingDurability = RANDOM_WARP_GEM_DURABILITY[random.nextInt(RANDOM_WARP_GEM_DURABILITY.length)];
+        int startingDamage = Math.max(0, TRUE_WARP_GEM_MAX_DURABILITY - remainingDurability);
+        stack.setDamageValue(startingDamage);
+    }
+
+    public static void initializeRandomizedDurability(ItemStack stack, Random random) {
+        if (stack.isEmpty() || !(stack.getItem() instanceof WarpGemItem)) return;
         int remainingDurability = RANDOM_WARP_GEM_DURABILITY[random.nextInt(RANDOM_WARP_GEM_DURABILITY.length)];
         int startingDamage = Math.max(0, TRUE_WARP_GEM_MAX_DURABILITY - remainingDurability);
         stack.setDamageValue(startingDamage);
