@@ -17,10 +17,13 @@ import net.minecraft.world.phys.AABB;
 import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.item.ModItems;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public final class AdvancementHelper {
@@ -68,20 +71,35 @@ public final class AdvancementHelper {
             return;
         }
 
-        Set<ResourceKey<Enchantment>> requiredSwordEnchantments = getConfiguredSwordEnchantmentsForItem(heldItem,
+        Map<ResourceKey<Enchantment>, Holder.Reference<Enchantment>> requiredSwordEnchantments = getConfiguredSwordEnchantmentsForItem(
+                heldItem,
                 level);
         if (requiredSwordEnchantments.isEmpty()) {
             return;
         }
 
         ItemEnchantments enchantments = heldItem.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
-        Set<ResourceKey<Enchantment>> presentEnchantments = new HashSet<>();
+        Set<ResourceKey<Enchantment>> presentConfiguredEnchantments = new HashSet<>();
+        List<Holder<Enchantment>> presentConfiguredHolders = new ArrayList<>();
         for (var entry : enchantments.entrySet()) {
-            entry.getKey().unwrapKey().ifPresent(presentEnchantments::add);
+            entry.getKey().unwrapKey().ifPresent(key -> {
+                if (requiredSwordEnchantments.containsKey(key)) {
+                    presentConfiguredEnchantments.add(key);
+                    presentConfiguredHolders.add(entry.getKey());
+                }
+            });
         }
 
-        if (!presentEnchantments.containsAll(requiredSwordEnchantments)) {
-            return;
+        // Excalibur = no configured sword enchantment remains addable to this sword right now.
+        for (Map.Entry<ResourceKey<Enchantment>, Holder.Reference<Enchantment>> configuredEnchantEntry : requiredSwordEnchantments
+                .entrySet()) {
+            if (presentConfiguredEnchantments.contains(configuredEnchantEntry.getKey())) {
+                continue;
+            }
+
+            if (isCompatibleWithCurrentConfiguredEnchantments(configuredEnchantEntry.getValue(), presentConfiguredHolders)) {
+                return;
+            }
         }
 
         var advancement = level.getServer().getAdvancements().get(EXCALIBUR_ADVANCEMENT_ID);
@@ -90,9 +108,10 @@ public final class AdvancementHelper {
         }
     }
 
-    private static Set<ResourceKey<Enchantment>> getConfiguredSwordEnchantmentsForItem(ItemStack item,
+    private static Map<ResourceKey<Enchantment>, Holder.Reference<Enchantment>> getConfiguredSwordEnchantmentsForItem(
+            ItemStack item,
             ServerLevel level) {
-        Set<ResourceKey<Enchantment>> requiredEnchantments = new LinkedHashSet<>();
+        Map<ResourceKey<Enchantment>, Holder.Reference<Enchantment>> requiredEnchantments = new LinkedHashMap<>();
 
         for (BookRarityProperties rarityProperties : BookRarityProperties.getAllProperties()) {
             for (EnchantmentPoolEntry poolEntry : rarityProperties.enchantmentPool) {
@@ -106,11 +125,25 @@ public final class AdvancementHelper {
                     continue;
                 }
 
-                enchantmentHolder.unwrapKey().ifPresent(requiredEnchantments::add);
+                enchantmentHolder.unwrapKey().ifPresent(key -> requiredEnchantments.putIfAbsent(key, enchantmentHolder));
             }
         }
 
         return requiredEnchantments;
+    }
+
+    private static boolean isCompatibleWithCurrentConfiguredEnchantments(
+            Holder<Enchantment> candidateEnchantment,
+            List<Holder<Enchantment>> currentConfiguredEnchantments) {
+        for (Holder<Enchantment> currentEnchantment : currentConfiguredEnchantments) {
+            boolean compatibleForward = Enchantment.areCompatible(candidateEnchantment, currentEnchantment);
+            boolean compatibleReverse = Enchantment.areCompatible(currentEnchantment, candidateEnchantment);
+            if (!compatibleForward || !compatibleReverse) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static void awardLegendaryPullAdvancementIfEligible(Player player, ServerLevel level) {
