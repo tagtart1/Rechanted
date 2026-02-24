@@ -1,6 +1,7 @@
 package net.tagtart.rechantment.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -17,6 +18,8 @@ import net.tagtart.rechantment.util.UtilFunctions;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static net.tagtart.rechantment.util.UtilFunctions.getIncompatibleEnchantments;
 
 public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderable {
 
@@ -98,13 +101,19 @@ public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderabl
             return retVal;
         }
 
-        List<Component> incompatibilityTooltipLines = UtilFunctions.getIncompatibilityTooltipLines(
-                enchantmentHolder,
-                Minecraft.getInstance().player.registryAccess()
-        );
-        if (!incompatibilityTooltipLines.isEmpty()) {
+
+        List<Holder<Enchantment>> incompatibleEnchantments = UtilFunctions.getIncompatibleEnchantments(enchantmentHolder, Minecraft.getInstance().player.registryAccess());
+        if (!incompatibleEnchantments.isEmpty()) {
+
+            int incompatibleColor = 0xf29811;
             retVal.add(Component.literal(" "));
-            retVal.addAll(incompatibilityTooltipLines);
+            retVal.add(Component.literal("Incompatible with:").withColor(incompatibleColor));
+
+            for (Holder<Enchantment> incompatible : incompatibleEnchantments) {
+                retVal.add(Component.literal("- ").withColor(incompatibleColor)
+                        .append(incompatible.value().description().copy().withColor(incompatibleColor)));
+            }
+
         }
 
         return retVal;

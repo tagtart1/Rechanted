@@ -113,10 +113,11 @@ public class UtilFunctions {
             return tooltipLines;
         }
 
-        tooltipLines.add(Component.literal("Incompatible with:").withStyle(ChatFormatting.RED));
+        int incompatibleColor = 0xf29811;
+        tooltipLines.add(Component.literal("Incompatible with:").withColor(incompatibleColor));
         for (Holder<Enchantment> incompatible : incompatibleEnchantments) {
-            tooltipLines.add(Component.literal("- ").withStyle(ChatFormatting.RED)
-                    .append(incompatible.value().description().copy().withStyle(ChatFormatting.RED)));
+            tooltipLines.add(Component.literal("- ").withColor(incompatibleColor)
+                    .append(incompatible.value().description().copy().withColor(incompatibleColor)));
         }
 
         return tooltipLines;
@@ -426,7 +427,7 @@ public class UtilFunctions {
         return dx * dx + dy * dy + dz * dz;
     }
 
-    private static List<Holder<Enchantment>> getIncompatibleEnchantments(Holder<Enchantment> enchantment, HolderLookup.Provider registryAccess) {
+    public static List<Holder<Enchantment>> getIncompatibleEnchantments(Holder<Enchantment> enchantment, HolderLookup.Provider registryAccess) {
         Optional<? extends HolderLookup.RegistryLookup<Enchantment>> enchantmentRegistryOptional = registryAccess.lookup(Registries.ENCHANTMENT);
         if (enchantmentRegistryOptional.isEmpty()) {
             return List.of();
