@@ -2,13 +2,13 @@
   "parent": "rechantment:upgrade_enchanting_table",
   "display": {
     "icon": {
-      "id": "rechantment:rechantment_enchanting_table"
+      "id": "minecraft:iron_block"
     },
     "title": {
-      "text": "Rechantment 3"
+      "text": "Mineral Conduit"
     },
     "description": {
-      "text": "Power the enchanting table with 9 mineral blocks and some bookshelves."
+      "text": "Yield to the table’s demands for nine mineral blocks underneath it, as well as sufficient bookshelves nearby."
     },
     "frame": "goal",
     "show_toast": true,

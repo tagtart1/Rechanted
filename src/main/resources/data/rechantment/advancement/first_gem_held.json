@@ -1,0 +1,39 @@
+{
+  "parent": "rechantment:power_enchanting_table",
+  "display": {
+    "icon": {
+      "id": "rechantment:chance_gem"
+    },
+    "title": {
+      "text": "Shiny!"
+    },
+    "description": {
+      "text": "Discover your first powerful gem."
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "hold_first_gem": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rechantment:chance_gem",
+              "rechantment:shiny_chance_gem",
+              "rechantment:return_gem",
+              "rechantment:tasty_gem",
+              "rechantment:warp_gem",
+              "rechantment:lucky_gem",
+              "rechantment:clone_gem",
+              "rechantment:smithing_gem"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

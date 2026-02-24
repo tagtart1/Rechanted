@@ -26,6 +26,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.CLONE_GEM.get());
         basicItem(ModItems.SMITHING_GEM.get());
         basicItem(ModItems.MYSTERIOUS_BOOK.get());
+        genericIconItem(ModItems.LEGENDARY_BOOK_ICON.getId().getPath(), "item/legendary");
     }
 
     private void rechantmentBookItem() {
@@ -67,5 +68,10 @@ public class ModItemModelProvider extends ItemModelProvider {
                 .predicate(modLoc("book_rarity"),5)
                 .model(new ModelFile.UncheckedModelFile( ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "item/legendary")));
 
+    }
+
+    private void genericIconItem(String modelPath, String texturePath) {
+        withExistingParent(modelPath, mcLoc("item/generated"))
+                .texture("layer0", ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, texturePath));
     }
 }

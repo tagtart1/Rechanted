@@ -1,13 +1,13 @@
 {
   "display": {
     "icon": {
-      "id": "rechantment:chance_gem"
+      "id": "rechantment:rechantment_book"
     },
     "title": {
-      "text": "Rechantment"
+      "text": "Rechanted"
     },
     "description": {
-      "text": "Discover the path of custom enchantments."
+      "text": "A new age of enchanting is here. The hollow table begs for life."
     },
     "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
     "frame": "task",
