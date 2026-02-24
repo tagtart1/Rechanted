@@ -82,6 +82,8 @@ public class HoverableGuiRenderable implements Renderable {
 
         if (renderDefaultTexture) {
             if (animatedTextureData != null) {
+                guiGraphics.flush();
+
                 float animationTick = timeElapsed;
                 int frame = (int)(animationTick / animatedTextureData.ticksPerFrame) % animatedTextureData.frameCount;
 
