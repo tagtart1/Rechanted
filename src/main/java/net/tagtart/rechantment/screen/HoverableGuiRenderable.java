@@ -9,6 +9,9 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.ItemStack;
+import net.tagtart.rechantment.item.ModItems;
+import net.tagtart.rechantment.util.UtilFunctions;
 import org.apache.logging.log4j.util.TriConsumer;
 
 import java.util.ArrayList;
@@ -18,7 +21,7 @@ import java.util.function.Consumer;
 public class HoverableGuiRenderable implements Renderable {
 
 
-    public record AnimatedTextureData(int frameWidth, int frameHeight, int textureWidth, int textureHeight, int ticksPerFrame, int frameCount, boolean verticalSheetDir) {
+    public record AnimatedTextureData(int textureWidth, int textureHeight, int ticksPerFrame, int frameCount, boolean verticalSheetDir) {
 
     }
 
@@ -82,25 +85,41 @@ public class HoverableGuiRenderable implements Renderable {
 
         if (renderDefaultTexture) {
             if (animatedTextureData != null) {
-                guiGraphics.flush();
 
                 float animationTick = timeElapsed;
                 int frame = (int)(animationTick / animatedTextureData.ticksPerFrame) % animatedTextureData.frameCount;
 
-                int frameU = (animatedTextureData.verticalSheetDir) ? 0 : frame * animatedTextureData.frameWidth;
-                int frameV = (!animatedTextureData.verticalSheetDir) ? 0 : frame * animatedTextureData.frameHeight;
+                boolean isVertical = animatedTextureData.verticalSheetDir;
+                int frameWidth = (isVertical) ? animatedTextureData.textureWidth : animatedTextureData.textureWidth / animatedTextureData.frameCount;
+                int frameHeight = (!isVertical) ? animatedTextureData.textureHeight : animatedTextureData.textureHeight / animatedTextureData.frameCount;
+                int frameU = (isVertical) ? 0 : frame * frameWidth;
+                int frameV = (!isVertical) ? 0 : frame * frameHeight;
 
-                guiGraphics.blit(
-                        renderTexture,
-                        renderOffsetPosX,
-                        renderOffsetPosY,
-                        renderUVOffsetU + frameU,
-                        renderUVOffsetV + frameV,
-                        animatedTextureData.frameWidth,
-                        animatedTextureData.frameHeight,
-                        animatedTextureData.textureWidth,
-                        animatedTextureData.textureHeight
-                );
+//                guiGraphics.blit(
+//                        renderTexture,
+//                        renderOffsetPosX,
+//                        renderOffsetPosY,
+//                        renderUVOffsetU + frameU,
+//                        renderUVOffsetV + frameV,
+//                        animatedTextureData.frameWidth,
+//                        animatedTextureData.frameHeight,
+//                        animatedTextureData.textureWidth,
+//                        animatedTextureData.textureHeight
+//                );
+                RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                RenderSystem.setShaderTexture(0, renderTexture);
+                RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+
+                float frameUVSizeU = ((float)frameWidth / animatedTextureData.textureWidth);
+                float frameUVSizeV = ((float)frameHeight / animatedTextureData.textureHeight);
+                float trueU = renderUVOffsetU + ((float)frameU / (float)animatedTextureData.textureWidth);
+                float trueV = renderUVOffsetV + ((float)frameV / (float)animatedTextureData.textureHeight);
+
+                UtilFunctions.fakeInnerBlit(null, renderOffsetPosX, renderOffsetPosX + frameWidth,
+                        renderOffsetPosY, renderOffsetPosY + frameHeight,
+                        0,
+                        trueU, trueU + frameUVSizeU,
+                        trueV, trueV + frameUVSizeV);
             }
             else {
                 guiGraphics.blit(renderTexture, renderOffsetPosX, renderOffsetPosY, renderUVOffsetU, renderUVOffsetV, imageViewWidth, imageViewHeight, imageWidth, imageHeight);

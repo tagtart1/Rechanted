@@ -22,6 +22,7 @@ import net.tagtart.rechantment.networking.data.OpenEnchantTableScreenC2SPayload;
 import net.tagtart.rechantment.networking.data.PlayerPurchaseEnchantedBookC2SPayload;
 import net.tagtart.rechantment.util.BookRarityProperties;
 import net.tagtart.rechantment.util.UtilFunctions;
+import org.joml.Vector2i;
 import oshi.util.tuples.Pair;
 
 import java.util.ArrayList;
@@ -37,6 +38,12 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
     private static final ResourceLocation EMPTY_LINE_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "textures/gui/enchant_table_effect_empty.png");
     private ResourceLocation[] shaderEffectsByBookID;
     private ShaderInstance lineShader;
+
+    // NOTE:
+    // Some mods do weird things to textures that have a .mcmeta, like automatically split them up into individual textures silently.
+    // Since this the manual sprite sheet animation code needs to work with or without those mods, this points to a COPY of the legendary book icon
+    // sprite sheet that DOES NOT have a .mcmeta file associated with it. I hate this, but it's the only place we do it (beside loot table screen) so it's fine for now but is big code smell
+    private static final ResourceLocation LEGENDARY_BOOK_MANUAL_ANIMATION_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "textures/gui/legendary_manual_animate.png");
 
     public static final Style PINK_COLOR_STYLE = Style.EMPTY.withColor(0xFCB4B4);
     public static final Style MID_GRAY_COLOR_STYLE = Style.EMPTY.withColor(0xA8A8A8);
@@ -93,9 +100,10 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
         hoverables.add(new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(2),BookRarityProperties.getAllProperties()[2].iconResourceLocation, leftPos + 52,  topPos + 42));
         hoverables.add(new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(3),BookRarityProperties.getAllProperties()[3].iconResourceLocation, leftPos + 127, topPos + 41));
 
-        HoverableWithTooltipGuiRenderable animatedLegendaryHoverable = new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(4),BookRarityProperties.getAllProperties()[4].iconResourceLocation,  leftPos + 90, topPos + 39);
+        HoverableWithTooltipGuiRenderable animatedLegendaryHoverable = new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(4), LEGENDARY_BOOK_MANUAL_ANIMATION_LOCATION,  leftPos + 90, topPos + 39);
+        Vector2i texSize = UtilFunctions.queryTextureSize(LEGENDARY_BOOK_MANUAL_ANIMATION_LOCATION);
         animatedLegendaryHoverable.setAnimatedData(new HoverableGuiRenderable.AnimatedTextureData(
-                16, 16, 16, 112, 3, 7, true
+                 texSize.x, texSize.y, 3, 7, true
         ));
         hoverables.add(animatedLegendaryHoverable);
 

@@ -20,6 +20,7 @@ import net.tagtart.rechantment.networking.data.OpenEnchantTableScreenC2SPayload;
 import net.tagtart.rechantment.util.BookRarityProperties;
 import net.tagtart.rechantment.util.EnchantmentPoolEntry;
 import net.tagtart.rechantment.util.UtilFunctions;
+import org.joml.Vector2i;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,10 @@ public class RechantmentTablePoolDisplayScreen extends AbstractContainerScreen<R
     private static final ResourceLocation LEGENDARY_LINE_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "textures/gui/enchant_table_loot_pool_effect_legendary.png");
     private ResourceLocation[] shaderEffectsByBookID;
     private ShaderInstance lineShader;
+
+    // NOTE:
+    // This is dumb. See RechantmentTableScreen's reference with the same name for long reason why it's here though.
+    private static final ResourceLocation LEGENDARY_BOOK_MANUAL_ANIMATION_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "textures/gui/legendary_manual_animate.png");
 
     // Hoverables for controlling the menu.
     private ArrayList<HoverableGuiRenderable> hoverables;
@@ -406,8 +411,10 @@ public class RechantmentTablePoolDisplayScreen extends AbstractContainerScreen<R
 
     private void updateIndexAnimationData() {
         if (viewingPropertyIndex == 4) {
+            Vector2i texSize = UtilFunctions.queryTextureSize(LEGENDARY_BOOK_MANUAL_ANIMATION_LOCATION);
+            bookIcon.renderTexture = LEGENDARY_BOOK_MANUAL_ANIMATION_LOCATION;
             bookIcon.setAnimatedData(new HoverableGuiRenderable.AnimatedTextureData(
-                    16, 16, 16, 112, 3, 7, true
+                    texSize.x, texSize.y, 3, 7, true
             ));
         }
         else {
