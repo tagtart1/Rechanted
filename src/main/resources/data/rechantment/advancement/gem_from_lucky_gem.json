@@ -1,0 +1,23 @@
+{
+  "parent": "rechantment:first_gem_held",
+  "display": {
+    "icon": {
+      "id": "rechantment:lucky_gem"
+    },
+    "title": {
+      "text": "2%!"
+    },
+    "description": {
+      "text": "Get extra lucky after throwing a Lucky Gem and find a bonus gem!"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "gem_from_lucky_gem": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

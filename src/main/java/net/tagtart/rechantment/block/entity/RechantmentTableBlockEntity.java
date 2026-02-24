@@ -10,17 +10,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -31,15 +27,14 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.EnchantingTableBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.block.renderer.RechantmentTableRenderer;
 import net.tagtart.rechantment.screen.RechantmentTableMenu;
 import net.tagtart.rechantment.event.ItemEntityTrailHandler;
 import net.tagtart.rechantment.sound.ModSounds;
+import net.tagtart.rechantment.util.AdvancementHelper;
 import net.tagtart.rechantment.util.BookRarityProperties;
 import net.tagtart.rechantment.util.UtilFunctions;
 import org.jetbrains.annotations.Nullable;
@@ -576,7 +571,9 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
             BookRarityProperties properties = BookRarityProperties.getAllProperties()[i];
             refreshCachedBlockStates(properties, pPos);
             if (meetsAllChargedEffectRequirements(properties, cachedBookshelvesInRange, cachedFloorBlocksInRange)) {
-                awardPlayerPowerUpEnchantTableAdvancement(pPos);
+                if (level instanceof ServerLevel serverLevel) {
+                    AdvancementHelper.awardPowerUpEnchantTableAdvancementNearPos(serverLevel, pPos);
+                }
 
                 reqMet = i;
                 break;
@@ -634,25 +631,4 @@ public class RechantmentTableBlockEntity extends EnchantingTableBlockEntity impl
                 floorRequirementsMet(bookProperties, floorStates);
     }
 
-    private void awardPlayerPowerUpEnchantTableAdvancement(BlockPos pPos) {
-        if (!(level instanceof ServerLevel serverLevel)) {
-            return;
-        }
-
-        // Scan around for players and award them the advancement
-        // Define area of effect around the target
-        AABB area = new AABB(
-                pPos.getX() - 2, pPos.getY() - 1, pPos.getZ() - 2,
-                pPos.getX() + 2, pPos.getY() + 1, pPos.getZ() + 2
-        );
-
-        serverLevel.getEntities((Entity) null, area, e -> e instanceof LivingEntity).forEach(target -> {
-            if (target instanceof ServerPlayer player) {
-                var advancement = serverLevel.getServer().getAdvancements().get(ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "power_enchanting_table"));
-                if (advancement != null) {
-                    player.getAdvancements().award(advancement, "power_up_enchanting_table");
-                }
-            }
-        });
-    }
 }

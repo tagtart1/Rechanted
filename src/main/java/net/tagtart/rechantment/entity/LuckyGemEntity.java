@@ -32,6 +32,7 @@ import net.minecraft.world.phys.Vec3;
 import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.event.ItemEntityTrailHandler;
 import net.tagtart.rechantment.item.ModItems;
+import net.tagtart.rechantment.util.AdvancementHelper;
 import net.tagtart.rechantment.util.UtilFunctions;
 import org.joml.Vector3f;
 
@@ -252,6 +253,7 @@ public class LuckyGemEntity extends Entity implements ItemSupplier {
                     2);
             if (isGemReward) {
                 rewardEntity.setGlowingTag(true);
+                AdvancementHelper.awardGemFromLuckyGemAdvancement(this.getOwnerPlayer(), (ServerLevel) this.level());
             }
             this.level().addFreshEntity(rewardEntity);
         }

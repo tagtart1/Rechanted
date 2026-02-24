@@ -12,7 +12,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.EnchantmentTags;
@@ -54,6 +53,7 @@ import net.tagtart.rechantment.item.ModItems;
 import net.tagtart.rechantment.networking.data.OpenEnchantTableScreenC2SPayload;
 import net.tagtart.rechantment.networking.data.PlayerPurchaseEnchantedBookC2SPayload;
 import net.tagtart.rechantment.networking.data.TriggerRebirthItemEffectS2CPayload;
+import net.tagtart.rechantment.util.AdvancementHelper;
 import net.tagtart.rechantment.util.BookRarityProperties;
 import net.tagtart.rechantment.util.UtilFunctions;
 
@@ -63,9 +63,6 @@ import java.util.List;
 @EventBusSubscriber(modid = Rechantment.MOD_ID)
 public class ModGenericEvents {
     private static final String ENCHANTMENT_DESCRIPTIONS_MOD_ID = "enchdesc";
-    private static final ResourceLocation UPGRADE_ENCHANT_TABLE_ADVANCEMENT_ID =
-            ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "upgrade_enchanting_table");
-    private static final String UPGRADE_ENCHANT_TABLE_CRITERION = "use_emerald_on_enchanting_table";
 
     @SubscribeEvent
     public static void register(RegisterPayloadHandlersEvent event) {
@@ -127,7 +124,7 @@ public class ModGenericEvents {
 
                 serverLevel.sendParticles(ParticleTypes.HAPPY_VILLAGER, useOnPos.getX() + 0.5, useOnPos.getY() + 1.0, useOnPos.getZ() + 0.5, 13, x, y, z, 2.5);
 
-                awardUpgradeEnchantingTableAdvancement(event.getPlayer(), serverLevel);
+                AdvancementHelper.awardUpgradeEnchantingTableAdvancement(event.getPlayer(), serverLevel);
 
                 event.cancelWithResult(ItemInteractionResult.CONSUME);
             }
@@ -165,18 +162,6 @@ public class ModGenericEvents {
 
         }
     }
-
-    private static void awardUpgradeEnchantingTableAdvancement(Player player, ServerLevel level) {
-        if (!(player instanceof ServerPlayer serverPlayer)) {
-            return;
-        }
-
-        var advancement = level.getServer().getAdvancements().get(UPGRADE_ENCHANT_TABLE_ADVANCEMENT_ID);
-        if (advancement != null) {
-            serverPlayer.getAdvancements().award(advancement, UPGRADE_ENCHANT_TABLE_CRITERION);
-        }
-    }
-
 
     @SubscribeEvent
     public static void onItemToolTip(ItemTooltipEvent event) {
@@ -436,13 +421,16 @@ public class ModGenericEvents {
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         Player player = event.getEntity();
-        if (player.level().isClientSide()) {
+        if (!(player.level() instanceof ServerLevel serverLevel)) {
             return;
         }
 
         if (player.tickCount % 20 != 0) {
             return;
         }
+
+        AdvancementHelper.awardLegendaryPullAdvancementIfEligible(player, serverLevel);
+        AdvancementHelper.awardExcaliburAdvancementIfEligible(player, serverLevel);
 
         Inventory inventory = player.getInventory();
         for (ItemStack stack : inventory.items) {
