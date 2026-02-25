@@ -431,16 +431,21 @@ public class UtilFunctions {
     }
 
     public static List<Holder<Enchantment>> getIncompatibleEnchantments(Holder<Enchantment> enchantment, HolderLookup.Provider registryAccess) {
-        Optional<? extends HolderLookup.RegistryLookup<Enchantment>> enchantmentRegistryOptional = registryAccess.lookup(Registries.ENCHANTMENT);
-        if (enchantmentRegistryOptional.isEmpty()) {
+        Map<ResourceKey<Enchantment>, Holder.Reference<Enchantment>> configuredEnchantments = getConfiguredEnchantments(registryAccess);
+        if (configuredEnchantments.isEmpty()) {
             return List.of();
         }
 
         List<Holder<Enchantment>> incompatibles = new ArrayList<>();
-        HolderLookup.RegistryLookup<Enchantment> enchantmentRegistry = enchantmentRegistryOptional.get();
-        enchantmentRegistry.listElements().forEach((otherEnchantmentHolder) -> {
+        ResourceKey<Enchantment> currentEnchantmentKey = enchantment.unwrapKey().orElse(null);
+        for (Map.Entry<ResourceKey<Enchantment>, Holder.Reference<Enchantment>> configuredEnchantment : configuredEnchantments.entrySet()) {
+            if (configuredEnchantment.getKey().equals(currentEnchantmentKey)) {
+                continue;
+            }
+
+            Holder<Enchantment> otherEnchantmentHolder = configuredEnchantment.getValue();
             if (enchantment.equals(otherEnchantmentHolder)) {
-                return;
+                continue;
             }
 
             boolean compatibleForward = Enchantment.areCompatible(enchantment, otherEnchantmentHolder);
@@ -448,13 +453,38 @@ public class UtilFunctions {
             if (!compatibleForward || !compatibleReverse) {
                 incompatibles.add(otherEnchantmentHolder);
             }
-        });
+        }
 
         incompatibles.sort(Comparator.comparing(
                 incompatEnchantment -> incompatEnchantment.value().description().getString(),
                 String.CASE_INSENSITIVE_ORDER));
 
         return incompatibles;
+    }
+
+    private static Map<ResourceKey<Enchantment>, Holder.Reference<Enchantment>> getConfiguredEnchantments(HolderLookup.Provider registryAccess) {
+        Optional<? extends HolderLookup.RegistryLookup<Enchantment>> enchantmentRegistryOptional = registryAccess.lookup(Registries.ENCHANTMENT);
+        if (enchantmentRegistryOptional.isEmpty()) {
+            return Map.of();
+        }
+
+        HolderLookup.RegistryLookup<Enchantment> enchantmentRegistry = enchantmentRegistryOptional.get();
+        Map<ResourceKey<Enchantment>, Holder.Reference<Enchantment>> configuredEnchantments = new LinkedHashMap<>();
+
+        for (BookRarityProperties rarityProperties : BookRarityProperties.getAllProperties()) {
+            for (EnchantmentPoolEntry poolEntry : rarityProperties.enchantmentPool) {
+                ResourceLocation enchantmentId = ResourceLocation.tryParse(poolEntry.enchantment);
+                if (enchantmentId == null) {
+                    continue;
+                }
+
+                ResourceKey<Enchantment> enchantmentKey = ResourceKey.create(Registries.ENCHANTMENT, enchantmentId);
+                enchantmentRegistry.get(enchantmentKey).ifPresent(holder ->
+                        configuredEnchantments.putIfAbsent(enchantmentKey, holder));
+            }
+        }
+
+        return configuredEnchantments;
     }
 
 
