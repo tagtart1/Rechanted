@@ -450,7 +450,9 @@ public class ModGenericEvents {
             return;
         }
 
-        AdvancementHelper.awardExcaliburAdvancementIfEligible(player, serverLevel);
+        if (player.tickCount % 40 == 0) {
+            AdvancementHelper.awardExcaliburAdvancementIfEligible(player, serverLevel);
+        }
 
         Inventory inventory = player.getInventory();
         for (ItemStack stack : inventory.items) {
