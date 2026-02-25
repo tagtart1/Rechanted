@@ -27,6 +27,9 @@ public class ModDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> SHOULD_ANNOUNCE_GEM = register("should_announce_gem",
             builder -> builder.persistent(Codec.BOOL));
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> GEM_OBTAINED = register("gem_obtained",
+            builder -> builder.persistent(Codec.BOOL));
+
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> IS_CLONE = register("is_clone",
             builder -> builder.persistent(Codec.BOOL));
 

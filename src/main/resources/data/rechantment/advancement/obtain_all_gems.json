@@ -17,100 +17,28 @@
   },
   "criteria": {
     "held_chance_gem": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "items": [
-          {
-            "items": [
-              "rechantment:chance_gem"
-            ]
-          }
-        ]
-      }
+      "trigger": "minecraft:impossible"
     },
     "held_shiny_chance_gem": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "items": [
-          {
-            "items": [
-              "rechantment:shiny_chance_gem"
-            ]
-          }
-        ]
-      }
+      "trigger": "minecraft:impossible"
     },
     "held_return_gem": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "items": [
-          {
-            "items": [
-              "rechantment:return_gem"
-            ]
-          }
-        ]
-      }
+      "trigger": "minecraft:impossible"
     },
     "held_tasty_gem": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "items": [
-          {
-            "items": [
-              "rechantment:tasty_gem"
-            ]
-          }
-        ]
-      }
+      "trigger": "minecraft:impossible"
     },
     "held_warp_gem": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "items": [
-          {
-            "items": [
-              "rechantment:warp_gem"
-            ]
-          }
-        ]
-      }
+      "trigger": "minecraft:impossible"
     },
     "held_lucky_gem": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "items": [
-          {
-            "items": [
-              "rechantment:lucky_gem"
-            ]
-          }
-        ]
-      }
+      "trigger": "minecraft:impossible"
     },
     "held_clone_gem": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "items": [
-          {
-            "items": [
-              "rechantment:clone_gem"
-            ]
-          }
-        ]
-      }
+      "trigger": "minecraft:impossible"
     },
     "held_smithing_gem": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "items": [
-          {
-            "items": [
-              "rechantment:smithing_gem"
-            ]
-          }
-        ]
-      }
+      "trigger": "minecraft:impossible"
     }
   }
 }

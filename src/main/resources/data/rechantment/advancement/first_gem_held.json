@@ -17,23 +17,7 @@
   },
   "criteria": {
     "hold_first_gem": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "items": [
-          {
-            "items": [
-              "rechantment:chance_gem",
-              "rechantment:shiny_chance_gem",
-              "rechantment:return_gem",
-              "rechantment:tasty_gem",
-              "rechantment:warp_gem",
-              "rechantment:lucky_gem",
-              "rechantment:clone_gem",
-              "rechantment:smithing_gem"
-            ]
-          }
-        ]
-      }
+      "trigger": "minecraft:impossible"
     }
   }
 }

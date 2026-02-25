@@ -440,10 +440,12 @@ public class ModGenericEvents {
 
         Inventory inventory = player.getInventory();
         for (ItemStack stack : inventory.items) {
+            processGemObtainedState(player, serverLevel, stack);
             announceFoundBook(player, stack);
             announceFoundGem(player, stack);
         }
         for (ItemStack stack : inventory.offhand) {
+            processGemObtainedState(player, serverLevel, stack);
             announceFoundBook(player, stack);
             announceFoundGem(player, stack);
         }
@@ -546,5 +548,17 @@ public class ModGenericEvents {
         }
 
         stack.remove(ModDataComponents.SHOULD_ANNOUNCE_GEM);
+    }
+
+    private static void processGemObtainedState(Player player, ServerLevel level, ItemStack stack) {
+        if (stack.isEmpty() || !AdvancementHelper.isTrackedGem(stack)) {
+            return;
+        }
+        if (stack.getOrDefault(ModDataComponents.GEM_OBTAINED, false)) {
+            return;
+        }
+
+        stack.set(ModDataComponents.GEM_OBTAINED, true);
+        AdvancementHelper.awardGemPickupAdvancements(player, level, stack);
     }
 }

@@ -51,6 +51,21 @@ public final class AdvancementHelper {
             .fromNamespaceAndPath(Rechantment.MOD_ID, "gem_from_lucky_gem");
     private static final String GEM_FROM_LUCKY_GEM_CRITERION = "gem_from_lucky_gem";
 
+    private static final ResourceLocation FIRST_GEM_HELD_ADVANCEMENT_ID = ResourceLocation
+            .fromNamespaceAndPath(Rechantment.MOD_ID, "first_gem_held");
+    private static final String FIRST_GEM_HELD_CRITERION = "hold_first_gem";
+
+    private static final ResourceLocation OBTAIN_ALL_GEMS_ADVANCEMENT_ID = ResourceLocation
+            .fromNamespaceAndPath(Rechantment.MOD_ID, "obtain_all_gems");
+    private static final String HELD_CHANCE_GEM_CRITERION = "held_chance_gem";
+    private static final String HELD_SHINY_CHANCE_GEM_CRITERION = "held_shiny_chance_gem";
+    private static final String HELD_RETURN_GEM_CRITERION = "held_return_gem";
+    private static final String HELD_TASTY_GEM_CRITERION = "held_tasty_gem";
+    private static final String HELD_WARP_GEM_CRITERION = "held_warp_gem";
+    private static final String HELD_LUCKY_GEM_CRITERION = "held_lucky_gem";
+    private static final String HELD_CLONE_GEM_CRITERION = "held_clone_gem";
+    private static final String HELD_SMITHING_GEM_CRITERION = "held_smithing_gem";
+
     private static final ResourceLocation UNBOXING_ADVANCEMENT_ID = ResourceLocation
             .fromNamespaceAndPath(Rechantment.MOD_ID, "unboxing");
     private static final String UNBOXING_CRITERION = "open_5_mysterious_books_in_10s";
@@ -252,6 +267,70 @@ public final class AdvancementHelper {
         if (advancement != null) {
             serverPlayer.getAdvancements().award(advancement, GEM_FROM_LUCKY_GEM_CRITERION);
         }
+    }
+
+    public static boolean isTrackedGem(ItemStack stack) {
+        return stack.is(ModItems.CHANCE_GEM.get())
+                || stack.is(ModItems.SHINY_CHANCE_GEM.get())
+                || stack.is(ModItems.RETURN_GEM.get())
+                || stack.is(ModItems.TASTY_GEM.get())
+                || stack.is(ModItems.WARP_GEM.get())
+                || stack.is(ModItems.LUCKY_GEM.get())
+                || stack.is(ModItems.CLONE_GEM.get())
+                || stack.is(ModItems.SMITHING_GEM.get());
+    }
+
+    public static void awardGemPickupAdvancements(Player player, ServerLevel level, ItemStack pickedStack) {
+        if (!(player instanceof ServerPlayer serverPlayer)) {
+            return;
+        }
+        if (pickedStack.isEmpty()) {
+            return;
+        }
+
+        var firstGemAdvancement = level.getServer().getAdvancements().get(FIRST_GEM_HELD_ADVANCEMENT_ID);
+        if (firstGemAdvancement != null) {
+            serverPlayer.getAdvancements().award(firstGemAdvancement, FIRST_GEM_HELD_CRITERION);
+        }
+
+        String allGemsCriterion = getAllGemsCriterionForStack(pickedStack);
+        if (allGemsCriterion == null) {
+            return;
+        }
+
+        var obtainAllGemsAdvancement = level.getServer().getAdvancements().get(OBTAIN_ALL_GEMS_ADVANCEMENT_ID);
+        if (obtainAllGemsAdvancement != null) {
+            serverPlayer.getAdvancements().award(obtainAllGemsAdvancement, allGemsCriterion);
+        }
+    }
+
+    private static String getAllGemsCriterionForStack(ItemStack stack) {
+        if (stack.is(ModItems.CHANCE_GEM.get())) {
+            return HELD_CHANCE_GEM_CRITERION;
+        }
+        if (stack.is(ModItems.SHINY_CHANCE_GEM.get())) {
+            return HELD_SHINY_CHANCE_GEM_CRITERION;
+        }
+        if (stack.is(ModItems.RETURN_GEM.get())) {
+            return HELD_RETURN_GEM_CRITERION;
+        }
+        if (stack.is(ModItems.TASTY_GEM.get())) {
+            return HELD_TASTY_GEM_CRITERION;
+        }
+        if (stack.is(ModItems.WARP_GEM.get())) {
+            return HELD_WARP_GEM_CRITERION;
+        }
+        if (stack.is(ModItems.LUCKY_GEM.get())) {
+            return HELD_LUCKY_GEM_CRITERION;
+        }
+        if (stack.is(ModItems.CLONE_GEM.get())) {
+            return HELD_CLONE_GEM_CRITERION;
+        }
+        if (stack.is(ModItems.SMITHING_GEM.get())) {
+            return HELD_SMITHING_GEM_CRITERION;
+        }
+
+        return null;
     }
 
     public static void recordMysteriousBookOpenAndAward(Player player, ServerLevel level) {
