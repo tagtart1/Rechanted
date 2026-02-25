@@ -16,6 +16,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.phys.AABB;
 import net.tagtart.rechantment.Rechantment;
+import net.tagtart.rechantment.attachments.ModAttachments;
 import net.tagtart.rechantment.item.ModItems;
 
 import java.util.ArrayList;
@@ -65,6 +66,10 @@ public final class AdvancementHelper {
     private static final String HELD_LUCKY_GEM_CRITERION = "held_lucky_gem";
     private static final String HELD_CLONE_GEM_CRITERION = "held_clone_gem";
     private static final String HELD_SMITHING_GEM_CRITERION = "held_smithing_gem";
+
+    private static final ResourceLocation ARCHMAGE_ADVANCEMENT_ID = ResourceLocation
+            .fromNamespaceAndPath(Rechantment.MOD_ID, "archmage");
+    private static final String ARCHMAGE_CRITERION = "discover_all_enchanted_books";
 
     private static final ResourceLocation UNBOXING_ADVANCEMENT_ID = ResourceLocation
             .fromNamespaceAndPath(Rechantment.MOD_ID, "unboxing");
@@ -284,7 +289,7 @@ public final class AdvancementHelper {
         if (!(player instanceof ServerPlayer serverPlayer)) {
             return;
         }
-        if (pickedStack.isEmpty()) {
+        if (pickedStack.isEmpty() || !isTrackedGem(pickedStack)) {
             return;
         }
 
@@ -331,6 +336,89 @@ public final class AdvancementHelper {
         }
 
         return null;
+    }
+
+    public static boolean isTrackedBook(ItemStack stack) {
+        return !stack.isEmpty() && stack.is(ModItems.RECHANTMENT_BOOK.get());
+    }
+
+    public static void awardArchmageProgressFromBook(Player player, ServerLevel level, ItemStack stack) {
+        if (!(player instanceof ServerPlayer serverPlayer)) {
+            return;
+        }
+        if (!isTrackedBook(stack)) {
+            return;
+        }
+
+        String enchantmentId = getBookBaseEnchantmentId(stack);
+        if (enchantmentId == null) {
+            return;
+        }
+
+        Set<String> requiredEnchantments = getConfiguredArchmageEnchantments(level);
+        if (requiredEnchantments.isEmpty() || !requiredEnchantments.contains(enchantmentId)) {
+            return;
+        }
+
+        if (!recordDiscoveredArchmageEnchantment(serverPlayer, enchantmentId)) {
+            return;
+        }
+
+        if (hasDiscoveredAllArchmageEnchantments(serverPlayer, requiredEnchantments)) {
+            var advancement = level.getServer().getAdvancements().get(ARCHMAGE_ADVANCEMENT_ID);
+            if (advancement != null) {
+                serverPlayer.getAdvancements().award(advancement, ARCHMAGE_CRITERION);
+            }
+        }
+    }
+
+    private static String getBookBaseEnchantmentId(ItemStack stack) {
+        ItemEnchantments enchantments = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
+        if (enchantments.isEmpty()) {
+            enchantments = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+        }
+        if (enchantments.isEmpty()) {
+            return null;
+        }
+
+        return enchantments.entrySet().iterator().next().getKey()
+                .unwrapKey()
+                .map(key -> key.location().toString())
+                .orElse(null);
+    }
+
+    private static Set<String> getConfiguredArchmageEnchantments(ServerLevel level) {
+        Set<String> configured = new HashSet<>();
+        for (BookRarityProperties rarityProperties : BookRarityProperties.getAllProperties()) {
+            for (EnchantmentPoolEntry poolEntry : rarityProperties.enchantmentPool) {
+                Holder.Reference<Enchantment> enchantmentHolder = UtilFunctions
+                        .getEnchantmentReferenceIfPresent(level.registryAccess(), poolEntry.enchantment);
+                if (enchantmentHolder == null) {
+                    continue;
+                }
+
+                enchantmentHolder.unwrapKey().ifPresent(key -> {
+                    String enchantmentId = key.location().toString();
+                    configured.add(enchantmentId);
+                });
+            }
+        }
+
+        return configured;
+    }
+
+    private static boolean recordDiscoveredArchmageEnchantment(ServerPlayer player, String enchantmentId) {
+        Set<String> discoveredEnchantments = new HashSet<>(player.getData(ModAttachments.ARCHMAGE_DISCOVERED_ENCHANTMENTS));
+        boolean addedNew = discoveredEnchantments.add(enchantmentId);
+        if (addedNew) {
+            player.setData(ModAttachments.ARCHMAGE_DISCOVERED_ENCHANTMENTS, discoveredEnchantments);
+        }
+        return addedNew;
+    }
+
+    private static boolean hasDiscoveredAllArchmageEnchantments(ServerPlayer player, Set<String> requiredEnchantments) {
+        Set<String> discoveredEnchantments = player.getData(ModAttachments.ARCHMAGE_DISCOVERED_ENCHANTMENTS);
+        return discoveredEnchantments.containsAll(requiredEnchantments);
     }
 
     public static void recordMysteriousBookOpenAndAward(Player player, ServerLevel level) {

@@ -1,0 +1,23 @@
+{
+  "parent": "rechantment:power_enchanting_table",
+  "display": {
+    "icon": {
+      "id": "rechantment:advancement_archmage"
+    },
+    "title": {
+      "text": "Archmage"
+    },
+    "description": {
+      "text": "Discover all enchanted books!"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "discover_all_enchanted_books": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

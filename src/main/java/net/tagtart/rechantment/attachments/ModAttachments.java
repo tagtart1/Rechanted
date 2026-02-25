@@ -7,7 +7,10 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.tagtart.rechantment.Rechantment;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.time.Instant;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public class ModAttachments {
@@ -18,6 +21,10 @@ public class ModAttachments {
     private static final Codec<Instant> INSTANT_CODEC = Codec.LONG.xmap(
             Instant::ofEpochMilli,  // Convert long to Instant
             Instant::toEpochMilli   // Convert Instant to long
+    );
+    private static final Codec<Set<String>> STRING_SET_CODEC = Codec.STRING.listOf().xmap(
+            HashSet::new,
+            ArrayList::new
     );
 
     // Stores the last time a player attacked (used for Blitz combo timing)
@@ -49,6 +56,13 @@ public class ModAttachments {
     public static final Supplier<AttachmentType<Double>> SPRING_JUMP_START_Y = ATTACHMENT_TYPES.register(
             "spring_jump_start_y", () -> AttachmentType.builder(() -> 0.0)
                     .serialize(Codec.DOUBLE)
+                    .build()
+    );
+
+    public static final Supplier<AttachmentType<Set<String>>> ARCHMAGE_DISCOVERED_ENCHANTMENTS = ATTACHMENT_TYPES.register(
+            "archmage_discovered_enchantments", () -> AttachmentType.builder((Supplier<Set<String>>) HashSet::new)
+                    .serialize(STRING_SET_CODEC, set -> !set.isEmpty())
+                    .copyOnDeath()
                     .build()
     );
 
