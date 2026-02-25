@@ -1,5 +1,5 @@
 {
-  "parent": "rechantment:power_enchanting_table",
+  "parent": "rechantment:legendary_pull",
   "display": {
     "icon": {
       "id": "rechantment:advancement_archmage"
