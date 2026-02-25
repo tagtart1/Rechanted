@@ -38,7 +38,12 @@ public class  ModItems {
 
      public static final DeferredItem<Item> MYSTERIOUS_BOOK = ITEMS.register("mysterious_book", () -> new MysteriousBookItem(new Item.Properties()));
 
-     public static final DeferredItem<Item> LEGENDARY_BOOK_ICON = ITEMS.register("legendary_book_icon",
+     public static final DeferredItem<Item> LEGENDARY_PULL_ICON = ITEMS.register("advancement_legendary_pull",
+             () -> new Item(new Item.Properties()));
+
+     public static final DeferredItem<Item> ARCHMAGE_ICON = ITEMS.register("advancement_archmage",
+             () -> new Item(new Item.Properties()));
+     public static final DeferredItem<Item> CHRONICLER_ICON = ITEMS.register("advancement_chronicler",
              () -> new Item(new Item.Properties()));
 
      public static void register(IEventBus eventBus) {

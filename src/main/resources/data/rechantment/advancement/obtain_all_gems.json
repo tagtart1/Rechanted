@@ -2,7 +2,7 @@
   "parent": "rechantment:first_gem_held",
   "display": {
     "icon": {
-      "id": "rechantment:shiny_chance_gem"
+      "id": "rechantment:advancement_chronicler"
     },
     "title": {
       "text": "Chronicler of Jewels"

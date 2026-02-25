@@ -2,7 +2,7 @@
   "parent": "rechantment:power_enchanting_table",
   "display": {
     "icon": {
-      "id": "rechantment:legendary_book_icon"
+      "id": "rechantment:advancement_legendary_pull"
     },
     "title": {
       "text": "Legendary Pull"
