@@ -59,8 +59,8 @@ public class ModAttachments {
                     .build()
     );
 
-    public static final Supplier<AttachmentType<Set<String>>> ARCHMAGE_DISCOVERED_ENCHANTMENTS = ATTACHMENT_TYPES.register(
-            "archmage_discovered_enchantments", () -> AttachmentType.builder((Supplier<Set<String>>) HashSet::new)
+    public static final Supplier<AttachmentType<Set<String>>> DISCOVERED_ENCHANTMENTS = ATTACHMENT_TYPES.register(
+            "discovered_enchantments", () -> AttachmentType.builder((Supplier<Set<String>>) HashSet::new)
                     .serialize(STRING_SET_CODEC, set -> !set.isEmpty())
                     .copyOnDeath()
                     .build()

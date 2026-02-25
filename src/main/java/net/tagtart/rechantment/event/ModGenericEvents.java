@@ -72,20 +72,17 @@ public class ModGenericEvents {
         registrar.commonToServer(
                 OpenEnchantTableScreenC2SPayload.TYPE,
                 OpenEnchantTableScreenC2SPayload.STREAM_CODEC,
-                OpenEnchantTableScreenC2SPayload::handlePayloadOnServerNetwork
-        );
+                OpenEnchantTableScreenC2SPayload::handlePayloadOnServerNetwork);
 
         registrar.commonToServer(
                 PlayerPurchaseEnchantedBookC2SPayload.TYPE,
                 PlayerPurchaseEnchantedBookC2SPayload.STREAM_CODEC,
-                PlayerPurchaseEnchantedBookC2SPayload::handlePayloadOnServerNetwork
-        );
+                PlayerPurchaseEnchantedBookC2SPayload::handlePayloadOnServerNetwork);
 
         registrar.commonToClient(
                 TriggerRebirthItemEffectS2CPayload.TYPE,
                 TriggerRebirthItemEffectS2CPayload.STREAM_CODEC,
-                TriggerRebirthItemEffectS2CPayload::handlePayloadOnClientMain
-        );
+                TriggerRebirthItemEffectS2CPayload::handlePayloadOnClientMain);
     }
 
     @SubscribeEvent
@@ -100,22 +97,22 @@ public class ModGenericEvents {
             boolean isNewEnchantingTable = level.getBlockState(useOnPos).is(ModBlocks.RECHANTMENT_TABLE_BLOCK);
 
             // If player right clicks on vanilla enchanting table block with an emerald,
-            // the block becomes our modded enchanting table block (circumvents having to craft it)
+            // the block becomes our modded enchanting table block (circumvents having to
+            // craft it)
             if (usedItem.is(Items.EMERALD) && isVanillaEnchantingTable) {
 
-                //level.destroyBlock(useOnPos, false);
+                // level.destroyBlock(useOnPos, false);
                 usedItem.setCount(usedItem.getCount() - 1);
 
                 BlockState newBlockState = ModBlocks.RECHANTMENT_TABLE_BLOCK.get().defaultBlockState();
                 try {
                     Direction dir = event.getPlayer().getDirection();
                     newBlockState = newBlockState.setValue(BlockStateProperties.FACING, dir.getCounterClockWise());
-                }
-                catch (NullPointerException ignored) {
+                } catch (NullPointerException ignored) {
                 }
                 level.setBlock(useOnPos, newBlockState, 3);
-                level.playSound(null, useOnPos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS,1.5f, 1.0f);
-                level.playSound(null, useOnPos, SoundEvents.ANVIL_LAND, SoundSource.BLOCKS,0.4f, 2.5f);
+                level.playSound(null, useOnPos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.5f, 1.0f);
+                level.playSound(null, useOnPos, SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 0.4f, 2.5f);
 
                 Random rand = new Random();
 
@@ -123,26 +120,30 @@ public class ModGenericEvents {
                 double y = rand.nextDouble(-0.2, 0.2);
                 double z = rand.nextDouble(-0.6, 0.6);
 
-                serverLevel.sendParticles(ParticleTypes.HAPPY_VILLAGER, useOnPos.getX() + 0.5, useOnPos.getY() + 1.0, useOnPos.getZ() + 0.5, 13, x, y, z, 2.5);
+                serverLevel.sendParticles(ParticleTypes.HAPPY_VILLAGER, useOnPos.getX() + 0.5, useOnPos.getY() + 1.0,
+                        useOnPos.getZ() + 0.5, 13, x, y, z, 2.5);
 
                 AdvancementHelper.awardUpgradeEnchantingTableAdvancement(event.getPlayer(), serverLevel);
 
                 event.cancelWithResult(ItemInteractionResult.CONSUME);
             }
 
-            // Allow the player to right-click our modded enchanting table block with lapis and transfer
-            // all possible lapis directly to the table's lapis slot; should make things convenient for some,
+            // Allow the player to right-click our modded enchanting table block with lapis
+            // and transfer
+            // all possible lapis directly to the table's lapis slot; should make things
+            // convenient for some,
             // even though I'd rather just open the menu and shift-click, you never know :)
             else if (usedItem.is(Items.LAPIS_LAZULI) && isNewEnchantingTable) {
 
-                RechantmentTableBlockEntity rbe = (RechantmentTableBlockEntity)level.getBlockEntity(useOnPos);
+                RechantmentTableBlockEntity rbe = (RechantmentTableBlockEntity) level.getBlockEntity(useOnPos);
                 ItemStack lapisStack = rbe.getItemHandlerLapisStack();
                 ItemStack replaceItemStack = new ItemStack(Items.LAPIS_LAZULI);
 
                 int maxStackSize = (lapisStack.is(Items.AIR)) ? 64 : lapisStack.getMaxStackSize();
                 int availableLapisSpace = maxStackSize - lapisStack.getCount();
 
-                // Replaces the item stack with a new one since just setting the count doesn't immediately
+                // Replaces the item stack with a new one since just setting the count doesn't
+                // immediately
                 // update to clients and therefore the renderer. Is there a better way? Idk.
                 if (availableLapisSpace > 0) {
 
@@ -155,8 +156,7 @@ public class ModGenericEvents {
                     event.getLevel().playSound(null, useOnPos, SoundEvents.BOOK_PUT, SoundSource.BLOCKS, 1.0f, 1.0f);
 
                     event.cancelWithResult(ItemInteractionResult.CONSUME);
-                }
-                else {
+                } else {
                     event.cancelWithResult(ItemInteractionResult.FAIL);
                 }
             }
@@ -197,35 +197,33 @@ public class ModGenericEvents {
                 BookRarityProperties rarity1 = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw1);
                 BookRarityProperties rarity2 = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw2);
 
-
                 float rarityValue1 = 0f;
                 float rarityValue2 = 0f;
 
                 if (rarity1 == null && component1.getKey().is(EnchantmentTags.CURSE)) {
                     rarityValue1 = 99.0f;
-                }
-                else if (rarity1 != null) {
+                } else if (rarity1 != null) {
 
                     rarityValue1 = rarity1.rarity;
                 }
 
                 if (rarity2 == null && component2.getKey().is(EnchantmentTags.CURSE)) {
                     rarityValue2 = 99.0f;
-                }
-                else if (rarity2 != null) {
+                } else if (rarity2 != null) {
                     rarityValue2 = rarity2.rarity;
                 }
-
 
                 return Float.compare(rarityValue2, rarityValue1);
             });
 
             if (hasEnchantmentDescriptions) {
                 // Compatibility path:
-                // Keep rarity/curse coloring, but do not reorder lines to avoid index conflicts with Enchantment Descriptions.
+                // Keep rarity/curse coloring, but do not reorder lines to avoid index conflicts
+                // with Enchantment Descriptions.
                 Set<Integer> consumedIndices = new HashSet<>();
                 for (Object2IntMap.Entry<Holder<Enchantment>> entry : enchantsSorted) {
-                    Component fullEnchantName = Enchantment.getFullname(entry.getKey(), enchantments.getLevel(entry.getKey()));
+                    Component fullEnchantName = Enchantment.getFullname(entry.getKey(),
+                            enchantments.getLevel(entry.getKey()));
                     String translatedString = fullEnchantName.getString();
 
                     for (int tooltipIndex = 0; tooltipIndex < tooltip.size(); tooltipIndex++) {
@@ -234,23 +232,26 @@ public class ModGenericEvents {
                         }
 
                         if (tooltip.get(tooltipIndex).getString().equalsIgnoreCase(translatedString)) {
-                            tooltip.set(tooltipIndex, fullEnchantName.copy().withStyle(getStyleForEnchantment(entry.getKey())));
+                            tooltip.set(tooltipIndex,
+                                    fullEnchantName.copy().withStyle(getStyleForEnchantment(entry.getKey())));
                             consumedIndices.add(tooltipIndex);
                             break;
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 // First pass:
                 // Only replace line indices that match an enchantment's translated name.
-                // This is technically a foolproof way of doing this but is very slow and I hate to do it like this.
-                // If there's a better way to accomplish the same thing then this def should be refactored.
+                // This is technically a foolproof way of doing this but is very slow and I hate
+                // to do it like this.
+                // If there's a better way to accomplish the same thing then this def should be
+                // refactored.
                 int enchantmentTooltipsStartIndex = tooltip.size();
                 for (int i = 1; i <= enchantsSorted.size(); i++) {
 
                     Object2IntMap.Entry<Holder<Enchantment>> entry = enchantsSorted.get(i - 1);
-                    Component fullEnchantName = Enchantment.getFullname(entry.getKey(), enchantments.getLevel(entry.getKey()));
+                    Component fullEnchantName = Enchantment.getFullname(entry.getKey(),
+                            enchantments.getLevel(entry.getKey()));
                     String translatedString = fullEnchantName.getString();
                     Optional<Component> replacedComponent = tooltip.stream().filter((text) -> {
                         String existingTranslated = text.getString();
@@ -270,8 +271,10 @@ public class ModGenericEvents {
                 int replacementIndex = enchantmentTooltipsStartIndex;
                 for (int i = 1; i <= enchantsSorted.size(); i++) {
                     Object2IntMap.Entry<Holder<Enchantment>> entry = enchantsSorted.get(i - 1);
-                    Component fullEnchantName = Enchantment.getFullname(entry.getKey(), enchantments.getLevel(entry.getKey()));
-                    tooltip.set(replacementIndex++, fullEnchantName.copy().withStyle(getStyleForEnchantment(entry.getKey())));
+                    Component fullEnchantName = Enchantment.getFullname(entry.getKey(),
+                            enchantments.getLevel(entry.getKey()));
+                    tooltip.set(replacementIndex++,
+                            fullEnchantName.copy().withStyle(getStyleForEnchantment(entry.getKey())));
                 }
             }
 
@@ -281,7 +284,6 @@ public class ModGenericEvents {
         } else if (stack.getOrDefault(ModDataComponents.REBORN, false)) {
             addRebornTooltipAtTop(tooltip);
         }
-
 
     }
 
@@ -307,7 +309,8 @@ public class ModGenericEvents {
         Component rebornText = Component.translatable("enchantment.rechantment.reborn")
                 .withStyle(Style.EMPTY.withColor(ChatFormatting.WHITE).withBold(true));
         String rebornTextString = rebornText.getString();
-        boolean alreadyPresent = tooltip.stream().anyMatch(component -> component.getString().equalsIgnoreCase(rebornTextString));
+        boolean alreadyPresent = tooltip.stream()
+                .anyMatch(component -> component.getString().equalsIgnoreCase(rebornTextString));
         if (alreadyPresent) {
             return;
         }
@@ -316,36 +319,42 @@ public class ModGenericEvents {
         tooltip.add(rebornInsertIndex, rebornText);
     }
 
-
     @SubscribeEvent
     public static void onLivingDrops(LivingDropsEvent event) {
 
         // Prevents teleporting player drops
-        if (event.getEntity() instanceof Player) return;
+        if (event.getEntity() instanceof Player)
+            return;
 
-       if ((event.getSource().getEntity() instanceof Player player)) {
-           ItemStack weapon = player.getMainHandItem();
-           int telekinesisEnchantment = UtilFunctions.getEnchantmentFromItem("rechantment:telekinesis", weapon, event.getEntity().registryAccess());
-           if (telekinesisEnchantment == 0) return;
+        if ((event.getSource().getEntity() instanceof Player player)) {
+            ItemStack weapon = player.getMainHandItem();
+            int telekinesisEnchantment = UtilFunctions.getEnchantmentFromItem("rechantment:telekinesis", weapon,
+                    event.getEntity().registryAccess());
+            if (telekinesisEnchantment == 0)
+                return;
 
-           for (ItemEntity item : event.getDrops()) {
-               TelekinesisEnchantmentHandler.markItemEntityForTelekinesis(item, player);
-           }
+            for (ItemEntity item : event.getDrops()) {
+                TelekinesisEnchantmentHandler.markItemEntityForTelekinesis(item, player);
+            }
         }
     }
 
     @SubscribeEvent
     public static void onExpDropFromHostile(LivingExperienceDropEvent event) {
         MobCategory mobCategory = event.getEntity().getType().getCategory();
-        if (event.getAttackingPlayer() == null) return;
+        if (event.getAttackingPlayer() == null)
+            return;
         ItemStack weapon = event.getAttackingPlayer().getMainHandItem();
-        int inquisitiveEnchantmentLevel = UtilFunctions.getEnchantmentFromItem("rechantment:inquisitive", weapon, event.getAttackingPlayer().registryAccess());
-        int telekinesisEnchantment = UtilFunctions.getEnchantmentFromItem("rechantment:telekinesis", weapon, event.getAttackingPlayer().registryAccess());
+        int inquisitiveEnchantmentLevel = UtilFunctions.getEnchantmentFromItem("rechantment:inquisitive", weapon,
+                event.getAttackingPlayer().registryAccess());
+        int telekinesisEnchantment = UtilFunctions.getEnchantmentFromItem("rechantment:telekinesis", weapon,
+                event.getAttackingPlayer().registryAccess());
 
         int expToDrop = event.getDroppedExperience();
 
         if (inquisitiveEnchantmentLevel != 0 && mobCategory == MobCategory.MONSTER) {
-            expToDrop = (int)InquisitiveEnchantmentEffect.trueProcess(inquisitiveEnchantmentLevel, RandomSource.create(), (float)expToDrop);
+            expToDrop = (int) InquisitiveEnchantmentEffect.trueProcess(inquisitiveEnchantmentLevel,
+                    RandomSource.create(), (float) expToDrop);
         }
 
         if (telekinesisEnchantment != 0) {
@@ -356,8 +365,7 @@ public class ModGenericEvents {
                         event.getEntity().getX(),
                         event.getEntity().getY() + 0.5D,
                         event.getEntity().getZ(),
-                        expToDrop
-                );
+                        expToDrop);
                 TelekinesisEnchantmentHandler.markExperienceOrbForTelekinesis(expOrb, player);
                 event.getAttackingPlayer().level().addFreshEntity(expOrb);
             }
@@ -384,19 +392,23 @@ public class ModGenericEvents {
         ItemStack topSlot = event.getTopItem();
         ItemStack bottomSlot = event.getBottomItem();
 
-        boolean rechantmentBookInTopOnly = (!topSlot.isEmpty() && topSlot.is(ModItems.RECHANTMENT_BOOK.get()) && bottomSlot.isEmpty());
-        boolean rechantmentBookInBottomOnly = (!bottomSlot.isEmpty() && bottomSlot.is(ModItems.RECHANTMENT_BOOK.get()) && topSlot.isEmpty());
+        boolean rechantmentBookInTopOnly = (!topSlot.isEmpty() && topSlot.is(ModItems.RECHANTMENT_BOOK.get())
+                && bottomSlot.isEmpty());
+        boolean rechantmentBookInBottomOnly = (!bottomSlot.isEmpty() && bottomSlot.is(ModItems.RECHANTMENT_BOOK.get())
+                && topSlot.isEmpty());
 
         if (rechantmentBookInTopOnly || rechantmentBookInBottomOnly) {
 
             ItemStack currentStack = rechantmentBookInTopOnly ? topSlot : bottomSlot;
 
-            // TODO: Double check this still works and possibly refactor when enchantments are figured out.
-            // Just did this to see if it could become compatible with the UtilFunctions.getPropertiesFromEnchantments method still somehow.
+            // TODO: Double check this still works and possibly refactor when enchantments
+            // are figured out.
+            // Just did this to see if it could become compatible with the
+            // UtilFunctions.getPropertiesFromEnchantments method still somehow.
             ItemEnchantments enchantments = currentStack.get(DataComponents.ENCHANTMENTS);
-//               CompoundTag rootTag = currentStack.getTag();
-//               CompoundTag enchantmentTag = rootTag.getCompound("Enchantment");
-//               String enchantmentRaw = enchantmentTag.getString("id");
+            // CompoundTag rootTag = currentStack.getTag();
+            // CompoundTag enchantmentTag = rootTag.getCompound("Enchantment");
+            // String enchantmentRaw = enchantmentTag.getString("id");
             Holder<Enchantment> enchantmentHolder = enchantments.entrySet().iterator().next().getKey();
             String enchantmentRaw = enchantmentHolder.unwrapKey().orElseThrow().location().toString();
             BookRarityProperties enchantRarityInfo = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw);
@@ -404,7 +416,8 @@ public class ModGenericEvents {
             Random rand = new Random();
             event.setXp(rand.nextInt(enchantRarityInfo.minGrindstoneXP, enchantRarityInfo.maxGrindstoneXP + 1));
 
-            ResourceLocation itemLocation = ResourceLocation.parse(RechantmentCommonConfigs.GRINDSTONE_RESULT_ITEM.get());
+            ResourceLocation itemLocation = ResourceLocation
+                    .parse(RechantmentCommonConfigs.GRINDSTONE_RESULT_ITEM.get());
             event.setOutput(new ItemStack(BuiltInRegistries.ITEM.get(itemLocation)));
         }
 
@@ -413,9 +426,11 @@ public class ModGenericEvents {
     @SubscribeEvent
     public static void onChunkLoad(ChunkEvent.Load event) {
         if (event.isNewChunk()) {
-            event.getChunk().findBlocks((blockState -> blockState.is(Blocks.ENCHANTING_TABLE)), ((blockPos, blockState) -> {
-                event.getChunk().setBlockState(blockPos, ModBlocks.RECHANTMENT_TABLE_BLOCK.get().defaultBlockState(), false);
-            }));
+            event.getChunk().findBlocks((blockState -> blockState.is(Blocks.ENCHANTING_TABLE)),
+                    ((blockPos, blockState) -> {
+                        event.getChunk().setBlockState(blockPos,
+                                ModBlocks.RECHANTMENT_TABLE_BLOCK.get().defaultBlockState(), false);
+                    }));
         }
     }
 
@@ -431,11 +446,10 @@ public class ModGenericEvents {
             return;
         }
 
-        if (player.tickCount % 20 != 0) {
+        if (player.tickCount % 5 != 0) {
             return;
         }
 
-        AdvancementHelper.awardLegendaryPullAdvancementIfEligible(player, serverLevel);
         AdvancementHelper.awardExcaliburAdvancementIfEligible(player, serverLevel);
 
         Inventory inventory = player.getInventory();
@@ -486,7 +500,8 @@ public class ModGenericEvents {
                 HoverEvent.Action.SHOW_ITEM,
                 new HoverEvent.ItemStackInfo(stack.copyWithCount(1))));
 
-        Component enchantName = Enchantment.getFullname(enchantmentHolder, enchantmentLevel).copy().withStyle(enchantStyle);
+        Component enchantName = Enchantment.getFullname(enchantmentHolder, enchantmentLevel).copy()
+                .withStyle(enchantStyle);
         Component playerName = player.getDisplayName();
 
         MutableComponent message = Component.empty()
@@ -508,7 +523,8 @@ public class ModGenericEvents {
                 otherPlayer.sendSystemMessage(message);
             }
 
-            level.playSound(null, player.getOnPos(), SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.PLAYERS, 1f, 1f);
+            level.playSound(null, player.getOnPos(), SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.PLAYERS, 1f,
+                    1f);
         }
 
         stack.remove(ModDataComponents.ANNOUNCE_ON_FOUND);
@@ -526,7 +542,7 @@ public class ModGenericEvents {
         Style gemStyle = Style.EMPTY.withColor(ChatFormatting.AQUA).withUnderlined(true);
         if (stack.is(ModItems.SHINY_CHANCE_GEM.get())) {
             gemStyle = gemStyle.withColor(ChatFormatting.LIGHT_PURPLE);
-        } 
+        }
 
         gemStyle = gemStyle.withHoverEvent(new HoverEvent(
                 HoverEvent.Action.SHOW_ITEM,
@@ -568,11 +584,14 @@ public class ModGenericEvents {
         if (stack.isEmpty() || !AdvancementHelper.isTrackedBook(stack)) {
             return;
         }
+
         if (hasBeenObtained(stack)) {
             return;
         }
 
         markAsObtained(stack);
+
+        AdvancementHelper.awardLegendaryPullAdvancementIfEligible(player, level, stack);
         AdvancementHelper.awardArchmageProgressFromBook(player, level, stack);
     }
 

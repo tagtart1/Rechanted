@@ -9,7 +9,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -188,8 +187,12 @@ public final class AdvancementHelper {
         return true;
     }
 
-    public static void awardLegendaryPullAdvancementIfEligible(Player player, ServerLevel level) {
+    public static void awardLegendaryPullAdvancementIfEligible(Player player, ServerLevel level, ItemStack stack) {
         if (!(player instanceof ServerPlayer serverPlayer)) {
+            return;
+        }
+
+        if (stack.isEmpty()) {
             return;
         }
 
@@ -200,7 +203,7 @@ public final class AdvancementHelper {
             return;
         }
 
-        if (!hasLegendaryBookInInventory(serverPlayer.getInventory(), legendaryRarity)) {
+        if (!isLegendaryRechantmentBook(stack, legendaryRarity)) {
             return;
         }
 
@@ -223,22 +226,6 @@ public final class AdvancementHelper {
         for (ServerPlayer player : serverLevel.getEntitiesOfClass(ServerPlayer.class, area)) {
             player.getAdvancements().award(advancement, POWER_ENCHANT_TABLE_CRITERION);
         }
-    }
-
-    private static boolean hasLegendaryBookInInventory(Inventory inventory, BookRarityProperties legendaryRarity) {
-        for (ItemStack stack : inventory.items) {
-            if (isLegendaryRechantmentBook(stack, legendaryRarity)) {
-                return true;
-            }
-        }
-
-        for (ItemStack stack : inventory.offhand) {
-            if (isLegendaryRechantmentBook(stack, legendaryRarity)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private static boolean isLegendaryRechantmentBook(ItemStack stack, BookRarityProperties legendaryRarity) {
@@ -408,16 +395,16 @@ public final class AdvancementHelper {
     }
 
     private static boolean recordDiscoveredArchmageEnchantment(ServerPlayer player, String enchantmentId) {
-        Set<String> discoveredEnchantments = new HashSet<>(player.getData(ModAttachments.ARCHMAGE_DISCOVERED_ENCHANTMENTS));
+        Set<String> discoveredEnchantments = new HashSet<>(player.getData(ModAttachments.DISCOVERED_ENCHANTMENTS));
         boolean addedNew = discoveredEnchantments.add(enchantmentId);
         if (addedNew) {
-            player.setData(ModAttachments.ARCHMAGE_DISCOVERED_ENCHANTMENTS, discoveredEnchantments);
+            player.setData(ModAttachments.DISCOVERED_ENCHANTMENTS, discoveredEnchantments);
         }
         return addedNew;
     }
 
     private static boolean hasDiscoveredAllArchmageEnchantments(ServerPlayer player, Set<String> requiredEnchantments) {
-        Set<String> discoveredEnchantments = player.getData(ModAttachments.ARCHMAGE_DISCOVERED_ENCHANTMENTS);
+        Set<String> discoveredEnchantments = player.getData(ModAttachments.DISCOVERED_ENCHANTMENTS);
         return discoveredEnchantments.containsAll(requiredEnchantments);
     }
 
