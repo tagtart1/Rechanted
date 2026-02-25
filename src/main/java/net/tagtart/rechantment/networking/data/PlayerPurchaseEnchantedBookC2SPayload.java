@@ -17,6 +17,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
@@ -26,7 +27,6 @@ import net.tagtart.rechantment.Rechantment;
 import net.tagtart.rechantment.block.entity.RechantmentTableBlockEntity;
 import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.item.ModItems;
-import net.tagtart.rechantment.item.custom.MysteriousBookItem;
 import net.tagtart.rechantment.screen.RechantmentTableMenu;
 import net.tagtart.rechantment.util.BonusItemResolver;
 import net.tagtart.rechantment.util.BookRarityProperties;
@@ -35,11 +35,13 @@ import net.tagtart.rechantment.util.UtilFunctions;
 
 import java.util.*;
 
+import static net.tagtart.rechantment.util.BookRarityProperties.BonusPoolEntryType.*;
+
 public record PlayerPurchaseEnchantedBookC2SPayload(int bookPropertiesIndex, BlockPos enchantTablePos) implements CustomPacketPayload {
 
 
-    public static final CustomPacketPayload.Type<PlayerPurchaseEnchantedBookC2SPayload> TYPE =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "player_purchase_book"));
+    public static final Type<PlayerPurchaseEnchantedBookC2SPayload> TYPE =
+            new Type<>(ResourceLocation.fromNamespaceAndPath(Rechantment.MOD_ID, "player_purchase_book"));
 
     public static final StreamCodec<ByteBuf, PlayerPurchaseEnchantedBookC2SPayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.INT,
@@ -181,20 +183,32 @@ public record PlayerPurchaseEnchantedBookC2SPayload(int bookPropertiesIndex, Blo
                 // Note: had to make the call to set the item directly in inventory to have announced message
                 player.getInventory().setItem(player.getInventory().getFreeSlot(), toGive);
 
-                if (random.nextDouble() < bookProperties.bonusItemRollChance) {
-                    Optional<ItemStack> bonusItem = BonusItemResolver.resolveRandomBonusItem(bookProperties, random);
-                    if (bonusItem.isPresent()) {
-                        ItemStack bonusStack = bonusItem.get();
-                        if (UtilFunctions.shouldAnnounceGemDrop(bonusStack.getDescriptionId())) {
-                            bonusStack.set(ModDataComponents.SHOULD_ANNOUNCE_GEM, true);
-                        }
-                        // If it's a book do the basic animation else do the special gem animation
-                        if (bonusItem.get().getItem() instanceof MysteriousBookItem) {
-                            enchTableEntity.startLightBonusPendingAnimatoin(bonusStack);
-                        } else {
-                            enchTableEntity.startBonusPendingAnimation(bonusStack);
+                if (true) {
+                    Optional<BookRarityProperties.BonusPoolEntryType> bonusType =  bookProperties.getRandomBonusPoolEntryWeighted(random);
+                    Optional<ItemStack> bonusStack = BonusItemResolver.resolveRandomBonusItem(bonusType, random);
+                    if (bonusType.isPresent() && bonusStack.isPresent()) {
+
+                        Item bonusItem = bonusStack.get().getItem();
+                        if (UtilFunctions.shouldAnnounceGemDrop(bonusItem.getDescriptionId())) {
+                            bonusStack.get().set(ModDataComponents.SHOULD_ANNOUNCE_GEM, true);
                         }
 
+                        switch (bonusType) {
+                            case MYSTERIOUS_BOOK:
+                                enchTableEntity.startLightBonusPendingAnimation(bonusStack.get());
+                                break;
+                            case COMMON_GEM_POOL:
+                                enchTableEntity.startBonusPendingAnimation(bonusStack.get());
+                                break;
+                            case RARE_GEM_POOL:
+                                enchTableEntity.startSuperBonusPendingAnimation(bonusStack.get());
+                                break;
+
+                            default:
+
+                        }
+
+                        // For triggering the rainbow effect in the enchanter screen shader.
                         if (player.containerMenu instanceof RechantmentTableMenu rechantmentTableMenu) {
                             rechantmentTableMenu.bonusEarnedEffectQueued.set(rechantmentTableMenu.bonusEarnedEffectQueued.get() + 1);
                             rechantmentTableMenu.broadcastChanges();

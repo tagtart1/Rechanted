@@ -80,6 +80,8 @@ public class BookRarityProperties {
     public Optional<BonusPoolEntryType> getRandomBonusPoolEntryWeighted(Random random) {
         int totalWeight = bonusItemMysteriousBookWeight + bonusItemCommonGemPoolWeight + bonusItemRareGemPoolWeight;
         if (totalWeight <= 0) {
+            Rechantment.LOGGER.warn(
+                    "Bonus pool for rarity '{}' is empty. Make sure your config is set up correctly", key);
             return Optional.empty();
         }
 
@@ -97,6 +99,8 @@ public class BookRarityProperties {
             return Optional.of(BonusPoolEntryType.RARE_GEM_POOL);
         }
 
+        Rechantment.LOGGER.warn(
+                "Bonus pool for rarity '{}' has no valid weight. Make sure your config is set up correctly", key);
         return Optional.empty();
     }
 

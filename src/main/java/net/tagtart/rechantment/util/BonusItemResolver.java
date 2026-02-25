@@ -21,20 +21,18 @@ public final class BonusItemResolver {
 
     public static Optional<ItemStack> resolveRandomBonusItem(BookRarityProperties bookProperties, Random random) {
         Optional<BookRarityProperties.BonusPoolEntryType> randomBonusPoolEntryType = bookProperties.getRandomBonusPoolEntryWeighted(random);
-        if (randomBonusPoolEntryType.isEmpty()) {
-            Rechantment.LOGGER.warn(
-                    "Bonus pool for rarity '{}' is empty or has no valid weight. Falling back to mysterious book.",
-                    bookProperties.key);
-            return Optional.of(new ItemStack(ModItems.MYSTERIOUS_BOOK.get()));
-        }
+        return resolveRandomBonusItem(randomBonusPoolEntryType, random);
+    }
 
-        return switch (randomBonusPoolEntryType.get()) {
+    public static Optional<ItemStack> resolveRandomBonusItem(Optional<BookRarityProperties.BonusPoolEntryType> entryType, Random random) {
+
+        return entryType.map(bonusPoolEntryType -> switch (bonusPoolEntryType) {
             case MYSTERIOUS_BOOK -> Optional.of(new ItemStack(ModItems.MYSTERIOUS_BOOK.get()));
             case COMMON_GEM_POOL -> resolveGemPoolReward(RechantmentCommonConfigs.COMMON_GEM_POOL.get(),
                     "Bonus Item Pools.common_gem_pool", random);
             case RARE_GEM_POOL -> resolveGemPoolReward(RechantmentCommonConfigs.RARE_GEM_POOL.get(),
                     "Bonus Item Pools.rare_gem_pool", random);
-        };
+        }).orElseGet(() -> Optional.of(new ItemStack(ModItems.MYSTERIOUS_BOOK.get())));
     }
 
     private static Optional<ItemStack> resolveGemPoolReward(List<? extends String> configuredPool, String sourceConfig,
