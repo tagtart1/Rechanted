@@ -401,14 +401,7 @@ public class ModGenericEvents {
 
             ItemStack currentStack = rechantmentBookInTopOnly ? topSlot : bottomSlot;
 
-            // TODO: Double check this still works and possibly refactor when enchantments
-            // are figured out.
-            // Just did this to see if it could become compatible with the
-            // UtilFunctions.getPropertiesFromEnchantments method still somehow.
-            ItemEnchantments enchantments = currentStack.get(DataComponents.ENCHANTMENTS);
-            // CompoundTag rootTag = currentStack.getTag();
-            // CompoundTag enchantmentTag = rootTag.getCompound("Enchantment");
-            // String enchantmentRaw = enchantmentTag.getString("id");
+            ItemEnchantments enchantments = currentStack.get(DataComponents.STORED_ENCHANTMENTS);
             Holder<Enchantment> enchantmentHolder = enchantments.entrySet().iterator().next().getKey();
             String enchantmentRaw = enchantmentHolder.unwrapKey().orElseThrow().location().toString();
             BookRarityProperties enchantRarityInfo = UtilFunctions.getPropertiesFromEnchantment(enchantmentRaw);
