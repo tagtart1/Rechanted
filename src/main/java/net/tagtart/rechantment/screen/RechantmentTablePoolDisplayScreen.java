@@ -23,6 +23,7 @@ import net.tagtart.rechantment.util.UtilFunctions;
 import org.joml.Vector2i;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class RechantmentTablePoolDisplayScreen extends AbstractContainerScreen<RechantmentTablePoolDisplayMenu> {
@@ -138,11 +139,19 @@ public class RechantmentTablePoolDisplayScreen extends AbstractContainerScreen<R
     protected void generateTableEntries() {
         entry_hoverables.clear();
         int nextEntryBasePosY = entry_base_posY;
-        for (EnchantmentPoolEntry entry : getCurrentViewingProperties().enchantmentPool) {
+
+        // Sort entries by weight, from highest to lowest.
+        List<EnchantmentPoolEntry> entries = getCurrentViewingProperties().enchantmentPool;
+        entries.sort(Comparator.comparing((entry) -> entry.weight));
+        entries =  entries.reversed();
+
+
+        for (EnchantmentPoolEntry entry : entries) {
             HoverableLootTablePoolEntryRenderable hoverable = new HoverableLootTablePoolEntryRenderable(this, this.font, entry, viewingPropertyIndex, entry_base_posX, nextEntryBasePosY);
             nextEntryBasePosY += hoverable.getEntryLabelBottomY();
             entry_hoverables.add(hoverable);
         }
+
         maxEntryOffset = nextEntryBasePosY;
         maxScrollPosition = (maxEntryOffset - VISIBLE_HEIGHT) - entry_base_posY;
         scrollPosition = 0.0;
