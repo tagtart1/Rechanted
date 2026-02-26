@@ -17,6 +17,7 @@ import net.tagtart.rechantment.block.ModBlocks;
 import net.tagtart.rechantment.block.entity.ModBlockEntities;
 import net.tagtart.rechantment.block.renderer.RechantmentTableRenderer;
 import net.tagtart.rechantment.component.ModDataComponents;
+import net.tagtart.rechantment.command.ModCommands;
 import net.tagtart.rechantment.config.RechantmentCommonConfigs;
 import net.tagtart.rechantment.effect.ModEffects;
 import net.tagtart.rechantment.enchantment.ModEnchantmentEffects;
@@ -66,6 +67,7 @@ public class Rechantment {
         // Do not add this line if there are no @SubscribeEvent-annotated functions in
         // this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.addListener(ModCommands::register);
 
         ModItems.register(modEventBus);
         ModMenuTypes.register(modEventBus);
