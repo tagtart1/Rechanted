@@ -1,7 +1,6 @@
 package net.tagtart.rechantment.screen;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
@@ -32,6 +31,7 @@ public class RechantmentTableMenu extends AbstractContainerMenu {
     private final Level level;
 
     public final DataSlot bonusEarnedEffectQueued = DataSlot.standalone();
+    public final DataSlot lightBonusEarnedEffectQueued = DataSlot.standalone();
 
     public RechantmentTableMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
         this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()));
@@ -49,6 +49,7 @@ public class RechantmentTableMenu extends AbstractContainerMenu {
         this.addSlot(new LapisSlot(blockEntity.getItemHandler(), 0, 90, 88));
 
         addDataSlot(bonusEarnedEffectQueued);
+        addDataSlot(lightBonusEarnedEffectQueued);
     }
 
     private static final int HOTBAR_SLOT_COUNT = 9;

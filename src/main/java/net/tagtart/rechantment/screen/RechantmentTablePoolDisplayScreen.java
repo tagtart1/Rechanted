@@ -407,10 +407,11 @@ public class RechantmentTablePoolDisplayScreen extends AbstractContainerScreen<R
         index = index % BookRarityProperties.getAllProperties().length;
         viewingPropertyIndex = index;
 
-        updateIndexAnimationData();
-
         Minecraft.getInstance().player.playSound(SoundEvents.BOOK_PAGE_TURN, 0.5F, (float) UtilFunctions.remap(0.0, 1.0, 0.8, 1.2, viewingPropertyIndex / 5.0));
         bookIcon.renderTexture = BookRarityProperties.getAllProperties()[viewingPropertyIndex].iconResourceLocation;
+
+        updateIndexAnimationData();
+
         generateTableEntries();
     }
 

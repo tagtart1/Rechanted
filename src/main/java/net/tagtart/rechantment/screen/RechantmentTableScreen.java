@@ -49,6 +49,7 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
     public static final Style MID_GRAY_COLOR_STYLE = Style.EMPTY.withColor(0xA8A8A8);
 
     public static final float BONUS_PENDING_EFFECT_Y_MOVE_SPEED = 0.01f;
+    public static final float LIGHT_BONUS_EFFECT_FLASH_DECREMENT_SPEED = 0.016f;
 
     private static final Component grayHyphen = Component.literal("- ").withStyle(MID_GRAY_COLOR_STYLE);
     private static final Component whiteArrow = Component.literal("→ ").withStyle(ChatFormatting.WHITE);
@@ -66,6 +67,7 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
 
     private float timeElapsed = 0.0f;
     private float bonusEarnedEffectVCoord = 1000.0f;
+    private float lightBonusEarnedFlashAmount = 0.0f;
 
     private final float REQ_CHECK_RATE = 0.2f;  // How often shader will check if requirements are met to display effect.
     private float timeSinceLastReqCheck = 0.0f; // Time since last requirement check was made for shader effect.
@@ -139,9 +141,13 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
             menu.bonusEarnedEffectQueued.set(0);  // Doesn't actually broadcast change; only client side so this check doesn't repeat.
             bonusEarnedEffectVCoord = -0.1f;
         }
+        if (menu.lightBonusEarnedEffectQueued.get() != 0) {
+            menu.lightBonusEarnedEffectQueued.set(0);
+            lightBonusEarnedFlashAmount = 1.0f;
+        }
         // Check if requirements are met currently after certain interval passed,
         // then set which book index can currently be crafted for use elsewhere.
-        else if (timeSinceLastReqCheck >= REQ_CHECK_RATE && menu.blockEntity.tableState == RechantmentTableBlockEntity.CustomRechantmentTableState.Normal)
+        if (timeSinceLastReqCheck >= REQ_CHECK_RATE && menu.blockEntity.tableState == RechantmentTableBlockEntity.CustomRechantmentTableState.Normal)
         {
             currentIndexRequirementsMet = 0;
             for (int i = 0; i < 5; ++i) {
@@ -166,8 +172,12 @@ public class RechantmentTableScreen extends AbstractContainerScreen<RechantmentT
         }
 
         bonusEarnedEffectVCoord += BONUS_PENDING_EFFECT_Y_MOVE_SPEED * pPartialTick;
+        lightBonusEarnedFlashAmount -= LIGHT_BONUS_EFFECT_FLASH_DECREMENT_SPEED * pPartialTick;
+
+        System.out.println("Penis length: " + lightBonusEarnedFlashAmount);
 
         lineShader.safeGetUniform("GemEarnEffectVCoord").set(bonusEarnedEffectVCoord);
+        lineShader.safeGetUniform("LightBonusFlashMult").set(lightBonusEarnedFlashAmount);
         lineShader.safeGetUniform("Time").set(timeElapsed);
         lineShader.safeGetUniform("Resolution").set((float)imageWidth, (float)imageHeight);
 

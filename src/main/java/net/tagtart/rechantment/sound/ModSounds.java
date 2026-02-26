@@ -29,8 +29,14 @@ public class ModSounds {
     public static final Supplier<SoundEvent> SUPER_BURP = registerSoundEvents("super_burp");
     public static final Supplier<SoundEvent> ENDER_EYE_DEATH = registerSoundEvents("ender_eye_death");
 
-    public static final Supplier<SoundEvent> ITEM_PENDING = registerSoundEvents("item_pending");
-    public static final Supplier<SoundEvent> ITEM_EARNED = registerSoundEvents("item_earned");
+    public static final Supplier<SoundEvent> TIER_1_ITEM_PENDING = registerSoundEvents("item_pending_t1");
+    public static final Supplier<SoundEvent> TIER_1_ITEM_EARNED = registerSoundEvents("item_earned_t1");
+
+    public static final Supplier<SoundEvent> TIER_2_ITEM_PENDING = registerSoundEvents("item_pending_t2");
+    public static final Supplier<SoundEvent> TIER_2_ITEM_EARNED = registerSoundEvents("item_earned_t2");
+
+    public static final Supplier<SoundEvent> TIER_3_ITEM_PENDING = registerSoundEvents("item_pending_t3");
+    public static final Supplier<SoundEvent> TIER_3_ITEM_EARNED = registerSoundEvents("item_earned_t3");
 
 
     private static Supplier<SoundEvent> registerSoundEvents(String name) {

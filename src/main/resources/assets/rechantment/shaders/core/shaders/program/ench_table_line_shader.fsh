@@ -6,6 +6,7 @@ uniform vec3 ColorModulator;
 uniform vec2 Resolution;
 uniform float Time;
 uniform float GemEarnEffectVCoord;
+uniform float LightBonusFlashMult;
 
 in vec2 texCoord;
 in vec4 vertexColor;
@@ -170,6 +171,9 @@ void main() {
     // END GEM RAINBOW EFFECT STUFF
 
     fragColor = vec4(mainColor * noiseSample);
+
+    // For light bonus items; makes color flash white briefly.
+    fragColor += max(0.0f, LightBonusFlashMult);
 
     if (mainColor.a <= 0.95) {
         fragColor = vec4(mainColor.rgb, 1.0);

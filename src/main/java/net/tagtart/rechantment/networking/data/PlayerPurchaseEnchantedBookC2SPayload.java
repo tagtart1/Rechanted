@@ -193,7 +193,7 @@ public record PlayerPurchaseEnchantedBookC2SPayload(int bookPropertiesIndex, Blo
                             bonusStack.get().set(ModDataComponents.SHOULD_ANNOUNCE_GEM, true);
                         }
 
-                        switch (bonusType) {
+                        switch (bonusType.get()) {
                             case MYSTERIOUS_BOOK:
                                 enchTableEntity.startLightBonusPendingAnimation(bonusStack.get());
                                 break;
@@ -210,7 +210,12 @@ public record PlayerPurchaseEnchantedBookC2SPayload(int bookPropertiesIndex, Blo
 
                         // For triggering the rainbow effect in the enchanter screen shader.
                         if (player.containerMenu instanceof RechantmentTableMenu rechantmentTableMenu) {
-                            rechantmentTableMenu.bonusEarnedEffectQueued.set(rechantmentTableMenu.bonusEarnedEffectQueued.get() + 1);
+                            if (bonusType.get() == MYSTERIOUS_BOOK) {
+                                rechantmentTableMenu.lightBonusEarnedEffectQueued.set(rechantmentTableMenu.lightBonusEarnedEffectQueued.get() + 1);
+                            }
+                            else {
+                                rechantmentTableMenu.bonusEarnedEffectQueued.set(rechantmentTableMenu.bonusEarnedEffectQueued.get() + 1);
+                            }
                             rechantmentTableMenu.broadcastChanges();
                         }
 

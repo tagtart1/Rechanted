@@ -75,7 +75,7 @@ public class AnimHelper {
 
         // Can't interpolate past first and last keyframes so just return their values directly.
         if (time <= keyframes.getFirst().startTime) {
-            return keyframes.get(0).value;
+            return keyframes.getFirst().value;
         }
         else if (time >= keyframes.getLast().startTime) {
             return keyframes.getLast().value;
@@ -88,6 +88,14 @@ public class AnimHelper {
             currKeyframe++;
         }
         currKeyframe--;
+
+        // Rarely called in practice, but this will fallback to last keyframe if array will access out of bounds below.
+        if (currKeyframe == keyframes.size() - 1) {
+            return keyframes.getLast().value;
+        }
+        if (currKeyframe <= -1) {
+            return keyframes.getFirst().value;
+        }
 
         Keyframe<V> k1 = keyframes.get(currKeyframe);
         Keyframe<V> k2 = keyframes.get(currKeyframe + 1);

@@ -98,6 +98,11 @@ public class RechantmentTableRenderer implements BlockEntityRenderer<Rechantment
                     new AnimHelper.FloatKeyframe(0f, 1.0f, AnimHelper::linear),
                     new AnimHelper.FloatKeyframe(25.0f, 0.0f, AnimHelper::easeOutBack)));
 
+    public static final ArrayList<AnimHelper.FloatKeyframe> LIGHT_BONUS_PENDING_BOOK_Y_DEG_KEYFRAMES = new ArrayList<>(
+            List.of(
+                    new AnimHelper.FloatKeyframe(0f, 0.0f, AnimHelper::easeInOutBack),
+                    new AnimHelper.FloatKeyframe(72.0f, (float)Math.PI * 2.0f, AnimHelper::easeOutBack)));
+
     public static final ArrayList<AnimHelper.FloatKeyframe> LIGHT_BONUS_EARNED_BOOK_OPEN_KEYFRAMES = new ArrayList<>(
             List.of(
                     new AnimHelper.FloatKeyframe(0f, 0.0f, AnimHelper::easeOutBack),
@@ -195,6 +200,44 @@ public class RechantmentTableRenderer implements BlockEntityRenderer<Rechantment
             float time = (gameTime + partialTick - stateStartTime);
 
             float bookOpenOffset = AnimHelper.evaluateKeyframes(LIGHT_BONUS_PENDING_BOOK_OPEN_KEYFRAMES, time);
+            float facingRotationOffset = AnimHelper.evaluateKeyframes(LIGHT_BONUS_PENDING_BOOK_Y_DEG_KEYFRAMES, time);
+
+            float startFacingRotation = getCorrectBookFacingYRotation(blockEntity);
+            float yRotation = startFacingRotation + facingRotationOffset;
+
+            poseStack.translate(0f, 0.1f, 0f);
+            poseStack.mulPose(Axis.YP.rotation(yRotation));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(100.0F));
+
+            this.bookModel.setupAnim(time, 0, 0, bookOpenOffset);
+            VertexConsumer vertexconsumer = BOOK_LOCATION.buffer(bufferSource, RenderType::entitySolid);
+            this.bookModel.render(poseStack, vertexconsumer, packedLight, packedOverlay, -1);
+        }
+
+        if (blockEntity.tableState == RechantmentTableBlockEntity.CustomRechantmentTableState.LightBonusEarned) {
+            long stateStartTime = gameTime - (RechantmentTableBlockEntity.LIGHT_BONUS_EARNED_ANIMATION_LENGTH_TICKS
+                    - blockEntity.currentStateTimeRemaining);
+            float time = (gameTime + partialTick - stateStartTime);
+
+            float bookOpenOffset = AnimHelper.evaluateKeyframes(LIGHT_BONUS_EARNED_BOOK_OPEN_KEYFRAMES, time);
+            float facingRotation = getCorrectBookFacingYRotation(blockEntity);
+
+            poseStack.translate(0f, 0.1f, 0f);
+            poseStack.mulPose(Axis.YP.rotation(facingRotation));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(100.0F));
+
+            this.bookModel.setupAnim(time, 0, 0, bookOpenOffset);
+            VertexConsumer vertexconsumer = BOOK_LOCATION.buffer(bufferSource, RenderType::entitySolid);
+            this.bookModel.render(poseStack, vertexconsumer, packedLight, packedOverlay, -1);
+
+        }
+
+        if (blockEntity.tableState == RechantmentTableBlockEntity.CustomRechantmentTableState.SuperBonusPending) {
+            long stateStartTime = gameTime - (RechantmentTableBlockEntity.LIGHT_BONUS_PENDING_ANIMATION_LENGTH_TICKS
+                    - blockEntity.currentStateTimeRemaining);
+            float time = (gameTime + partialTick - stateStartTime);
+
+            float bookOpenOffset = AnimHelper.evaluateKeyframes(LIGHT_BONUS_PENDING_BOOK_OPEN_KEYFRAMES, time);
             float startFacingRotation = getVanillaBookFacingYRotation(blockEntity, partialTick);
             float targetFacingRotation = getCorrectBookFacingYRotation(blockEntity);
             float shortestDelta = wrapRadians(targetFacingRotation - startFacingRotation);
@@ -209,7 +252,7 @@ public class RechantmentTableRenderer implements BlockEntityRenderer<Rechantment
             this.bookModel.render(poseStack, vertexconsumer, packedLight, packedOverlay, -1);
         }
 
-        if (blockEntity.tableState == RechantmentTableBlockEntity.CustomRechantmentTableState.LightBonusEarned) {
+        if (blockEntity.tableState == RechantmentTableBlockEntity.CustomRechantmentTableState.SuperBonusEarned) {
             long stateStartTime = gameTime - (RechantmentTableBlockEntity.LIGHT_BONUS_EARNED_ANIMATION_LENGTH_TICKS
                     - blockEntity.currentStateTimeRemaining);
             float time = (gameTime + partialTick - stateStartTime);

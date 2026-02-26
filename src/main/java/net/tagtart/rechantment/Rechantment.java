@@ -23,6 +23,7 @@ import net.tagtart.rechantment.effect.ModEffects;
 import net.tagtart.rechantment.enchantment.ModEnchantmentEffects;
 import net.tagtart.rechantment.enchantment.ModEnchantments;
 import net.tagtart.rechantment.entity.ModEntities;
+import net.tagtart.rechantment.entity.renderer.LuckyGemEntityRenderer;
 import net.tagtart.rechantment.entity.renderer.ReturnGemBeamEntityRenderer;
 import net.tagtart.rechantment.item.ModCreativeModeTabs;
 import net.tagtart.rechantment.item.ModItemProperties;
@@ -120,7 +121,7 @@ public class Rechantment {
         public static void registerRenderer(EntityRenderersEvent.RegisterRenderers event) {
             event.registerEntityRenderer(ModEntities.RETURN_GEM_BEAM_ENTITY.get(), ReturnGemBeamEntityRenderer::new);
             event.registerEntityRenderer(ModEntities.THROWN_WARP_GEM_ENTITY.get(), ThrownItemRenderer::new);
-            event.registerEntityRenderer(ModEntities.LUCKY_GEM_ENTITY.get(), ThrownItemRenderer::new);
+            event.registerEntityRenderer(ModEntities.LUCKY_GEM_ENTITY.get(), LuckyGemEntityRenderer::new);
 
             event.registerBlockEntityRenderer(ModBlockEntities.RECHANTMENT_TABLE_BE.get(), RechantmentTableRenderer::new);
         }

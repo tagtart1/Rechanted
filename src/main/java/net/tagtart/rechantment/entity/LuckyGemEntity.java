@@ -33,9 +33,11 @@ import net.tagtart.rechantment.component.ModDataComponents;
 import net.tagtart.rechantment.event.ItemEntityTrailHandler;
 import net.tagtart.rechantment.item.ModItems;
 import net.tagtart.rechantment.util.AdvancementHelper;
+import net.tagtart.rechantment.util.AnimHelper;
 import net.tagtart.rechantment.util.UtilFunctions;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,13 +48,15 @@ public class LuckyGemEntity extends Entity implements ItemSupplier {
     private double tx;
     private double ty;
     private double tz;
+
+
     private static final double HORIZONTAL_RANGE = 10.0D;
     private static final double VERTICAL_RANGE = 5.0D;
-    private static final int RISE_DURATION_TICKS = 15 * 2;
-    private static final int PAUSE_DURATION_TICKS = 15;
-    private static final int VERTICAL_RISE_DURATION_TICKS = 15;
-    private static final int PAUSE_PHASE_END_TICK = RISE_DURATION_TICKS + PAUSE_DURATION_TICKS;
-    private static final int DIVE_PHASE_START_TICK = PAUSE_PHASE_END_TICK + VERTICAL_RISE_DURATION_TICKS;
+    public static final int RISE_DURATION_TICKS = 15 * 2;
+    public static final int PAUSE_DURATION_TICKS = 15;
+    public static final int VERTICAL_RISE_DURATION_TICKS = 15;
+    public static final int PAUSE_PHASE_END_TICK = RISE_DURATION_TICKS + PAUSE_DURATION_TICKS;
+    public static final int DIVE_PHASE_START_TICK = PAUSE_PHASE_END_TICK + VERTICAL_RISE_DURATION_TICKS;
     private static final double VERTICAL_RISE_Y_VELOCITY = 0.10D;
     private static final double RISE_START_Y_BLEND = 0.07D;
     private static final double RISE_END_Y_BLEND = 0.22D;
@@ -64,6 +68,8 @@ public class LuckyGemEntity extends Entity implements ItemSupplier {
     private static final float VERTICAL_RISE_NOTE_START_PITCH = 0.90F;
     private static final float VERTICAL_RISE_NOTE_PITCH_STEP = 0.12F;
     private static final float VERTICAL_RISE_NOTE_MAX_PITCH = 2.00F;
+
+
     private static final DustParticleOptions TRAIL_GREEN_DUST = new DustParticleOptions(
             new Vector3f(0.25F, 0.92F, 0.20F), 1.0F);
     private static final DustParticleOptions TRAIL_YELLOW_DUST = new DustParticleOptions(

@@ -90,19 +90,51 @@
       }
     ]
   },
-  "item_pending": {
-    "subtitles": "sounds.rechantment.item_pending",
+  "item_pending_t1": {
+    "subtitles": "sounds.rechantment.item_pending_t1",
     "sounds": [
       {
-        "name": "rechantment:item_pending_ominous"
+        "name": "rechantment:item_pending_t1"
       }
     ]
   },
-  "item_earned": {
-    "subtitles": "sounds.rechantment.item_earned",
+  "item_earned_t1": {
+    "subtitles": "sounds.rechantment.item_earned_t1",
     "sounds": [
       {
-        "name": "rechantment:item_earned_wow"
+        "name": "rechantment:item_earned_t1"
+      }
+    ]
+  },
+  "item_pending_t2": {
+    "subtitles": "sounds.rechantment.item_pending_t2",
+    "sounds": [
+      {
+        "name": "rechantment:item_pending_t2"
+      }
+    ]
+  },
+  "item_earned_t2": {
+    "subtitles": "sounds.rechantment.item_earned_t2",
+    "sounds": [
+      {
+        "name": "rechantment:item_earned_t2"
+      }
+    ]
+  },
+  "item_pending_t3": {
+    "subtitles": "sounds.rechantment.item_pending_t3",
+    "sounds": [
+      {
+        "name": "rechantment:item_pending_t3"
+      }
+    ]
+  },
+  "item_earned_t3": {
+    "subtitles": "sounds.rechantment.item_earned_t3",
+    "sounds": [
+      {
+        "name": "rechantment:item_earned_t3"
       }
     ]
   }
