@@ -387,14 +387,14 @@ public class RechantedTableBlockEntity extends EnchantingTableBlockEntity implem
                     // For the 3 "Orbs" rotating around the book as it floats up.
                     if (currentStateTimeRemaining > 2) {
                         float t = SUPER_BONUS_PENDING_ANIMATION_LENGTH_TICKS - currentStateTimeRemaining;
-                        float yOffset = AnimHelper.evaluateKeyframes(RechantmentTableRenderer.BONUS_PENDING_Y_TRANSLATION_KEYFRAMES, t);
+                        float yOffset = AnimHelper.evaluateKeyframes(RechantedTableRenderer.BONUS_PENDING_Y_TRANSLATION_KEYFRAMES, t);
                         float radius = AnimHelper.evaluateKeyframes(SUPER_BONUS_PENDING_ORBS_RADIUS_KEYFRAMES, t);
 
                         sendRainbowCircleParticles(
                                 serverLevel,
                                 new Vec3(0.0f, yOffset + 0.4f, 0.0f),
-                                RechantmentTableRenderer.UP,
-                                RechantmentTableRenderer.NORTH,
+                                RechantedTableRenderer.UP,
+                                RechantedTableRenderer.NORTH,
                                 3,
                                 radius,
                                 0.95f,
@@ -416,8 +416,8 @@ public class RechantedTableBlockEntity extends EnchantingTableBlockEntity implem
                         sendRainbowCircleParticles(
                                 serverLevel,
                                 pos,
-                                RechantmentTableRenderer.UP,
-                                RechantmentTableRenderer.NORTH,
+                                RechantedTableRenderer.UP,
+                                RechantedTableRenderer.NORTH,
                                 20,
                                 0.8f * elapsedFraction,
                                 s,
@@ -430,8 +430,8 @@ public class RechantedTableBlockEntity extends EnchantingTableBlockEntity implem
                         sendRainbowCircleParticles(
                                 serverLevel,
                                 pos,
-                                RechantmentTableRenderer.UP,
-                                RechantmentTableRenderer.NORTH,
+                                RechantedTableRenderer.UP,
+                                RechantedTableRenderer.NORTH,
                                 8,
                                 1.0f * elapsedFraction,
                                 s,
@@ -444,8 +444,8 @@ public class RechantedTableBlockEntity extends EnchantingTableBlockEntity implem
                         sendRainbowCircleParticles(
                                 serverLevel,
                                 pos,
-                                RechantmentTableRenderer.UP,
-                                RechantmentTableRenderer.NORTH,
+                                RechantedTableRenderer.UP,
+                                RechantedTableRenderer.NORTH,
                                 8,
                                 1.2f * elapsedFraction,
                                 s,

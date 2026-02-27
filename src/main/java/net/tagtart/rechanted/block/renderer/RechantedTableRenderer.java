@@ -253,7 +253,7 @@ public class RechantedTableRenderer implements BlockEntityRenderer<RechantedTabl
         }
 
         if (blockEntity.tableState == RechantedTableBlockEntity.CustomRechantedTableState.SuperBonusPending) {
-            long stateStartTime = gameTime - (RechantmentTableBlockEntity.SUPER_BONUS_PENDING_ANIMATION_LENGTH_TICKS
+            long stateStartTime = gameTime - (RechantedTableBlockEntity.SUPER_BONUS_PENDING_ANIMATION_LENGTH_TICKS
                     - blockEntity.currentStateTimeRemaining);
             float time = (gameTime + partialTick - stateStartTime);
 
