@@ -75,6 +75,16 @@ public class RechantedTableRenderer implements BlockEntityRenderer<RechantedTabl
             new AnimHelper.FloatKeyframe(115.0f, 1.0f, AnimHelper::easeInBack),
             new AnimHelper.FloatKeyframe(129.0f, 0.0f, AnimHelper::easeOutBack)));
 
+    public static final ArrayList<AnimHelper.FloatKeyframe> SUPER_BONUS_PENDING_Z_DEG_ROTATION_KEYFRAMES = new ArrayList<>(List.of(
+            new AnimHelper.FloatKeyframe(0f, -70f, AnimHelper::linear),
+            new AnimHelper.FloatKeyframe(45.0f, 0f, AnimHelper::easeInOutQuad),
+            new AnimHelper.FloatKeyframe(110.0f, -360f, AnimHelper::linear)));
+
+    public static final ArrayList<AnimHelper.FloatKeyframe> SUPER_BONUS_PENDING_X_DEG_ROTATION_KEYFRAMES = new ArrayList<>(List.of(
+            new AnimHelper.FloatKeyframe(0f, 0f, AnimHelper::linear),
+            new AnimHelper.FloatKeyframe(20.0f, 0f, AnimHelper::easeInOutQuad),
+            new AnimHelper.FloatKeyframe(55.0f, -360f, AnimHelper::linear)));
+
     // --- GEM EARNED KEYFRAMES ---
     public static final ArrayList<AnimHelper.FloatKeyframe> BONUS_EARNED_Y_TRANSLATION_KEYFRAMES = new ArrayList<>(
             List.of(
@@ -108,6 +118,16 @@ public class RechantedTableRenderer implements BlockEntityRenderer<RechantedTabl
                     new AnimHelper.FloatKeyframe(0f, 0.0f, AnimHelper::easeOutBack),
                     new AnimHelper.FloatKeyframe(8.0f, 1.0f, AnimHelper::linear),
                     new AnimHelper.FloatKeyframe(16.0f, 1.0f, AnimHelper::easeInBack)));
+
+    public static final ArrayList<AnimHelper.FloatKeyframe> SUPER_BONUS_EARNED_Z_DEG_ROTATION_KEYFRAMES = new ArrayList<>(
+            List.of(
+                    new AnimHelper.FloatKeyframe(0f, 360f, AnimHelper::easeInOutQuad),
+                    new AnimHelper.FloatKeyframe(14.0f, -60f, AnimHelper::linear)));
+
+
+    public static final ArrayList<AnimHelper.FloatKeyframe> SUPER_BONUS_EARNED_X_DEG_ROTATION_KEYFRAMES = new ArrayList<>(List.of(
+            new AnimHelper.FloatKeyframe(0f, -360f, AnimHelper::easeOutBack),
+            new AnimHelper.FloatKeyframe(6.0f, 0F, AnimHelper::easeInOutQuad)));
 
     public RechantedTableRenderer(BlockEntityRendererProvider.Context context) {
         this.bookModel = new BookModel(context.bakeLayer(ModelLayers.BOOK));
@@ -233,19 +253,22 @@ public class RechantedTableRenderer implements BlockEntityRenderer<RechantedTabl
         }
 
         if (blockEntity.tableState == RechantedTableBlockEntity.CustomRechantedTableState.SuperBonusPending) {
-            long stateStartTime = gameTime - (RechantedTableBlockEntity.LIGHT_BONUS_PENDING_ANIMATION_LENGTH_TICKS
+            long stateStartTime = gameTime - (RechantmentTableBlockEntity.SUPER_BONUS_PENDING_ANIMATION_LENGTH_TICKS
                     - blockEntity.currentStateTimeRemaining);
             float time = (gameTime + partialTick - stateStartTime);
 
-            float bookOpenOffset = AnimHelper.evaluateKeyframes(LIGHT_BONUS_PENDING_BOOK_OPEN_KEYFRAMES, time);
-            float startFacingRotation = getVanillaBookFacingYRotation(blockEntity, partialTick);
-            float targetFacingRotation = getCorrectBookFacingYRotation(blockEntity);
-            float shortestDelta = wrapRadians(targetFacingRotation - startFacingRotation);
-            float rotateProgress = Mth.clamp(time / 25.0F, 0.0F, 1.0F);
-            float yRotation = startFacingRotation + shortestDelta * AnimHelper.easeInOutQuad(rotateProgress);
+            float yOffset = AnimHelper.evaluateKeyframes(BONUS_PENDING_Y_TRANSLATION_KEYFRAMES, time);
+            float yRotationOffset = AnimHelper.evaluateKeyframes(BONUS_PENDING_Y_ROTATION_KEYFRAMES, time);
+            float zRotationOffset = AnimHelper.evaluateKeyframes(SUPER_BONUS_PENDING_Z_DEG_ROTATION_KEYFRAMES, time);
+            float xRotationOffset = AnimHelper.evaluateKeyframes(SUPER_BONUS_PENDING_X_DEG_ROTATION_KEYFRAMES, time);
 
-            poseStack.mulPose(Axis.YP.rotation(yRotation));
-            poseStack.mulPose(Axis.ZP.rotationDegrees(100.0F));
+            float bookOpenOffset = AnimHelper.evaluateKeyframes(BONUS_PENDING_BOOK_OPEN_KEYFRAMES, time);
+            float facingRotation = getCorrectBookFacingYRotation(blockEntity);
+
+            poseStack.translate(0f, yOffset, 0f);
+            poseStack.mulPose(Axis.YP.rotation(facingRotation + yRotationOffset));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(170.0F + zRotationOffset));
+            poseStack.mulPose(Axis.XP.rotationDegrees(xRotationOffset));
 
             this.bookModel.setupAnim(time, 0, 0, bookOpenOffset);
             VertexConsumer vertexconsumer = BOOK_LOCATION.buffer(bufferSource, RenderType::entitySolid);
@@ -253,17 +276,22 @@ public class RechantedTableRenderer implements BlockEntityRenderer<RechantedTabl
         }
 
         if (blockEntity.tableState == RechantedTableBlockEntity.CustomRechantedTableState.SuperBonusEarned) {
-            long stateStartTime = gameTime - (RechantedTableBlockEntity.LIGHT_BONUS_EARNED_ANIMATION_LENGTH_TICKS
+            long stateStartTime = gameTime - (RechantedTableBlockEntity.SUPER_BONUS_EARNED_ANIMATION_LENGTH_TICKS
                     - blockEntity.currentStateTimeRemaining);
             float time = (gameTime + partialTick - stateStartTime);
 
-            float bookOpenOffset = AnimHelper.evaluateKeyframes(LIGHT_BONUS_EARNED_BOOK_OPEN_KEYFRAMES, time);
+            float yOffset = AnimHelper.evaluateKeyframes(BONUS_EARNED_Y_TRANSLATION_KEYFRAMES, time);
+            float zRotationOffset = AnimHelper.evaluateKeyframes(SUPER_BONUS_EARNED_Z_DEG_ROTATION_KEYFRAMES, time);
+            float xRotationOffset = AnimHelper.evaluateKeyframes(SUPER_BONUS_EARNED_X_DEG_ROTATION_KEYFRAMES, time);
+            float bookOpenOffset = AnimHelper.evaluateKeyframes(BONUS_EARNED_BOOK_OPEN_KEYFRAMES, time);
             float facingRotation = getCorrectBookFacingYRotation(blockEntity);
 
+            poseStack.translate(0f, yOffset, 0f);
             poseStack.mulPose(Axis.YP.rotation(facingRotation));
-            poseStack.mulPose(Axis.ZP.rotationDegrees(100.0F));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(170F + zRotationOffset));
+            poseStack.mulPose(Axis.XP.rotationDegrees(xRotationOffset));
 
-            this.bookModel.setupAnim(time, 0, 0, bookOpenOffset);
+            this.bookModel.setupAnim(time, 0f, 0f, bookOpenOffset);
             VertexConsumer vertexconsumer = BOOK_LOCATION.buffer(bufferSource, RenderType::entitySolid);
             this.bookModel.render(poseStack, vertexconsumer, packedLight, packedOverlay, -1);
 

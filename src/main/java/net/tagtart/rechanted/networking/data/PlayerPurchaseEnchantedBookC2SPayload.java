@@ -183,7 +183,7 @@ public record PlayerPurchaseEnchantedBookC2SPayload(int bookPropertiesIndex, Blo
                 // Note: had to make the call to set the item directly in inventory to have announced message
                 player.getInventory().setItem(player.getInventory().getFreeSlot(), toGive);
 
-                if (true) {
+                if (random.nextDouble() < bookProperties.bonusItemRollChance) {
                     Optional<BookRarityProperties.BonusPoolEntryType> bonusType =  bookProperties.getRandomBonusPoolEntryWeighted(random);
                     Optional<ItemStack> bonusStack = BonusItemResolver.resolveRandomBonusItem(bonusType, random);
                     if (bonusType.isPresent() && bonusStack.isPresent()) {

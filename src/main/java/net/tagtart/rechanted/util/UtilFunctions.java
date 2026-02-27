@@ -2,6 +2,7 @@ package net.tagtart.rechanted.util;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.*;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -26,14 +27,19 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.FireworkExplosion;
+import net.minecraft.world.item.component.Fireworks;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.tagtart.rechanted.config.RechantedCommonConfigs;
 import net.tagtart.rechanted.event.ParticleEmitter;
@@ -611,6 +617,34 @@ public class UtilFunctions {
                 return originalCount * 2;
             }
             return originalCount;
+    }
+
+    public static void spawnRandomFireworkExplosion(Level level, RandomSource random, double x, double y, double z) {
+        if (level.isClientSide) {
+            return;
+        }
+
+        FireworkExplosion.Shape[] shapes = FireworkExplosion.Shape.values();
+        FireworkExplosion.Shape randomShape = shapes[random.nextInt(shapes.length)];
+        int mainColor = Mth.hsvToRgb(random.nextFloat(), 1.0F, 1.0F);
+        int fadeColor = Mth.hsvToRgb(random.nextFloat(), 0.85F, 1.0F);
+
+        FireworkExplosion explosion = new FireworkExplosion(
+                randomShape,
+                IntList.of(mainColor),
+                IntList.of(fadeColor),
+                random.nextBoolean(),
+                random.nextBoolean());
+
+        ItemStack fireworkStack = new ItemStack(Items.FIREWORK_ROCKET);
+        fireworkStack.set(DataComponents.FIREWORKS, new Fireworks(0, List.of(explosion)));
+
+        FireworkRocketEntity firework = new FireworkRocketEntity(level, x, y, z,
+                fireworkStack);
+        firework.setDeltaMovement(Vec3.ZERO);
+        level.addFreshEntity(firework);
+        level.broadcastEntityEvent(firework, (byte) 17);
+        firework.discard();
     }
 
     public static double remap(double fromMin, double fromMax, double toMin, double toMax, double value) {

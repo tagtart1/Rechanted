@@ -40,6 +40,8 @@ import net.tagtart.rechanted.util.UtilFunctions;
 import org.jetbrains.annotations.Nullable;
 import oshi.util.tuples.Pair;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -70,6 +72,21 @@ public class RechantedTableBlockEntity extends EnchantingTableBlockEntity implem
     public static final double LIGHT_BONUS_EARNED_ITEM_SPAWN_Y_OFFSET = .5;
     public static final double LIGHT_BONUS_EARNED_ITEM_MOVE_SPEED_ON_SPAWN = 0.42;  // Slightly faster so light bonus drops don't stall near the table.
     public static final float LIGHT_BONUS_EARNED_ITEM_LAUNCH_Y_BIAS = 1.8f;  // Higher value = higher arc; reduces horizontal distance due normalize().
+
+    // NOTE: THESE VALUES ARE HERE FOR CLARITY'S SAKE, BUT IF WE CHANGE THEM FROM 130 AND 20, WE WILL HAVE TO
+    // MAKE SOME NEW KEYFRAMES IN THE RENDERER FOR THIS STATE. IT CURRENTLY RE-USES SOME FROM BONUS PENDING
+    // AND THAT ONLY WORKS BECAUSE BOTH STATES LAST THE SAME AMOUNT OF TICKS!
+    public static final int SUPER_BONUS_PENDING_ANIMATION_LENGTH_TICKS = 130;
+    public static final int SUPER_BONUS_EARNED_ANIMATION_LENGTH_TICKS = 20;
+
+    public static final ArrayList<AnimHelper.FloatKeyframe> SUPER_BONUS_PENDING_ORBS_RADIUS_KEYFRAMES = new ArrayList(
+            List.of(
+                    new AnimHelper.FloatKeyframe(0.0f, 0.0f, AnimHelper::easeOutBack),
+                    new AnimHelper.FloatKeyframe(90.0f, 1.0f, AnimHelper::linear),
+                    new AnimHelper.FloatKeyframe(98.0f, 1.3f, AnimHelper::easeInBack),
+                    new AnimHelper.FloatKeyframe(126.0f, 0.0f, AnimHelper::linear)
+            )
+    );
 
     private final ItemStackHandler itemHandler = new ItemStackHandler(1) {
 
@@ -214,6 +231,7 @@ public class RechantedTableBlockEntity extends EnchantingTableBlockEntity implem
             case BonusPending:
 
                 if (pLevel instanceof ServerLevel serverLevel) {
+                    float elapsedFraction = (1.0f - ((float) currentStateTimeRemaining / BONUS_PENDING_ANIMATION_LENGTH_TICKS));
 
                     if (currentStateTimeRemaining == BONUS_PENDING_ANIMATION_LENGTH_TICKS - 10) {
                         serverLevel.playSound(null, getBlockPos(), ModSounds.ENCHANT_TABLE_CLOSE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
@@ -236,12 +254,12 @@ public class RechantedTableBlockEntity extends EnchantingTableBlockEntity implem
                                 0.95f,
                                 0.95f,
                                 1.0f,
+                                0,
                                 0
                         );
                     }
 
                     if (currentStateTimeRemaining % 15 == 0 && currentStateTimeRemaining > 15) {
-                        float elapsedFraction = (1.0f - ((float) currentStateTimeRemaining / BONUS_PENDING_ANIMATION_LENGTH_TICKS));
                         float s = 0.92f;
                         float v = Mth.clamp(elapsedFraction + 0.6f, 0.0f, 1.0f);
                         float scale = elapsedFraction + 0.1f;
@@ -259,6 +277,7 @@ public class RechantedTableBlockEntity extends EnchantingTableBlockEntity implem
                                 s,
                                 v,
                                 scale,
+                                0,
                                 0
                         );
 
@@ -272,6 +291,7 @@ public class RechantedTableBlockEntity extends EnchantingTableBlockEntity implem
                                 s,
                                 v,
                                 scale,
+                                0,
                                 0
                         );
 
@@ -285,7 +305,9 @@ public class RechantedTableBlockEntity extends EnchantingTableBlockEntity implem
                                 s,
                                 v,
                                 scale,
+                                0,
                                 0
+
                         );
                     }
 
@@ -326,6 +348,7 @@ public class RechantedTableBlockEntity extends EnchantingTableBlockEntity implem
                                 0.9f,
                                 Mth.clamp(elapsedFraction + 0.4f, 0.0f, 1.0f),
                                 elapsedFraction + 0.1f,
+                                0,
                                 0
                         );
                     }
@@ -350,21 +373,116 @@ public class RechantedTableBlockEntity extends EnchantingTableBlockEntity implem
                 break;
 
             case SuperBonusPending:
+                if (pLevel instanceof ServerLevel serverLevel) {
+                    float elapsedFraction = (1.0f - ((float) currentStateTimeRemaining / SUPER_BONUS_PENDING_ANIMATION_LENGTH_TICKS));
 
+                    if (currentStateTimeRemaining == BONUS_PENDING_ANIMATION_LENGTH_TICKS - 10) {
+                        serverLevel.playSound(null, getBlockPos(), ModSounds.ENCHANT_TABLE_CLOSE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+                    }
+
+                    if (currentStateTimeRemaining % 10 == 0 && currentStateTimeRemaining > 80) {
+                        serverLevel.playSound(null, getBlockPos(), ModSounds.ENCHANT_TABLE_OPEN.get(), SoundSource.BLOCKS, 1.0f, 1.1f);
+                    }
+
+                    // For the 3 "Orbs" rotating around the book as it floats up.
+                    if (currentStateTimeRemaining > 2) {
+                        float t = SUPER_BONUS_PENDING_ANIMATION_LENGTH_TICKS - currentStateTimeRemaining;
+                        float yOffset = AnimHelper.evaluateKeyframes(RechantmentTableRenderer.BONUS_PENDING_Y_TRANSLATION_KEYFRAMES, t);
+                        float radius = AnimHelper.evaluateKeyframes(SUPER_BONUS_PENDING_ORBS_RADIUS_KEYFRAMES, t);
+
+                        sendRainbowCircleParticles(
+                                serverLevel,
+                                new Vec3(0.0f, yOffset + 0.4f, 0.0f),
+                                RechantmentTableRenderer.UP,
+                                RechantmentTableRenderer.NORTH,
+                                3,
+                                radius,
+                                0.95f,
+                                0.95f,
+                                1.0f,
+                                elapsedFraction * (float)Math.PI * 4.0f,
+                                0
+                        );
+                    }
+
+                    if (currentStateTimeRemaining % 15 == 0 && currentStateTimeRemaining > 15) {
+                        float s = 0.92f;
+                        float v = Mth.clamp(elapsedFraction + 0.6f, 0.0f, 1.0f);
+                        float scale = elapsedFraction + 0.1f;
+                        //float yOffset = AnimHelper.evaluateKeyframes(RechantmentTableRenderer.BONUS_PENDING_Y_TRANSLATION_KEYFRAMES, BONUS_PENDING_ANIMATION_LENGTH_TICKS - currentStateTimeRemaining);
+                        Vec3 pos = new Vec3(0, 0.3f, 0);
+
+                        // Next 3 particle calls are for the ring of particles on top of the table.
+                        sendRainbowCircleParticles(
+                                serverLevel,
+                                pos,
+                                RechantmentTableRenderer.UP,
+                                RechantmentTableRenderer.NORTH,
+                                20,
+                                0.8f * elapsedFraction,
+                                s,
+                                v,
+                                scale,
+                                0,
+                                0
+                        );
+
+                        sendRainbowCircleParticles(
+                                serverLevel,
+                                pos,
+                                RechantmentTableRenderer.UP,
+                                RechantmentTableRenderer.NORTH,
+                                8,
+                                1.0f * elapsedFraction,
+                                s,
+                                v,
+                                scale,
+                                0,
+                                0
+                        );
+
+                        sendRainbowCircleParticles(
+                                serverLevel,
+                                pos,
+                                RechantmentTableRenderer.UP,
+                                RechantmentTableRenderer.NORTH,
+                                8,
+                                1.2f * elapsedFraction,
+                                s,
+                                v,
+                                scale,
+                                0,
+                                0
+                        );
+                    }
+
+                    if (currentStateTimeRemaining <= 0) {
+                        completePendingSuperBonusAnimation();
+                    }
+                }
                 break;
             case SuperBonusEarned:
+                if (pLevel instanceof ServerLevel serverLevel) {
+                    if (currentStateTimeRemaining <= 0) {
+                        UtilFunctions.spawnRandomFireworkExplosion(serverLevel, serverLevel.random, getBlockPos().getX() + 0.5f, getBlockPos().getY() + 1.5f, getBlockPos().getZ() + 0.5f);
+                        returnToDefaultState();
+                    }
 
+                    if (currentStateTimeRemaining == 2) {
+                        level.playSound(null, getBlockPos(), ModSounds.ENCHANT_TABLE_CLOSE.get(), SoundSource.BLOCKS, 1.5f, 1.0f);
+                    }
+                }
                 break;
         }
     }
 
-    public void sendRainbowCircleParticles(ServerLevel serverLevel, Vec3 offset, Vec3 up, Vec3 north, int numParticles, float radius, float saturation, float value, float particleScale, int overrideRGB) {
+    public void sendRainbowCircleParticles(ServerLevel serverLevel, Vec3 offset, Vec3 up, Vec3 north, int numParticles, float radius, float saturation, float value, float particleScale, float angleOffset, int overrideRGB) {
         Random rand = new Random();
         float tau = (float)Math.PI * 2.0f;
         for (int i = 0; i < numParticles; ++i) {
             Vec3 particleBasePos = getBlockPos().getCenter();
 
-            float angle = ((float) i / numParticles) * tau;
+            float angle = (((float) i / numParticles) * tau) + angleOffset;
             double relativeX = Math.cos(angle);
             double relativeZ = Math.sin(angle);
 
@@ -481,9 +599,9 @@ public class RechantedTableBlockEntity extends EnchantingTableBlockEntity implem
         serverLevel.playSound(null, getBlockPos(), ModSounds.TIER_2_ITEM_EARNED.get(), SoundSource.BLOCKS, 0.8f, 1.15f);
 
         Vec3 yOffset = new Vec3(0, 1.5f, 0);
-        sendRainbowCircleParticles(serverLevel, yOffset, RechantedTableRenderer.UP,RechantedTableRenderer.NORTH, 20, 0.5f, 0.8f, 0.8f, 0.4f, 0);
-        sendRainbowCircleParticles(serverLevel, yOffset, RechantedTableRenderer.NORTH, new Vec3(1, 0, 0), 20, 0.7f, 0.8f, 0.9f, 0.5f, 0);
-        sendRainbowCircleParticles(serverLevel, yOffset, new Vec3(1, 0, 0),RechantedTableRenderer.UP, 20, 0.9f, 0.9f, 0.95f, 0.6f, 0);
+        sendRainbowCircleParticles(serverLevel, yOffset, RechantedTableRenderer.UP,RechantedTableRenderer.NORTH, 20, 0.5f, 0.8f, 0.8f, 0.4f, 0,0);
+        sendRainbowCircleParticles(serverLevel, yOffset, RechantedTableRenderer.NORTH, new Vec3(1, 0, 0), 20, 0.7f, 0.8f, 0.9f, 0.5f, 0,0);
+        sendRainbowCircleParticles(serverLevel, yOffset, new Vec3(1, 0, 0),RechantedTableRenderer.UP, 20, 0.9f, 0.9f, 0.95f, 0.6f, 0,0);
         pendingBonusItem = ItemStack.EMPTY;
 
         setChanged();
@@ -531,8 +649,8 @@ public class RechantedTableBlockEntity extends EnchantingTableBlockEntity implem
     public void startSuperBonusPendingAnimation(ItemStack bonusItem) {
         if (level.isClientSide || tableState != CustomRechantedTableState.Normal) return;
 
-        tableState = CustomRechantedTableState.BonusPending;
-        currentStateTimeRemaining = BONUS_PENDING_ANIMATION_LENGTH_TICKS;
+        tableState = CustomRechantedTableState.SuperBonusPending;
+        currentStateTimeRemaining = SUPER_BONUS_PENDING_ANIMATION_LENGTH_TICKS;
 
         pendingBonusItem = bonusItem.copy();
 
@@ -544,10 +662,10 @@ public class RechantedTableBlockEntity extends EnchantingTableBlockEntity implem
 
     public void completePendingSuperBonusAnimation() {
 
-        if (level.isClientSide || tableState != CustomRechantedTableState.BonusPending || pendingBonusItem == ItemStack.EMPTY) return;
+        if (level.isClientSide || tableState != CustomRechantedTableState.SuperBonusPending || pendingBonusItem == ItemStack.EMPTY) return;
 
-        tableState = CustomRechantedTableState.BonusEarned;
-        currentStateTimeRemaining = BONUS_EARNED_ANIMATION_LENGTH_TICKS;
+        tableState = CustomRechantedTableState.SuperBonusEarned;
+        currentStateTimeRemaining = SUPER_BONUS_EARNED_ANIMATION_LENGTH_TICKS;
 
         ItemEntity item = new ItemEntity(
                 level,
@@ -575,9 +693,9 @@ public class RechantedTableBlockEntity extends EnchantingTableBlockEntity implem
         serverLevel.playSound(null, getBlockPos(), ModSounds.TIER_3_ITEM_EARNED.get(), SoundSource.BLOCKS, 0.8f, 1.15f);
 
         Vec3 yOffset = new Vec3(0, 1.5f, 0);
-        sendRainbowCircleParticles(serverLevel, yOffset, RechantedTableRenderer.UP,RechantedTableRenderer.NORTH, 20, 0.5f, 0.8f, 0.8f, 0.4f, 0);
-        sendRainbowCircleParticles(serverLevel, yOffset, RechantedTableRenderer.NORTH, new Vec3(1, 0, 0), 20, 0.7f, 0.8f, 0.9f, 0.5f, 0);
-        sendRainbowCircleParticles(serverLevel, yOffset, new Vec3(1, 0, 0),RechantedTableRenderer.UP, 20, 0.9f, 0.9f, 0.95f, 0.6f, 0);
+        sendRainbowCircleParticles(serverLevel, yOffset, RechantedTableRenderer.UP,RechantedTableRenderer.NORTH, 20, 0.5f, 0.8f, 0.8f, 0.4f, 0,0);
+        sendRainbowCircleParticles(serverLevel, yOffset, RechantedTableRenderer.NORTH, new Vec3(1, 0, 0), 20, 0.7f, 0.8f, 0.9f, 0.5f, 0,0);
+        sendRainbowCircleParticles(serverLevel, yOffset, new Vec3(1, 0, 0),RechantedTableRenderer.UP, 20, 0.9f, 0.9f, 0.95f, 0.6f, 0,0);
         pendingBonusItem = ItemStack.EMPTY;
 
         setChanged();

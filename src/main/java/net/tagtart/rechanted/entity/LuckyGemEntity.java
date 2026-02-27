@@ -193,37 +193,9 @@ public class LuckyGemEntity extends Entity implements ItemSupplier {
         return new Vec3(Math.cos((double) f1) * d6, Mth.lerp(yBlend, d7, targetYVelocity), Math.sin((double) f1) * d6);
     }
 
-    private void spawnRandomFireworkExplosion() {
-        if (this.level().isClientSide) {
-            return;
-        }
-
-        FireworkExplosion.Shape[] shapes = FireworkExplosion.Shape.values();
-        FireworkExplosion.Shape randomShape = shapes[this.random.nextInt(shapes.length)];
-        int mainColor = Mth.hsvToRgb(this.random.nextFloat(), 1.0F, 1.0F);
-        int fadeColor = Mth.hsvToRgb(this.random.nextFloat(), 0.85F, 1.0F);
-
-        FireworkExplosion explosion = new FireworkExplosion(
-                randomShape,
-                IntList.of(mainColor),
-                IntList.of(fadeColor),
-                this.random.nextBoolean(),
-                this.random.nextBoolean());
-
-        ItemStack fireworkStack = new ItemStack(Items.FIREWORK_ROCKET);
-        fireworkStack.set(DataComponents.FIREWORKS, new Fireworks(0, List.of(explosion)));
-
-        FireworkRocketEntity firework = new FireworkRocketEntity(this.level(), this.getX(), this.getY(), this.getZ(),
-                fireworkStack);
-        firework.setDeltaMovement(Vec3.ZERO);
-        this.level().addFreshEntity(firework);
-        this.level().broadcastEntityEvent(firework, (byte) 17);
-        firework.discard();
-    }
-
     private void popAndDropItem() {
         this.spawnPopRewardItems();
-        this.spawnRandomFireworkExplosion();
+        UtilFunctions.spawnRandomFireworkExplosion(this.level(), this.random, this.getX(), this.getY(), this.getZ());
         this.playSound(SoundEvents.AMETHYST_BLOCK_BREAK, 4.0F, 1.0F);
         this.playSound(SoundEvents.FIREWORK_ROCKET_BLAST, 1.2F, 1.0F);
         this.playSound(SoundEvents.FIREWORK_ROCKET_TWINKLE, 1.0F, 1.2F);

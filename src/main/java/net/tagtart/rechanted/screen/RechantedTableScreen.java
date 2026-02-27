@@ -174,8 +174,6 @@ public class RechantedTableScreen extends AbstractContainerScreen<RechantedTable
         bonusEarnedEffectVCoord += BONUS_PENDING_EFFECT_Y_MOVE_SPEED * pPartialTick;
         lightBonusEarnedFlashAmount -= LIGHT_BONUS_EFFECT_FLASH_DECREMENT_SPEED * pPartialTick;
 
-        System.out.println("Penis length: " + lightBonusEarnedFlashAmount);
-
         lineShader.safeGetUniform("GemEarnEffectVCoord").set(bonusEarnedEffectVCoord);
         lineShader.safeGetUniform("LightBonusFlashMult").set(lightBonusEarnedFlashAmount);
         lineShader.safeGetUniform("Time").set(timeElapsed);
