@@ -97,12 +97,12 @@ public class RechantedTableScreen extends AbstractContainerScreen<RechantedTable
 
         hoverables = new ArrayList<>();
 
-        hoverables.add(new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(0), BookRarityProperties.getAllProperties()[0].iconResourceLocation, leftPos + 19, topPos + 45));
-        hoverables.add(new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(1),BookRarityProperties.getAllProperties()[1].iconResourceLocation,leftPos + 159, topPos + 45));
-        hoverables.add(new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(2),BookRarityProperties.getAllProperties()[2].iconResourceLocation, leftPos + 52,  topPos + 42));
-        hoverables.add(new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(3),BookRarityProperties.getAllProperties()[3].iconResourceLocation, leftPos + 127, topPos + 41));
+        hoverables.add(new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(1), BookRarityProperties.getAllProperties()[1].iconResourceLocation, leftPos + 19, topPos + 45));
+        hoverables.add(new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(2),BookRarityProperties.getAllProperties()[2].iconResourceLocation,leftPos + 159, topPos + 45));
+        hoverables.add(new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(3),BookRarityProperties.getAllProperties()[3].iconResourceLocation, leftPos + 52,  topPos + 42));
+        hoverables.add(new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(4),BookRarityProperties.getAllProperties()[4].iconResourceLocation, leftPos + 127, topPos + 41));
 
-        HoverableWithTooltipGuiRenderable animatedLegendaryHoverable = new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(4), LEGENDARY_BOOK_MANUAL_ANIMATION_LOCATION,  leftPos + 90, topPos + 39);
+        HoverableWithTooltipGuiRenderable animatedLegendaryHoverable = new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(5), LEGENDARY_BOOK_MANUAL_ANIMATION_LOCATION,  leftPos + 90, topPos + 39);
         Vector2i texSize = UtilFunctions.queryTextureSize(LEGENDARY_BOOK_MANUAL_ANIMATION_LOCATION);
         animatedLegendaryHoverable.setAnimatedData(new HoverableGuiRenderable.AnimatedTextureData(
                  texSize.x, texSize.y, 3, 7, true
@@ -150,11 +150,11 @@ public class RechantedTableScreen extends AbstractContainerScreen<RechantedTable
         if (timeSinceLastReqCheck >= REQ_CHECK_RATE && menu.blockEntity.tableState == RechantedTableBlockEntity.CustomRechantedTableState.Normal)
         {
             currentIndexRequirementsMet = 0;
-            for (int i = 0; i < 5; ++i) {
+            for (int i = 1; i < 6; ++i) {
                 BookRarityProperties properties = BookRarityProperties.getAllProperties()[i];
                 refreshCachedBlockStates(properties);
                 if (playerMeetsAllEnchantRequirements(properties, cachedBookshelvesInRange, cachedFloorBlocksInRange)) {
-                    currentIndexRequirementsMet = i + 1;
+                    currentIndexRequirementsMet = i;
                     break;
                 }
 
@@ -226,8 +226,8 @@ public class RechantedTableScreen extends AbstractContainerScreen<RechantedTable
             Player player = playerInventory.player;
             Level level = player.level();
 
-            for (int i = 0; i < hoverables.size(); ++i) {
-                HoverableWithTooltipGuiRenderable hoverable = hoverables.get(i);
+            for (int i = 1; i < hoverables.size() + 1; ++i) {
+                HoverableWithTooltipGuiRenderable hoverable = hoverables.get(i - 1);
                 if (hoverable.tryClickMouse(pMouseX, pMouseY, pButton)) {
                     BookRarityProperties properties = BookRarityProperties.getAllProperties()[i];
                     BlockPos pos = menu.blockEntity.getBlockPos();
@@ -282,8 +282,8 @@ public class RechantedTableScreen extends AbstractContainerScreen<RechantedTable
         else if (pButton == 1) {
 
             // On right click, open loot table display screen.
-            for (int i = 0; i < hoverables.size(); ++i) {
-                HoverableWithTooltipGuiRenderable hoverable = hoverables.get(i);
+            for (int i = 1; i < hoverables.size() + 1; ++i) {
+                HoverableWithTooltipGuiRenderable hoverable = hoverables.get(i - 1);
                 if (hoverable.tryClickMouse(pMouseX, pMouseY, pButton)) {
 
                     RechantedTableBlockEntity rbe = menu.blockEntity;

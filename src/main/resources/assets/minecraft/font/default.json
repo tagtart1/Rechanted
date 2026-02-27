@@ -2,6 +2,15 @@
   "providers": [
     {
       "type": "bitmap",
+      "file": "rechanted:icons/enchantment_dusty.png",
+      "ascent": 8,
+      "height": 14,
+      "chars": [
+        "尘"
+      ]
+    },
+    {
+      "type": "bitmap",
       "file": "rechanted:icons/enchantment_simple.png",
       "ascent": 8,
       "height": 14,

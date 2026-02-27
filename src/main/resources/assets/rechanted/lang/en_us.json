@@ -6,6 +6,7 @@
   "block.rechanted.rechanted_enchanting_table": "Enchanting Table",
 
   "tooltip.rechanted.enchantment_table.enchanted_book_desc": "A book with mysterious spirit, concealed occult magic inside",
+  "tooltip.rechanted.enchantment_table.dusty_mysterious_book_desc": "A book containing magic of lesser but modest value...",
   "tooltip.rechanted.enchantment_table.experience": "ᴇxᴘᴇʀɪᴇɴᴄᴇ",
   "tooltip.rechanted.enchantment_table.cost": "ᴄᴏꜱᴛ",
   "tooltip.rechanted.enchantment_table.requirements": "ʀᴇꞯᴜɪʀᴇᴍᴇɴᴛꜱ",
@@ -26,6 +27,7 @@
   "message.rechanted.bonus_pending": "Wait, something's happening!",
   "message.rechanted.bonus_item_found": "You found a bonus item!",
 
+  "enchantment.rarity.dusty": "尘",
   "enchantment.rarity.simple": "眤",
   "enchantment.rarity.unique": "眥",
   "enchantment.rarity.elite": "眦",

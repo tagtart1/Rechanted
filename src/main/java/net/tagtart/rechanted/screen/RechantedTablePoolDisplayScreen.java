@@ -35,6 +35,7 @@ public class RechantedTablePoolDisplayScreen extends AbstractContainerScreen<Rec
     private static final ResourceLocation BACK_ARROW_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechanted.MOD_ID, "textures/gui/arrow_button_back.png");
     private static final ResourceLocation SCROLL_BAR_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechanted.MOD_ID, "textures/gui/scrollbar_rect.png");
 
+    private static final ResourceLocation EMPTY_LINE_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechanted.MOD_ID, "textures/gui/enchant_table_loot_pool_effect_empty.png");
     private static final ResourceLocation SIMPLE_LINE_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechanted.MOD_ID, "textures/gui/enchant_table_loot_pool_effect_simple.png");
     private static final ResourceLocation UNIQUE_LINE_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechanted.MOD_ID, "textures/gui/enchant_table_loot_pool_effect_unique.png");
     private static final ResourceLocation ELITE_LINE_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechanted.MOD_ID, "textures/gui/enchant_table_loot_pool_effect_elite.png");
@@ -126,12 +127,13 @@ public class RechantedTablePoolDisplayScreen extends AbstractContainerScreen<Rec
         Minecraft.getInstance().player.playSound(SoundEvents.BOOK_PAGE_TURN, 0.5F, (float) UtilFunctions.remap(0.0, 1.0, 0.85, 1.15, viewingPropertyIndex / 5.0));
         generateTableEntries();
 
-        this.shaderEffectsByBookID = new ResourceLocation[5];
-        this.shaderEffectsByBookID[0] = SIMPLE_LINE_LOCATION;
-        this.shaderEffectsByBookID[1] = UNIQUE_LINE_LOCATION;
-        this.shaderEffectsByBookID[2] = ELITE_LINE_LOCATION;
-        this.shaderEffectsByBookID[3] = ULTIMATE_LINE_LOCATION;
-        this.shaderEffectsByBookID[4] = LEGENDARY_LINE_LOCATION;
+        this.shaderEffectsByBookID = new ResourceLocation[6];
+        this.shaderEffectsByBookID[0] = EMPTY_LINE_LOCATION;
+        this.shaderEffectsByBookID[1] = SIMPLE_LINE_LOCATION;
+        this.shaderEffectsByBookID[2] = UNIQUE_LINE_LOCATION;
+        this.shaderEffectsByBookID[3] = ELITE_LINE_LOCATION;
+        this.shaderEffectsByBookID[4] = ULTIMATE_LINE_LOCATION;
+        this.shaderEffectsByBookID[5] = LEGENDARY_LINE_LOCATION;
 
         this.lineShader = ModShaders.ENCHANT_TABLE_FBM_LINE_SHADER;
     }
@@ -420,7 +422,7 @@ public class RechantedTablePoolDisplayScreen extends AbstractContainerScreen<Rec
     }
 
     private void updateIndexAnimationData() {
-        if (viewingPropertyIndex == 4) {
+        if (viewingPropertyIndex == 5) {
             Vector2i texSize = UtilFunctions.queryTextureSize(LEGENDARY_BOOK_MANUAL_ANIMATION_LOCATION);
             bookIcon.renderTexture = LEGENDARY_BOOK_MANUAL_ANIMATION_LOCATION;
             bookIcon.setAnimatedData(new HoverableGuiRenderable.AnimatedTextureData(

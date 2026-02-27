@@ -33,6 +33,9 @@ public class ModItemModelProvider extends ItemModelProvider {
     }
 
     private void rechantedBookItem() {
+        withExistingParent("dusty", mcLoc("item/generated"))
+                .texture("layer0", ResourceLocation.fromNamespaceAndPath(Rechanted.MOD_ID, "item/dusty"));
+
         withExistingParent("simple", mcLoc("item/generated"))
                 .texture("layer0", ResourceLocation.fromNamespaceAndPath(Rechanted.MOD_ID, "item/simple"));
 
@@ -50,7 +53,11 @@ public class ModItemModelProvider extends ItemModelProvider {
 
     // TODO: change to modLoc, just copy pasted so thats why its not there
         withExistingParent(ModItems.RECHANTED_BOOK.getId().getPath(), mcLoc("item/generated"))
-                .texture("layer0", ResourceLocation.fromNamespaceAndPath(Rechanted.MOD_ID, "item/simple"))
+                .texture("layer0", ResourceLocation.fromNamespaceAndPath(Rechanted.MOD_ID, "item/dusty"))
+                .override()
+                .predicate(modLoc("book_rarity"), 0)
+                .model(new ModelFile.UncheckedModelFile(ResourceLocation.fromNamespaceAndPath(Rechanted.MOD_ID, "item/dusty")))
+                .end()
                 .override()
                 .predicate(modLoc("book_rarity"), 1)
                 .model(new ModelFile.UncheckedModelFile(ResourceLocation.fromNamespaceAndPath(Rechanted.MOD_ID, "item/simple")))

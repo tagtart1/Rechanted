@@ -10,7 +10,7 @@ public class RechantedCommonConfigs {
         public static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
         public static final ModConfigSpec SPEC;
 
-        // Simple tier configs.
+        // Dusty tier configs.
         public static final ModConfigSpec.ConfigValue<? extends String> RARITY_0_KEY;
         public static final ModConfigSpec.IntValue RARITY_0_COLOR;
         public static final ModConfigSpec.IntValue RARITY_0_EXP_COST;
@@ -32,7 +32,7 @@ public class RechantedCommonConfigs {
         public static final ModConfigSpec.IntValue RARITY_0_GRINDSTONE_XP_MAX;
         public static final ModConfigSpec.ConfigValue<List<? extends String>> RARITY_0_ENCHANTMENTS;
 
-        // Unique tier configs.
+        // Simple tier configs.
         public static final ModConfigSpec.ConfigValue<? extends String> RARITY_1_KEY;
         public static final ModConfigSpec.IntValue RARITY_1_COLOR;
         public static final ModConfigSpec.IntValue RARITY_1_EXP_COST;
@@ -54,7 +54,7 @@ public class RechantedCommonConfigs {
         public static final ModConfigSpec.IntValue RARITY_1_GRINDSTONE_XP_MAX;
         public static final ModConfigSpec.ConfigValue<List<? extends String>> RARITY_1_ENCHANTMENTS;
 
-        // Elite tier configs.
+        // Unique tier configs.
         public static final ModConfigSpec.ConfigValue<? extends String> RARITY_2_KEY;
         public static final ModConfigSpec.IntValue RARITY_2_COLOR;
         public static final ModConfigSpec.IntValue RARITY_2_EXP_COST;
@@ -76,7 +76,7 @@ public class RechantedCommonConfigs {
         public static final ModConfigSpec.IntValue RARITY_2_GRINDSTONE_XP_MAX;
         public static final ModConfigSpec.ConfigValue<List<? extends String>> RARITY_2_ENCHANTMENTS;
 
-        // Ultimate tier configs.
+        // Elite tier configs.
         public static final ModConfigSpec.ConfigValue<? extends String> RARITY_3_KEY;
         public static final ModConfigSpec.IntValue RARITY_3_COLOR;
         public static final ModConfigSpec.IntValue RARITY_3_EXP_COST;
@@ -98,7 +98,7 @@ public class RechantedCommonConfigs {
         public static final ModConfigSpec.IntValue RARITY_3_GRINDSTONE_XP_MAX;
         public static final ModConfigSpec.ConfigValue<List<? extends String>> RARITY_3_ENCHANTMENTS;
 
-        // Legendary tier configs.
+        // Ultimate tier configs.
         public static final ModConfigSpec.ConfigValue<? extends String> RARITY_4_KEY;
         public static final ModConfigSpec.IntValue RARITY_4_COLOR;
         public static final ModConfigSpec.IntValue RARITY_4_EXP_COST;
@@ -119,6 +119,28 @@ public class RechantedCommonConfigs {
         public static final ModConfigSpec.IntValue RARITY_4_GRINDSTONE_XP_MIN;
         public static final ModConfigSpec.IntValue RARITY_4_GRINDSTONE_XP_MAX;
         public static final ModConfigSpec.ConfigValue<List<? extends String>> RARITY_4_ENCHANTMENTS;
+
+        // Legendary tier configs.
+        public static final ModConfigSpec.ConfigValue<? extends String> RARITY_5_KEY;
+        public static final ModConfigSpec.IntValue RARITY_5_COLOR;
+        public static final ModConfigSpec.IntValue RARITY_5_EXP_COST;
+        public static final ModConfigSpec.IntValue RARITY_5_WORLD_SPAWN_WEIGHT;
+        public static final ModConfigSpec.IntValue RARITY_5_MIN_SUCCESS;
+        public static final ModConfigSpec.IntValue RARITY_5_MAX_SUCCESS;
+        public static final ModConfigSpec.IntValue RARITY_5_FORCED_BOOK_BREAKS;
+        public static final ModConfigSpec.IntValue RARITY_5_FORCED_FLOOR_BREAKS;
+        public static final ModConfigSpec.DoubleValue RARITY_5_BOOK_BREAK_CHANCE;
+        public static final ModConfigSpec.DoubleValue RARITY_5_FLOOR_BREAK_CHANCE;
+        public static final ModConfigSpec.IntValue RARITY_5_REQUIRED_BOOKSHELVES;
+        public static final ModConfigSpec.IntValue RARITY_5_REQUIRED_LAPIS;
+        public static final ModConfigSpec.ConfigValue<? extends String> RARITY_5_FLOOR_BLOCK_TYPE;
+        public static final ModConfigSpec.DoubleValue RARITY_5_BONUS_ITEM_ROLL_CHANCE;
+        public static final ModConfigSpec.IntValue RARITY_5_BONUS_ITEM_MYSTERIOUS_BOOK_WEIGHT;
+        public static final ModConfigSpec.IntValue RARITY_5_BONUS_ITEM_COMMON_GEM_POOL_WEIGHT;
+        public static final ModConfigSpec.IntValue RARITY_5_BONUS_ITEM_RARE_GEM_POOL_WEIGHT;
+        public static final ModConfigSpec.IntValue RARITY_5_GRINDSTONE_XP_MIN;
+        public static final ModConfigSpec.IntValue RARITY_5_GRINDSTONE_XP_MAX;
+        public static final ModConfigSpec.ConfigValue<List<? extends String>> RARITY_5_ENCHANTMENTS;
 
         public static final ModConfigSpec.ConfigValue<? extends String> GRINDSTONE_RESULT_ITEM;
         public static final ModConfigSpec.ConfigValue<List<? extends String>> COMMON_GEM_POOL;
@@ -154,200 +176,270 @@ public class RechantedCommonConfigs {
                 BUILDER.translation("config.rechanted.book_rarities.title").comment("Configs for Each Book Rarity")
                                 .push("Book Rarities");
 
+                // Dusty rarity properties; not accessible from enchanting table by default, but still here
+                // for consistency or if someone wants to swap a tier out for it.
+                BUILDER.translation("config.rechanted.dusty.name").push("Dusty");
+                RARITY_0_KEY = BUILDER.translation("config.rechanted.dusty.key.title").define("key", "dusty");
+                RARITY_0_COLOR = BUILDER.translation("config.rechanted.dusty.color.title").defineInRange("color",
+                        3881787, 0, Integer.MAX_VALUE);
+                RARITY_0_EXP_COST = BUILDER.translation("config.rechanted.dusty.exp_cost.title")
+                        .defineInRange("exp_cost", 75, 0, Integer.MAX_VALUE);
+                RARITY_0_WORLD_SPAWN_WEIGHT = BUILDER.translation("config.rechanted.dusty.world_spawn_weight.title")
+                        .defineInRange("world_spawn_weight", 0, 0, Integer.MAX_VALUE);
+                RARITY_0_MIN_SUCCESS = BUILDER.translation("config.rechanted.dusty.min_success.title")
+                        .defineInRange("min_success", 45, 0, 100);
+                RARITY_0_MAX_SUCCESS = BUILDER.translation("config.rechanted.dusty.max_success.title")
+                        .defineInRange("max_success", 100, 0, 100);
+                RARITY_0_FORCED_BOOK_BREAKS = BUILDER
+                        .translation("config.rechanted.dusty.guaranteed_bookshelf_breaks.title")
+                        .defineInRange("guaranteed_bookshelf_breaks", 0, 0, Integer.MAX_VALUE);
+                RARITY_0_FORCED_FLOOR_BREAKS = BUILDER
+                        .translation("config.rechanted.dusty.guaranteed_floor_breaks.title")
+                        .defineInRange("guaranteed_floor_breaks", 0, 0, Integer.MAX_VALUE);
+                RARITY_0_BOOK_BREAK_CHANCE = BUILDER.translation("config.rechanted.dusty.book_break_chance.title")
+                        .defineInRange("book_break_chance", 0.0, 0.0, 1.0);
+                RARITY_0_FLOOR_BREAK_CHANCE = BUILDER.translation("config.rechanted.dusty.floor_break_chance.title")
+                        .defineInRange("floor_break_chance", 0.05, 0.0, 1.0);
+                RARITY_0_REQUIRED_BOOKSHELVES = BUILDER
+                        .translation("config.rechanted.dusty.required_bookshelves.title")
+                        .defineInRange("required_bookshelves", 3, 0, Integer.MAX_VALUE);
+                RARITY_0_REQUIRED_LAPIS = BUILDER.translation("config.rechanted.dusty.required_lapis.title")
+                        .defineInRange("required_lapis", 1, 0, 64);
+                RARITY_0_FLOOR_BLOCK_TYPE = BUILDER.translation("config.rechanted.dusty.floor_block_type.title")
+                        .define("floor_block_type", "minecraft:air");
+                RARITY_0_BONUS_ITEM_ROLL_CHANCE = BUILDER
+                        .translation("config.rechanted.dusty.bonus_item_roll_chance.title")
+                        .defineInRange("bonus_item_roll_chance", 0.085, 0.0, 1.0);
+                RARITY_0_BONUS_ITEM_MYSTERIOUS_BOOK_WEIGHT = BUILDER
+                        .translation("config.rechanted.dusty.bonus_item_mysterious_book_weight.title")
+                        .defineInRange("bonus_item_mysterious_book_weight", 60, 0, Integer.MAX_VALUE);
+                RARITY_0_BONUS_ITEM_COMMON_GEM_POOL_WEIGHT = BUILDER
+                        .translation("config.rechanted.dusty.bonus_item_common_gem_pool_weight.title")
+                        .defineInRange("bonus_item_common_gem_pool_weight", 40, 0, Integer.MAX_VALUE);
+                RARITY_0_BONUS_ITEM_RARE_GEM_POOL_WEIGHT = BUILDER
+                        .translation("config.rechanted.dusty.bonus_item_rare_gem_pool_weight.title")
+                        .defineInRange("bonus_item_rare_gem_pool_weight", 10, 0, Integer.MAX_VALUE);
+
+                BUILDER.comment(
+                        "Minimum and maximum amount of xp orbs this tier provides when put into a grindstone",
+                        "Make sure min is less than max, or problems may occur");
+                RARITY_0_GRINDSTONE_XP_MIN = BUILDER.translation("config.rechanted.simple.grindstone_xp_min.title")
+                        .defineInRange("grindstone_xp_min", 2, 0, Integer.MAX_VALUE);
+                RARITY_0_GRINDSTONE_XP_MAX = BUILDER.translation("config.rechanted.simple.grindstone_xp_max.title")
+                        .defineInRange("grindstone_xp_max", 6, 0, Integer.MAX_VALUE);
+                BUILDER.comment(
+                        "List of potential enchantments with weights, levels, and per-level weights.",
+                        "Format: <enchantment>|<weight>|<level-range>|<level-weights>",
+                        "Example: minecraft:unbreaking|10|1-3|1,2,3");
+                ArrayList<String> rarity_0_default_enchantments = new ArrayList<>();
+                rarity_0_default_enchantments.add("minecraft:bane_of_arthropods|1|1-4|3,3,2,1");
+                rarity_0_default_enchantments.add("minecraft:piercing|1|1-4|3,3,2,1");
+                rarity_0_default_enchantments.add("minecraft:quick_charge|1|1-3|3,2,1");
+                rarity_0_default_enchantments.add("minecraft:multishot|1|1|1");
+                rarity_0_default_enchantments.add("minecraft:impaling|1|1-5|2,2,2,1,1");
+                rarity_0_default_enchantments.add("minecraft:riptide|1|1-3|2,2,1");
+                rarity_0_default_enchantments.add("minecraft:channeling|1|1|1");
+                rarity_0_default_enchantments.add("minecraft:loyalty|1|1-3|2,2,1");
+
+                RARITY_0_ENCHANTMENTS = BUILDER.translation("config.rechanted.dusty.enchantments.title").defineList(
+                        "enchantments", rarity_0_default_enchantments,
+                        () -> "minecraft:sharpness|1|1-4|3,3,2,1", s -> s instanceof String);
+                BUILDER.pop();
+
                 // Simple rarity properties.
                 BUILDER.translation("config.rechanted.simple.name").push("Simple");
-                RARITY_0_KEY = BUILDER.translation("config.rechanted.simple.key.title").define("key", "simple");
-                RARITY_0_COLOR = BUILDER.translation("config.rechanted.simple.color.title").defineInRange("color",
-                                11184810, 0, Integer.MAX_VALUE);
-                RARITY_0_EXP_COST = BUILDER.translation("config.rechanted.simple.exp_cost.title")
-                                .defineInRange("exp_cost", 75, 0, Integer.MAX_VALUE);
-                RARITY_0_WORLD_SPAWN_WEIGHT = BUILDER.translation("config.rechanted.simple.world_spawn_weight.title")
-                                .defineInRange("world_spawn_weight", 50, 0, Integer.MAX_VALUE);
-                RARITY_0_MIN_SUCCESS = BUILDER.translation("config.rechanted.simple.min_success.title")
-                                .defineInRange("min_success", 45, 0, 100);
-                RARITY_0_MAX_SUCCESS = BUILDER.translation("config.rechanted.simple.max_success.title")
-                                .defineInRange("max_success", 100, 0, 100);
-                RARITY_0_FORCED_BOOK_BREAKS = BUILDER
-                                .translation("config.rechanted.simple.guaranteed_bookshelf_breaks.title")
-                                .defineInRange("guaranteed_bookshelf_breaks", 0, 0, Integer.MAX_VALUE);
-                RARITY_0_FORCED_FLOOR_BREAKS = BUILDER
-                                .translation("config.rechanted.simple.guaranteed_floor_breaks.title")
-                                .defineInRange("guaranteed_floor_breaks", 0, 0, Integer.MAX_VALUE);
-                RARITY_0_BOOK_BREAK_CHANCE = BUILDER.translation("config.rechanted.simple.book_break_chance.title")
-                                .defineInRange("book_break_chance", 0.0, 0.0, 1.0);
-                RARITY_0_FLOOR_BREAK_CHANCE = BUILDER.translation("config.rechanted.simple.floor_break_chance.title")
-                                .defineInRange("floor_break_chance", 0.05, 0.0, 1.0);
-                RARITY_0_REQUIRED_BOOKSHELVES = BUILDER
-                                .translation("config.rechanted.simple.required_bookshelves.title")
-                                .defineInRange("required_bookshelves", 4, 0, Integer.MAX_VALUE);
-                RARITY_0_REQUIRED_LAPIS = BUILDER.translation("config.rechanted.simple.required_lapis.title")
-                                .defineInRange("required_lapis", 2, 0, 64);
-                RARITY_0_FLOOR_BLOCK_TYPE = BUILDER.translation("config.rechanted.simple.floor_block_type.title")
-                                .define("floor_block_type", "minecraft:iron_block");
-                RARITY_0_BONUS_ITEM_ROLL_CHANCE = BUILDER
-                                .translation("config.rechanted.simple.bonus_item_roll_chance.title")
-                                .defineInRange("bonus_item_roll_chance", 0.085, 0.0, 1.0);
-                RARITY_0_BONUS_ITEM_MYSTERIOUS_BOOK_WEIGHT = BUILDER
-                                .translation("config.rechanted.simple.bonus_item_mysterious_book_weight.title")
-                                .defineInRange("bonus_item_mysterious_book_weight", 60, 0, Integer.MAX_VALUE);
-                RARITY_0_BONUS_ITEM_COMMON_GEM_POOL_WEIGHT = BUILDER
-                                .translation("config.rechanted.simple.bonus_item_common_gem_pool_weight.title")
-                                .defineInRange("bonus_item_common_gem_pool_weight", 40, 0, Integer.MAX_VALUE);
-                RARITY_0_BONUS_ITEM_RARE_GEM_POOL_WEIGHT = BUILDER
+                RARITY_1_KEY = BUILDER.translation("config.rechanted.simple.key.title").define("key", "simple");
+                RARITY_1_COLOR = BUILDER.translation("config.rechanted.simple.color.title").defineInRange("color",
+                               11184810, 0, Integer.MAX_VALUE);
+                RARITY_1_EXP_COST = BUILDER.translation("config.rechanted.simple.exp_cost.title")
+                               .defineInRange("exp_cost", 75, 0, Integer.MAX_VALUE);
+                RARITY_1_WORLD_SPAWN_WEIGHT = BUILDER.translation("config.rechanted.simple.world_spawn_weight.title")
+                               .defineInRange("world_spawn_weight", 50, 0, Integer.MAX_VALUE);
+                RARITY_1_MIN_SUCCESS = BUILDER.translation("config.rechanted.simple.min_success.title")
+                              .defineInRange("min_success", 45, 0, 100);
+                RARITY_1_MAX_SUCCESS = BUILDER.translation("config.rechanted.simple.max_success.title")
+                               .defineInRange("max_success", 100, 0, 100);
+                RARITY_1_FORCED_BOOK_BREAKS = BUILDER
+                               .translation("config.rechanted.simple.guaranteed_bookshelf_breaks.title")
+                               .defineInRange("guaranteed_bookshelf_breaks", 0, 0, Integer.MAX_VALUE);
+                RARITY_1_FORCED_FLOOR_BREAKS = BUILDER
+                               .translation("config.rechanted.simple.guaranteed_floor_breaks.title")
+                               .defineInRange("guaranteed_floor_breaks", 0, 0, Integer.MAX_VALUE);
+                RARITY_1_BOOK_BREAK_CHANCE = BUILDER.translation("config.rechanted.simple.book_break_chance.title")
+                               .defineInRange("book_break_chance", 0.0, 0.0, 1.0);
+                RARITY_1_FLOOR_BREAK_CHANCE = BUILDER.translation("config.rechanted.simple.floor_break_chance.title")
+                               .defineInRange("floor_break_chance", 0.05, 0.0, 1.0);
+                RARITY_1_REQUIRED_BOOKSHELVES = BUILDER
+                               .translation("config.rechanted.simple.required_bookshelves.title")
+                               .defineInRange("required_bookshelves", 4, 0, Integer.MAX_VALUE);
+                RARITY_1_REQUIRED_LAPIS = BUILDER.translation("config.rechanted.simple.required_lapis.title")
+                               .defineInRange("required_lapis", 2, 0, 64);
+                RARITY_1_FLOOR_BLOCK_TYPE = BUILDER.translation("config.rechanted.simple.floor_block_type.title")
+                               .define("floor_block_type", "minecraft:iron_block");
+                RARITY_1_BONUS_ITEM_ROLL_CHANCE = BUILDER
+                               .translation("config.rechanted.simple.bonus_item_roll_chance.title")
+                               .defineInRange("bonus_item_roll_chance", 0.085, 0.0, 1.0);
+                RARITY_1_BONUS_ITEM_MYSTERIOUS_BOOK_WEIGHT = BUILDER
+                               .translation("config.rechanted.simple.bonus_item_mysterious_book_weight.title")
+                               .defineInRange("bonus_item_mysterious_book_weight", 60, 0, Integer.MAX_VALUE);
+                RARITY_1_BONUS_ITEM_COMMON_GEM_POOL_WEIGHT = BUILDER
+                               .translation("config.rechanted.simple.bonus_item_common_gem_pool_weight.title")
+                               .defineInRange("bonus_item_common_gem_pool_weight", 40, 0, Integer.MAX_VALUE);
+                RARITY_1_BONUS_ITEM_RARE_GEM_POOL_WEIGHT = BUILDER
                                 .translation("config.rechanted.simple.bonus_item_rare_gem_pool_weight.title")
                                 .defineInRange("bonus_item_rare_gem_pool_weight", 10, 0, Integer.MAX_VALUE);
 
                 BUILDER.comment(
                                 "Minimum and maximum amount of xp orbs this tier provides when put into a grindstone",
                                 "Make sure min is less than max, or problems may occur");
-                RARITY_0_GRINDSTONE_XP_MIN = BUILDER.translation("config.rechanted.simple.grindstone_xp_min.title")
+                RARITY_1_GRINDSTONE_XP_MIN = BUILDER.translation("config.rechanted.simple.grindstone_xp_min.title")
                                 .defineInRange("grindstone_xp_min", 3, 0, Integer.MAX_VALUE);
-                RARITY_0_GRINDSTONE_XP_MAX = BUILDER.translation("config.rechanted.simple.grindstone_xp_max.title")
+                RARITY_1_GRINDSTONE_XP_MAX = BUILDER.translation("config.rechanted.simple.grindstone_xp_max.title")
                                 .defineInRange("grindstone_xp_max", 7, 0, Integer.MAX_VALUE);
                 BUILDER.comment(
                                 "List of potential enchantments with weights, levels, and per-level weights.",
                                 "Format: <enchantment>|<weight>|<level-range>|<level-weights>",
                                 "Example: minecraft:unbreaking|10|1-3|1,2,3");
-                ArrayList<String> rarity_0_default_enchantments = new ArrayList<>();
-                rarity_0_default_enchantments.add("minecraft:sharpness|3|1-4|3,3,1,1");
-                rarity_0_default_enchantments.add("minecraft:efficiency|3|2-4|1,1,1");
-                rarity_0_default_enchantments.add("minecraft:protection|3|1-4|3,3,2,1");
-                rarity_0_default_enchantments.add("minecraft:knockback|2|1-2|3,2");
-                rarity_0_default_enchantments.add("minecraft:power|2|1-4|4,3,2,1");
-                rarity_0_default_enchantments.add("minecraft:smite|2|1-4|3,3,2,1");
-                rarity_0_default_enchantments.add("minecraft:lure|1|1-3|3,2,1");
-                rarity_0_default_enchantments.add("minecraft:aqua_affinity|1|1|1");
-                rarity_0_default_enchantments.add("minecraft:punch|1|1-2|3,1");
-                rarity_0_default_enchantments.add("minecraft:density|1|1-4|2,2,1,1");
+                ArrayList<String> rarity_1_default_enchantments = new ArrayList<>();
+                rarity_1_default_enchantments.add("minecraft:sharpness|3|1-4|3,3,1,1");
+                rarity_1_default_enchantments.add("minecraft:efficiency|3|2-4|1,1,1");
+                rarity_1_default_enchantments.add("minecraft:protection|3|1-4|3,3,2,1");
+                rarity_1_default_enchantments.add("minecraft:knockback|2|1-2|3,2");
+                rarity_1_default_enchantments.add("minecraft:power|2|1-4|4,3,2,1");
+                rarity_1_default_enchantments.add("minecraft:smite|2|1-4|3,3,2,1");
+                rarity_1_default_enchantments.add("minecraft:lure|1|1-3|3,2,1");
+                rarity_1_default_enchantments.add("minecraft:aqua_affinity|1|1|1");
+                rarity_1_default_enchantments.add("minecraft:punch|1|1-2|3,1");
+                rarity_1_default_enchantments.add("minecraft:density|1|1-4|2,2,1,1");
 
-                RARITY_0_ENCHANTMENTS = BUILDER.translation("config.rechanted.simple.enchantments.title").defineList(
-                                "enchantments", rarity_0_default_enchantments,
+                RARITY_1_ENCHANTMENTS = BUILDER.translation("config.rechanted.simple.enchantments.title").defineList(
+                                "enchantments", rarity_1_default_enchantments,
                                 () -> "minecraft:sharpness|1|1-4|3,3,2,1", s -> s instanceof String);
                 BUILDER.pop();
                 // Unique rarity builder default config
                 BUILDER.translation("config.rechanted.unique.name").comment("Configs for Unique Rarity Enchantments")
                                 .push("unique");
-                RARITY_1_KEY = BUILDER.translation("config.rechanted.unique.key.title").define("key", "unique");
-                RARITY_1_COLOR = BUILDER.translation("config.rechanted.unique.color.title").defineInRange("color",
+                RARITY_2_KEY = BUILDER.translation("config.rechanted.unique.key.title").define("key", "unique");
+                RARITY_2_COLOR = BUILDER.translation("config.rechanted.unique.color.title").defineInRange("color",
                                 5635925, 0, Integer.MAX_VALUE);
-                RARITY_1_EXP_COST = BUILDER.translation("config.rechanted.unique.exp_cost.title")
+                RARITY_2_EXP_COST = BUILDER.translation("config.rechanted.unique.exp_cost.title")
                                 .defineInRange("exp_cost", 100, 0, Integer.MAX_VALUE);
-                RARITY_1_WORLD_SPAWN_WEIGHT = BUILDER.translation("config.rechanted.unique.world_spawn_weight.title")
+                RARITY_2_WORLD_SPAWN_WEIGHT = BUILDER.translation("config.rechanted.unique.world_spawn_weight.title")
                                 .defineInRange("world_spawn_weight", 40, 0, Integer.MAX_VALUE);
-                RARITY_1_MIN_SUCCESS = BUILDER.translation("config.rechanted.unique.min_success.title")
+                RARITY_2_MIN_SUCCESS = BUILDER.translation("config.rechanted.unique.min_success.title")
                                 .defineInRange("min_success", 45, 0, 100);
-                RARITY_1_MAX_SUCCESS = BUILDER.translation("config.rechanted.unique.max_success.title")
+                RARITY_2_MAX_SUCCESS = BUILDER.translation("config.rechanted.unique.max_success.title")
                                 .defineInRange("max_success", 100, 0, 100);
-                RARITY_1_FORCED_BOOK_BREAKS = BUILDER
+                RARITY_2_FORCED_BOOK_BREAKS = BUILDER
                                 .translation("config.rechanted.unique.guaranteed_bookshelf_breaks.title")
                                 .defineInRange("guaranteed_bookshelf_breaks", 0, 0, Integer.MAX_VALUE);
-                RARITY_1_FORCED_FLOOR_BREAKS = BUILDER
+                RARITY_2_FORCED_FLOOR_BREAKS = BUILDER
                                 .translation("config.rechanted.unique.guaranteed_floor_breaks.title")
                                 .defineInRange("guaranteed_floor_breaks", 0, 0, Integer.MAX_VALUE);
-                RARITY_1_BOOK_BREAK_CHANCE = BUILDER.translation("config.rechanted.unique.book_break_chance.title")
+                RARITY_2_BOOK_BREAK_CHANCE = BUILDER.translation("config.rechanted.unique.book_break_chance.title")
                                 .defineInRange("book_break_chance", 0.0, 0.0, 1.0);
-                RARITY_1_FLOOR_BREAK_CHANCE = BUILDER.translation("config.rechanted.unique.floor_break_chance.title")
+                RARITY_2_FLOOR_BREAK_CHANCE = BUILDER.translation("config.rechanted.unique.floor_break_chance.title")
                                 .defineInRange("floor_break_chance", 0.045, 0.0, 1.0);
-                RARITY_1_REQUIRED_BOOKSHELVES = BUILDER
+                RARITY_2_REQUIRED_BOOKSHELVES = BUILDER
                                 .translation("config.rechanted.unique.required_bookshelves.title")
                                 .defineInRange("required_bookshelves", 8, 0, Integer.MAX_VALUE);
-                RARITY_1_REQUIRED_LAPIS = BUILDER.translation("config.rechanted.unique.required_lapis.title")
+                RARITY_2_REQUIRED_LAPIS = BUILDER.translation("config.rechanted.unique.required_lapis.title")
                                 .defineInRange("required_lapis", 3, 0, 64);
-                RARITY_1_FLOOR_BLOCK_TYPE = BUILDER.translation("config.rechanted.unique.floor_block_type.title")
+                RARITY_2_FLOOR_BLOCK_TYPE = BUILDER.translation("config.rechanted.unique.floor_block_type.title")
                                 .define("floor_block_type", "minecraft:gold_block");
-                RARITY_1_BONUS_ITEM_ROLL_CHANCE = BUILDER
+                RARITY_2_BONUS_ITEM_ROLL_CHANCE = BUILDER
                                 .translation("config.rechanted.unique.bonus_item_roll_chance.title")
                                 .defineInRange("bonus_item_roll_chance", 0.085, 0.0, 1.0);
-                RARITY_1_BONUS_ITEM_MYSTERIOUS_BOOK_WEIGHT = BUILDER
+                RARITY_2_BONUS_ITEM_MYSTERIOUS_BOOK_WEIGHT = BUILDER
                                 .translation("config.rechanted.unique.bonus_item_mysterious_book_weight.title")
                                 .defineInRange("bonus_item_mysterious_book_weight", 60, 0, Integer.MAX_VALUE);
-                RARITY_1_BONUS_ITEM_COMMON_GEM_POOL_WEIGHT = BUILDER
+                RARITY_2_BONUS_ITEM_COMMON_GEM_POOL_WEIGHT = BUILDER
                                 .translation("config.rechanted.unique.bonus_item_common_gem_pool_weight.title")
                                 .defineInRange("bonus_item_common_gem_pool_weight", 40, 0, Integer.MAX_VALUE);
-                RARITY_1_BONUS_ITEM_RARE_GEM_POOL_WEIGHT = BUILDER
+                RARITY_2_BONUS_ITEM_RARE_GEM_POOL_WEIGHT = BUILDER
                                 .translation("config.rechanted.unique.bonus_item_rare_gem_pool_weight.title")
                                 .defineInRange("bonus_item_rare_gem_pool_weight", 12, 0, Integer.MAX_VALUE);
-                RARITY_1_GRINDSTONE_XP_MIN = BUILDER.translation("config.rechanted.unique.grindstone_xp_min.title")
+                RARITY_2_GRINDSTONE_XP_MIN = BUILDER.translation("config.rechanted.unique.grindstone_xp_min.title")
                                 .defineInRange("grindstone_xp_min", 5, 0, Integer.MAX_VALUE);
-                RARITY_1_GRINDSTONE_XP_MAX = BUILDER.translation("config.rechanted.unique.grindstone_xp_max.title")
+                RARITY_2_GRINDSTONE_XP_MAX = BUILDER.translation("config.rechanted.unique.grindstone_xp_max.title")
                                 .defineInRange("grindstone_xp_max", 10, 0, Integer.MAX_VALUE);
-                ArrayList<String> rarity_1_default_enchantments = new ArrayList<>();
-                rarity_1_default_enchantments.add("minecraft:projectile_protection|2|2-4|2,1,1");
-                rarity_1_default_enchantments.add("minecraft:fire_protection|2|1-4|2,2,1,1");
-                rarity_1_default_enchantments.add("minecraft:blast_protection|2|2-4|3,2,1");
-                rarity_1_default_enchantments.add("minecraft:feather_falling|2|1-4|3,3,2,1");
-                rarity_1_default_enchantments.add("rechanted:bash|2|1|1");
-                rarity_1_default_enchantments.add("rechanted:spring|2|1-3|3,2,1");
-                rarity_1_default_enchantments.add("minecraft:unbreaking|1|1-3|4,2,1");
-                rarity_1_default_enchantments.add("minecraft:thorns|1|1-3|2,2,1");
-                rarity_1_default_enchantments.add("minecraft:respiration|1|1-3|3,2,1");
-                rarity_1_default_enchantments.add("minecraft:breach|1|1-4|2,2,1,1");
-                RARITY_1_ENCHANTMENTS = BUILDER.translation("config.rechanted.unique.enchantments.title").defineList(
-                                "enchantments", rarity_1_default_enchantments,
+                ArrayList<String> rarity_2_default_enchantments = new ArrayList<>();
+                rarity_2_default_enchantments.add("minecraft:projectile_protection|2|2-4|2,1,1");
+                rarity_2_default_enchantments.add("minecraft:fire_protection|2|1-4|2,2,1,1");
+                rarity_2_default_enchantments.add("minecraft:blast_protection|2|2-4|3,2,1");
+                rarity_2_default_enchantments.add("minecraft:feather_falling|2|1-4|3,3,2,1");
+                rarity_2_default_enchantments.add("rechanted:bash|2|1|1");
+                rarity_2_default_enchantments.add("rechanted:spring|2|1-3|3,2,1");
+                rarity_2_default_enchantments.add("minecraft:unbreaking|1|1-3|4,2,1");
+                rarity_2_default_enchantments.add("minecraft:thorns|1|1-3|2,2,1");
+                rarity_2_default_enchantments.add("minecraft:respiration|1|1-3|3,2,1");
+                rarity_2_default_enchantments.add("minecraft:breach|1|1-4|2,2,1,1");
+                RARITY_2_ENCHANTMENTS = BUILDER.translation("config.rechanted.unique.enchantments.title").defineList(
+                                "enchantments", rarity_2_default_enchantments,
                                 () -> "minecraft:sharpness|1|1-4|3,3,2,1", s -> s instanceof String);
 
                 BUILDER.pop();
 
                 BUILDER.translation("config.rechanted.elite.name").comment("Configs for Elite Rarity Enchantments")
                                 .push("elite");
-                RARITY_2_KEY = BUILDER.translation("config.rechanted.elite.key.title").define("key", "elite");
-                RARITY_2_COLOR = BUILDER.translation("config.rechanted.elite.color.title").defineInRange("color",
+                RARITY_3_KEY = BUILDER.translation("config.rechanted.elite.key.title").define("key", "elite");
+                RARITY_3_COLOR = BUILDER.translation("config.rechanted.elite.color.title").defineInRange("color",
                                 5636095, 0, Integer.MAX_VALUE);
-                RARITY_2_EXP_COST = BUILDER.translation("config.rechanted.elite.exp_cost.title")
+                RARITY_3_EXP_COST = BUILDER.translation("config.rechanted.elite.exp_cost.title")
                                 .defineInRange("exp_cost", 200, 0, Integer.MAX_VALUE);
-                RARITY_2_WORLD_SPAWN_WEIGHT = BUILDER.translation("config.rechanted.elite.world_spawn_weight.title")
+                RARITY_3_WORLD_SPAWN_WEIGHT = BUILDER.translation("config.rechanted.elite.world_spawn_weight.title")
                                 .defineInRange("world_spawn_weight", 5, 0, Integer.MAX_VALUE);
-                RARITY_2_MIN_SUCCESS = BUILDER.translation("config.rechanted.elite.min_success.title")
+                RARITY_3_MIN_SUCCESS = BUILDER.translation("config.rechanted.elite.min_success.title")
                                 .defineInRange("min_success", 50, 0, 100);
-                RARITY_2_MAX_SUCCESS = BUILDER.translation("config.rechanted.elite.max_success.title")
+                RARITY_3_MAX_SUCCESS = BUILDER.translation("config.rechanted.elite.max_success.title")
                                 .defineInRange("max_success", 100, 0, 100);
-                RARITY_2_FORCED_BOOK_BREAKS = BUILDER
+                RARITY_3_FORCED_BOOK_BREAKS = BUILDER
                                 .translation("config.rechanted.elite.guaranteed_bookshelf_breaks.title")
                                 .defineInRange("guaranteed_bookshelf_breaks", 0, 0, Integer.MAX_VALUE);
-                RARITY_2_FORCED_FLOOR_BREAKS = BUILDER
+                RARITY_3_FORCED_FLOOR_BREAKS = BUILDER
                                 .translation("config.rechanted.elite.guaranteed_floor_breaks.title")
                                 .defineInRange("guaranteed_floor_breaks", 0, 0, Integer.MAX_VALUE);
-                RARITY_2_BOOK_BREAK_CHANCE = BUILDER.translation("config.rechanted.elite.book_break_chance.title")
+                RARITY_3_BOOK_BREAK_CHANCE = BUILDER.translation("config.rechanted.elite.book_break_chance.title")
                                 .defineInRange("book_break_chance", 0.015, 0.0, 1.0);
-                RARITY_2_FLOOR_BREAK_CHANCE = BUILDER.translation("config.rechanted.elite.floor_break_chance.title")
+                RARITY_3_FLOOR_BREAK_CHANCE = BUILDER.translation("config.rechanted.elite.floor_break_chance.title")
                                 .defineInRange("floor_break_chance", 0.03, 0.0, 1.0);
-                RARITY_2_REQUIRED_BOOKSHELVES = BUILDER
+                RARITY_3_REQUIRED_BOOKSHELVES = BUILDER
                                 .translation("config.rechanted.elite.required_bookshelves.title")
                                 .defineInRange("required_bookshelves", 16, 0, Integer.MAX_VALUE);
-                RARITY_2_REQUIRED_LAPIS = BUILDER.translation("config.rechanted.elite.required_lapis.title")
+                RARITY_3_REQUIRED_LAPIS = BUILDER.translation("config.rechanted.elite.required_lapis.title")
                                 .defineInRange("required_lapis", 3, 0, 64);
-                RARITY_2_FLOOR_BLOCK_TYPE = BUILDER.translation("config.rechanted.elite.floor_block_type.title")
+                RARITY_3_FLOOR_BLOCK_TYPE = BUILDER.translation("config.rechanted.elite.floor_block_type.title")
                                 .define("floor_block_type", "minecraft:diamond_block");
-                RARITY_2_BONUS_ITEM_ROLL_CHANCE = BUILDER
+                RARITY_3_BONUS_ITEM_ROLL_CHANCE = BUILDER
                                 .translation("config.rechanted.elite.bonus_item_roll_chance.title")
                                 .defineInRange("bonus_item_roll_chance", 0.095, 0.0, 1.0);
-                RARITY_2_BONUS_ITEM_MYSTERIOUS_BOOK_WEIGHT = BUILDER
+                RARITY_3_BONUS_ITEM_MYSTERIOUS_BOOK_WEIGHT = BUILDER
                                 .translation("config.rechanted.elite.bonus_item_mysterious_book_weight.title")
                                 .defineInRange("bonus_item_mysterious_book_weight", 60, 0, Integer.MAX_VALUE);
-                RARITY_2_BONUS_ITEM_COMMON_GEM_POOL_WEIGHT = BUILDER
+                RARITY_3_BONUS_ITEM_COMMON_GEM_POOL_WEIGHT = BUILDER
                                 .translation("config.rechanted.elite.bonus_item_common_gem_pool_weight.title")
                                 .defineInRange("bonus_item_common_gem_pool_weight", 50, 0, Integer.MAX_VALUE);
-                RARITY_2_BONUS_ITEM_RARE_GEM_POOL_WEIGHT = BUILDER
+                RARITY_3_BONUS_ITEM_RARE_GEM_POOL_WEIGHT = BUILDER
                                 .translation("config.rechanted.elite.bonus_item_rare_gem_pool_weight.title")
                                 .defineInRange("bonus_item_rare_gem_pool_weight", 20, 0, Integer.MAX_VALUE);
-                RARITY_2_GRINDSTONE_XP_MIN = BUILDER.translation("config.rechanted.elite.grindstone_xp_min.title")
+                RARITY_3_GRINDSTONE_XP_MIN = BUILDER.translation("config.rechanted.elite.grindstone_xp_min.title")
                                 .defineInRange("grindstone_xp_min", 10, 0, Integer.MAX_VALUE);
-                RARITY_2_GRINDSTONE_XP_MAX = BUILDER.translation("config.rechanted.elite.grindstone_xp_max.title")
+                RARITY_3_GRINDSTONE_XP_MAX = BUILDER.translation("config.rechanted.elite.grindstone_xp_max.title")
                                 .defineInRange("grindstone_xp_max", 20, 0, Integer.MAX_VALUE);
-                ArrayList<String> rarity_2_default_enchantments = new ArrayList<>();
-                rarity_2_default_enchantments.add("rechanted:hells_fury|3|1-4|3,3,2,1");
-                rarity_2_default_enchantments.add("rechanted:voids_bane|3|1-4|3,3,2,1");
-                rarity_2_default_enchantments.add("rechanted:berserk|3|1-3|3,2,1");
-                rarity_2_default_enchantments.add("rechanted:reach|3|1-4|2,2,1,1");
-                rarity_2_default_enchantments.add("minecraft:looting|2|1-3|4,2,1");
-                rarity_2_default_enchantments.add("minecraft:flame|2|1|1");
-                rarity_2_default_enchantments.add("minecraft:depth_strider|2|1-3|2,2,1");
-                rarity_2_default_enchantments.add("minecraft:soul_speed|2|2-3|2,1");
-                rarity_2_default_enchantments.add("minecraft:fire_aspect|2|1-2|2,1");
-                rarity_2_default_enchantments.add("minecraft:fortune|1|1-3|4,2,1");
-                rarity_2_default_enchantments.add("minecraft:frost_walker|1|1-2|2,1");
-                RARITY_2_ENCHANTMENTS = BUILDER.translation("config.rechanted.elite.enchantments.title").defineList(
-                                "enchantments", rarity_2_default_enchantments,
+                ArrayList<String> rarity_3_default_enchantments = new ArrayList<>();
+                rarity_3_default_enchantments.add("rechanted:hells_fury|3|1-4|3,3,2,1");
+                rarity_3_default_enchantments.add("rechanted:voids_bane|3|1-4|3,3,2,1");
+                rarity_3_default_enchantments.add("rechanted:berserk|3|1-3|3,2,1");
+                rarity_3_default_enchantments.add("rechanted:reach|3|1-4|2,2,1,1");
+                rarity_3_default_enchantments.add("minecraft:looting|2|1-3|4,2,1");
+                rarity_3_default_enchantments.add("minecraft:flame|2|1|1");
+                rarity_3_default_enchantments.add("minecraft:depth_strider|2|1-3|2,2,1");
+                rarity_3_default_enchantments.add("minecraft:soul_speed|2|2-3|2,1");
+                rarity_3_default_enchantments.add("minecraft:fire_aspect|2|1-2|2,1");
+                rarity_3_default_enchantments.add("minecraft:fortune|1|1-3|4,2,1");
+                rarity_3_default_enchantments.add("minecraft:frost_walker|1|1-2|2,1");
+                RARITY_3_ENCHANTMENTS = BUILDER.translation("config.rechanted.elite.enchantments.title").defineList(
+                                "enchantments", rarity_3_default_enchantments,
                                 () -> "minecraft:sharpness|1|1-4|3,3,2,1", s -> s instanceof String);
 
                 BUILDER.pop();
@@ -355,66 +447,66 @@ public class RechantedCommonConfigs {
                 // Ultimate rarity builder default config
                 BUILDER.translation("config.rechanted.ultimate.name")
                                 .comment("Configs for Ultimate Rarity Enchantments").push("ultimate");
-                RARITY_3_KEY = BUILDER.translation("config.rechanted.ultimate.key.title").define("key", "ultimate");
-                RARITY_3_COLOR = BUILDER.translation("config.rechanted.ultimate.color.title").defineInRange("color",
+                RARITY_4_KEY = BUILDER.translation("config.rechanted.ultimate.key.title").define("key", "ultimate");
+                RARITY_4_COLOR = BUILDER.translation("config.rechanted.ultimate.color.title").defineInRange("color",
                                 16777045, 0, Integer.MAX_VALUE);
-                RARITY_3_EXP_COST = BUILDER.translation("config.rechanted.ultimate.exp_cost.title")
+                RARITY_4_EXP_COST = BUILDER.translation("config.rechanted.ultimate.exp_cost.title")
                                 .defineInRange("exp_cost", 400, 0, Integer.MAX_VALUE);
-                RARITY_3_WORLD_SPAWN_WEIGHT = BUILDER
+                RARITY_4_WORLD_SPAWN_WEIGHT = BUILDER
                                 .translation("config.rechanted.ultimate.world_spawn_weight.title")
                                 .defineInRange("world_spawn_weight", 3, 0, Integer.MAX_VALUE);
-                RARITY_3_MIN_SUCCESS = BUILDER.translation("config.rechanted.ultimate.min_success.title")
+                RARITY_4_MIN_SUCCESS = BUILDER.translation("config.rechanted.ultimate.min_success.title")
                                 .defineInRange("min_success", 50, 0, 100);
-                RARITY_3_MAX_SUCCESS = BUILDER.translation("config.rechanted.ultimate.max_success.title")
+                RARITY_4_MAX_SUCCESS = BUILDER.translation("config.rechanted.ultimate.max_success.title")
                                 .defineInRange("max_success", 100, 0, 100);
-                RARITY_3_FORCED_BOOK_BREAKS = BUILDER
+                RARITY_4_FORCED_BOOK_BREAKS = BUILDER
                                 .translation("config.rechanted.ultimate.guaranteed_bookshelf_breaks.title")
                                 .defineInRange("guaranteed_bookshelf_breaks", 0, 0, Integer.MAX_VALUE);
-                RARITY_3_FORCED_FLOOR_BREAKS = BUILDER
+                RARITY_4_FORCED_FLOOR_BREAKS = BUILDER
                                 .translation("config.rechanted.ultimate.guaranteed_floor_breaks.title")
                                 .defineInRange("guaranteed_floor_breaks", 0, 0, Integer.MAX_VALUE);
-                RARITY_3_BOOK_BREAK_CHANCE = BUILDER.translation("config.rechanted.ultimate.book_break_chance.title")
+                RARITY_4_BOOK_BREAK_CHANCE = BUILDER.translation("config.rechanted.ultimate.book_break_chance.title")
                                 .defineInRange("book_break_chance", 0.015, 0.0, 1.0);
-                RARITY_3_FLOOR_BREAK_CHANCE = BUILDER
+                RARITY_4_FLOOR_BREAK_CHANCE = BUILDER
                                 .translation("config.rechanted.ultimate.floor_break_chance.title")
                                 .defineInRange("floor_break_chance", 0.075, 0.0, 1.0);
-                RARITY_3_REQUIRED_BOOKSHELVES = BUILDER
+                RARITY_4_REQUIRED_BOOKSHELVES = BUILDER
                                 .translation("config.rechanted.ultimate.required_bookshelves.title")
                                 .defineInRange("required_bookshelves", 32, 0, Integer.MAX_VALUE);
-                RARITY_3_REQUIRED_LAPIS = BUILDER.translation("config.rechanted.ultimate.required_lapis.title")
+                RARITY_4_REQUIRED_LAPIS = BUILDER.translation("config.rechanted.ultimate.required_lapis.title")
                                 .defineInRange("required_lapis", 4, 0, 64);
-                RARITY_3_FLOOR_BLOCK_TYPE = BUILDER.translation("config.rechanted.ultimate.floor_block_type.title")
+                RARITY_4_FLOOR_BLOCK_TYPE = BUILDER.translation("config.rechanted.ultimate.floor_block_type.title")
                                 .define("floor_block_type", "minecraft:emerald_block");
-                RARITY_3_BONUS_ITEM_ROLL_CHANCE = BUILDER
+                RARITY_4_BONUS_ITEM_ROLL_CHANCE = BUILDER
                                 .translation("config.rechanted.ultimate.bonus_item_roll_chance.title")
                                 .defineInRange("bonus_item_roll_chance", 0.09, 0.0, 1.0);
-                RARITY_3_BONUS_ITEM_MYSTERIOUS_BOOK_WEIGHT = BUILDER
+                RARITY_4_BONUS_ITEM_MYSTERIOUS_BOOK_WEIGHT = BUILDER
                                 .translation("config.rechanted.ultimate.bonus_item_mysterious_book_weight.title")
                                 .defineInRange("bonus_item_mysterious_book_weight", 60, 0, Integer.MAX_VALUE);
-                RARITY_3_BONUS_ITEM_COMMON_GEM_POOL_WEIGHT = BUILDER
+                RARITY_4_BONUS_ITEM_COMMON_GEM_POOL_WEIGHT = BUILDER
                                 .translation("config.rechanted.ultimate.bonus_item_common_gem_pool_weight.title")
                                 .defineInRange("bonus_item_common_gem_pool_weight", 50, 0, Integer.MAX_VALUE);
-                RARITY_3_BONUS_ITEM_RARE_GEM_POOL_WEIGHT = BUILDER
+                RARITY_4_BONUS_ITEM_RARE_GEM_POOL_WEIGHT = BUILDER
                                 .translation("config.rechanted.ultimate.bonus_item_rare_gem_pool_weight.title")
                                 .defineInRange("bonus_item_rare_gem_pool_weight", 20, 0, Integer.MAX_VALUE);
-                RARITY_3_GRINDSTONE_XP_MIN = BUILDER.translation("config.rechanted.ultimate.grindstone_xp_min.title")
+                RARITY_4_GRINDSTONE_XP_MIN = BUILDER.translation("config.rechanted.ultimate.grindstone_xp_min.title")
                                 .defineInRange("grindstone_xp_min", 20, 0, Integer.MAX_VALUE);
-                RARITY_3_GRINDSTONE_XP_MAX = BUILDER.translation("config.rechanted.ultimate.grindstone_xp_max.title")
+                RARITY_4_GRINDSTONE_XP_MAX = BUILDER.translation("config.rechanted.ultimate.grindstone_xp_max.title")
                                 .defineInRange("grindstone_xp_max", 50, 0, Integer.MAX_VALUE);
-                ArrayList<String> rarity_3_default_enchantments = new ArrayList<>();
-                rarity_3_default_enchantments.add("minecraft:swift_sneak|2|1-3|3,2,1");
-                rarity_3_default_enchantments.add("minecraft:luck_of_the_sea|2|1-3|4,2,1");
-                rarity_3_default_enchantments.add("minecraft:sweeping_edge|2|1-3|3,2,1");
-                rarity_3_default_enchantments.add("minecraft:silk_touch|2|1|1");
-                rarity_3_default_enchantments.add("rechanted:ice_aspect|2|1-2|3,1");
-                rarity_3_default_enchantments.add("rechanted:timber|2|1-3|4,2,1");
-                rarity_3_default_enchantments.add("rechanted:courage|2|1-2|2,1");
-                rarity_3_default_enchantments.add("rechanted:wisdom|2|1-2|3,1");
-                rarity_3_default_enchantments.add("rechanted:vein_miner|1|1|1");
-                rarity_3_default_enchantments.add("rechanted:telekinesis|1|1|1");
-                rarity_3_default_enchantments.add("minecraft:wind_burst|1|1-3|3,2,1");
-                RARITY_3_ENCHANTMENTS = BUILDER.translation("config.rechanted.ultimate.enchantments.title")
-                                .defineList("enchantments", rarity_3_default_enchantments,
+                ArrayList<String> rarity_4_default_enchantments = new ArrayList<>();
+                rarity_4_default_enchantments.add("minecraft:swift_sneak|2|1-3|3,2,1");
+                rarity_4_default_enchantments.add("minecraft:luck_of_the_sea|2|1-3|4,2,1");
+                rarity_4_default_enchantments.add("minecraft:sweeping_edge|2|1-3|3,2,1");
+                rarity_4_default_enchantments.add("minecraft:silk_touch|2|1|1");
+                rarity_4_default_enchantments.add("rechanted:ice_aspect|2|1-2|3,1");
+                rarity_4_default_enchantments.add("rechanted:timber|2|1-3|4,2,1");
+                rarity_4_default_enchantments.add("rechanted:courage|2|1-2|2,1");
+                rarity_4_default_enchantments.add("rechanted:wisdom|2|1-2|3,1");
+                rarity_4_default_enchantments.add("rechanted:vein_miner|1|1|1");
+                rarity_4_default_enchantments.add("rechanted:telekinesis|1|1|1");
+                rarity_4_default_enchantments.add("minecraft:wind_burst|1|1-3|3,2,1");
+                RARITY_4_ENCHANTMENTS = BUILDER.translation("config.rechanted.ultimate.enchantments.title")
+                                .defineList("enchantments", rarity_4_default_enchantments,
                                                 () -> "minecraft:sharpness|1|1-4|3,3,2,1", s -> s instanceof String);
 
                 BUILDER.pop();
@@ -422,62 +514,62 @@ public class RechantedCommonConfigs {
                 // Legendary rarity builder default config
                 BUILDER.translation("config.rechanted.legendary.name")
                                 .comment("Configs for Legendary Rarity Enchantments").push("legendary");
-                RARITY_4_KEY = BUILDER.translation("config.rechanted.legendary.key.title").define("key", "legendary");
-                RARITY_4_COLOR = BUILDER.translation("config.rechanted.legendary.color.title").defineInRange("color",
+                RARITY_5_KEY = BUILDER.translation("config.rechanted.legendary.key.title").define("key", "legendary");
+                RARITY_5_COLOR = BUILDER.translation("config.rechanted.legendary.color.title").defineInRange("color",
                                 16755200, 0, Integer.MAX_VALUE);
-                RARITY_4_EXP_COST = BUILDER.translation("config.rechanted.legendary.exp_cost.title")
+                RARITY_5_EXP_COST = BUILDER.translation("config.rechanted.legendary.exp_cost.title")
                                 .defineInRange("exp_cost", 1250, 0, Integer.MAX_VALUE);
-                RARITY_4_WORLD_SPAWN_WEIGHT = BUILDER
+                RARITY_5_WORLD_SPAWN_WEIGHT = BUILDER
                                 .translation("config.rechanted.legendary.world_spawn_weight.title")
                                 .defineInRange("world_spawn_weight", 1, 0, Integer.MAX_VALUE);
-                RARITY_4_MIN_SUCCESS = BUILDER.translation("config.rechanted.legendary.min_success.title")
+                RARITY_5_MIN_SUCCESS = BUILDER.translation("config.rechanted.legendary.min_success.title")
                                 .defineInRange("min_success", 55, 0, 100);
-                RARITY_4_MAX_SUCCESS = BUILDER.translation("config.rechanted.legendary.max_success.title")
+                RARITY_5_MAX_SUCCESS = BUILDER.translation("config.rechanted.legendary.max_success.title")
                                 .defineInRange("max_success", 100, 0, 100);
-                RARITY_4_FORCED_BOOK_BREAKS = BUILDER
+                RARITY_5_FORCED_BOOK_BREAKS = BUILDER
                                 .translation("config.rechanted.legendary.guaranteed_bookshelf_breaks.title")
                                 .defineInRange("guaranteed_bookshelf_breaks", 0, 0, Integer.MAX_VALUE);
-                RARITY_4_FORCED_FLOOR_BREAKS = BUILDER
+                RARITY_5_FORCED_FLOOR_BREAKS = BUILDER
                                 .translation("config.rechanted.legendary.guaranteed_floor_breaks.title")
                                 .defineInRange("guaranteed_floor_breaks", 0, 0, Integer.MAX_VALUE);
-                RARITY_4_BOOK_BREAK_CHANCE = BUILDER.translation("config.rechanted.legendary.book_break_chance.title")
+                RARITY_5_BOOK_BREAK_CHANCE = BUILDER.translation("config.rechanted.legendary.book_break_chance.title")
                                 .defineInRange("book_break_chance", 0.015, 0.0, 1.0);
-                RARITY_4_FLOOR_BREAK_CHANCE = BUILDER
+                RARITY_5_FLOOR_BREAK_CHANCE = BUILDER
                                 .translation("config.rechanted.legendary.floor_break_chance.title")
                                 .defineInRange("floor_break_chance", 0.09, 0.0, 1.0);
-                RARITY_4_REQUIRED_BOOKSHELVES = BUILDER
+                RARITY_5_REQUIRED_BOOKSHELVES = BUILDER
                                 .translation("config.rechanted.legendary.required_bookshelves.title")
                                 .defineInRange("required_bookshelves", 45, 0, Integer.MAX_VALUE);
-                RARITY_4_REQUIRED_LAPIS = BUILDER.translation("config.rechanted.legendary.required_lapis.title")
+                RARITY_5_REQUIRED_LAPIS = BUILDER.translation("config.rechanted.legendary.required_lapis.title")
                                 .defineInRange("required_lapis", 5, 0, 64);
-                RARITY_4_FLOOR_BLOCK_TYPE = BUILDER.translation("config.rechanted.legendary.floor_block_type.title")
+                RARITY_5_FLOOR_BLOCK_TYPE = BUILDER.translation("config.rechanted.legendary.floor_block_type.title")
                                 .define("floor_block_type", "minecraft:ancient_debris");
-                RARITY_4_BONUS_ITEM_ROLL_CHANCE = BUILDER
+                RARITY_5_BONUS_ITEM_ROLL_CHANCE = BUILDER
                                 .translation("config.rechanted.legendary.bonus_item_roll_chance.title")
                                 .defineInRange("bonus_item_roll_chance", 0.12, 0.0, 1.0);
-                RARITY_4_BONUS_ITEM_MYSTERIOUS_BOOK_WEIGHT = BUILDER
+                RARITY_5_BONUS_ITEM_MYSTERIOUS_BOOK_WEIGHT = BUILDER
                                 .translation("config.rechanted.legendary.bonus_item_mysterious_book_weight.title")
                                 .defineInRange("bonus_item_mysterious_book_weight", 15, 0, Integer.MAX_VALUE);
-                RARITY_4_BONUS_ITEM_COMMON_GEM_POOL_WEIGHT = BUILDER
+                RARITY_5_BONUS_ITEM_COMMON_GEM_POOL_WEIGHT = BUILDER
                                 .translation("config.rechanted.legendary.bonus_item_common_gem_pool_weight.title")
                                 .defineInRange("bonus_item_common_gem_pool_weight", 50, 0, Integer.MAX_VALUE);
-                RARITY_4_BONUS_ITEM_RARE_GEM_POOL_WEIGHT = BUILDER
+                RARITY_5_BONUS_ITEM_RARE_GEM_POOL_WEIGHT = BUILDER
                                 .translation("config.rechanted.legendary.bonus_item_rare_gem_pool_weight.title")
                                 .defineInRange("bonus_item_rare_gem_pool_weight", 20, 0, Integer.MAX_VALUE);
-                RARITY_4_GRINDSTONE_XP_MIN = BUILDER.translation("config.rechanted.legendary.grindstone_xp_min.title")
+                RARITY_5_GRINDSTONE_XP_MIN = BUILDER.translation("config.rechanted.legendary.grindstone_xp_min.title")
                                 .defineInRange("grindstone_xp_min", 75, 0, Integer.MAX_VALUE);
-                RARITY_4_GRINDSTONE_XP_MAX = BUILDER.translation("config.rechanted.legendary.grindstone_xp_max.title")
+                RARITY_5_GRINDSTONE_XP_MAX = BUILDER.translation("config.rechanted.legendary.grindstone_xp_max.title")
                                 .defineInRange("grindstone_xp_max", 150, 0, Integer.MAX_VALUE);
-                ArrayList<String> rarity_4_default_enchantments = new ArrayList<>();
-                rarity_4_default_enchantments.add("rechanted:inquisitive|3|1-4|5,4,2,1");
-                rarity_4_default_enchantments.add("rechanted:thunder_strike|3|1-4|5,3,2,1");
-                rarity_4_default_enchantments.add("rechanted:overload|3|1-3|4,2,1");
-                rarity_4_default_enchantments.add("rechanted:blitz|3|1-4|5,3,2,1");
-                rarity_4_default_enchantments.add("rechanted:volley|2|1-3|5,2,1");
-                rarity_4_default_enchantments.add("minecraft:infinity|1|1|1");
-                rarity_4_default_enchantments.add("rechanted:rebirth|1|1|1");
-                RARITY_4_ENCHANTMENTS = BUILDER.translation("config.rechanted.legendary.enchantments.title")
-                                .defineList("enchantments", rarity_4_default_enchantments,
+                ArrayList<String> rarity_5_default_enchantments = new ArrayList<>();
+                rarity_5_default_enchantments.add("rechanted:inquisitive|3|1-4|5,4,2,1");
+                rarity_5_default_enchantments.add("rechanted:thunder_strike|3|1-4|5,3,2,1");
+                rarity_5_default_enchantments.add("rechanted:overload|3|1-3|4,2,1");
+                rarity_5_default_enchantments.add("rechanted:blitz|3|1-4|5,3,2,1");
+                rarity_5_default_enchantments.add("rechanted:volley|2|1-3|5,2,1");
+                rarity_5_default_enchantments.add("minecraft:infinity|1|1|1");
+                rarity_5_default_enchantments.add("rechanted:rebirth|1|1|1");
+                RARITY_5_ENCHANTMENTS = BUILDER.translation("config.rechanted.legendary.enchantments.title")
+                                .defineList("enchantments", rarity_5_default_enchantments,
                                                 () -> "minecraft:sharpness|1|1-4|3,3,2,1", s -> s instanceof String);
 
                 BUILDER.pop();
