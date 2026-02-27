@@ -1,0 +1,44 @@
+{
+  "parent": "rechanted:first_gem_held",
+  "display": {
+    "icon": {
+      "id": "rechanted:advancement_chronicler"
+    },
+    "title": {
+      "text": "Chronicler of Jewels"
+    },
+    "description": {
+      "text": "Discover all gems!"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "held_chance_gem": {
+      "trigger": "minecraft:impossible"
+    },
+    "held_shiny_chance_gem": {
+      "trigger": "minecraft:impossible"
+    },
+    "held_return_gem": {
+      "trigger": "minecraft:impossible"
+    },
+    "held_tasty_gem": {
+      "trigger": "minecraft:impossible"
+    },
+    "held_warp_gem": {
+      "trigger": "minecraft:impossible"
+    },
+    "held_lucky_gem": {
+      "trigger": "minecraft:impossible"
+    },
+    "held_clone_gem": {
+      "trigger": "minecraft:impossible"
+    },
+    "held_smithing_gem": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

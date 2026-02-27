@@ -1,0 +1,23 @@
+{
+  "parent": "rechanted:power_enchanting_table",
+  "display": {
+    "icon": {
+      "id": "rechanted:chance_gem"
+    },
+    "title": {
+      "text": "Shiny!"
+    },
+    "description": {
+      "text": "Discover your first powerful gem."
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "hold_first_gem": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

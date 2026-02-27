@@ -1,0 +1,23 @@
+{
+  "parent": "rechanted:legendary_pull",
+  "display": {
+    "icon": {
+      "id": "minecraft:netherite_sword"
+    },
+    "title": {
+      "text": "Excalibur"
+    },
+    "description": {
+      "text": "Wield a sword with the maximum number of enchantments applied!"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "hold_max_sword_enchants": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

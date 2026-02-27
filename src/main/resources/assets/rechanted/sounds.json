@@ -1,0 +1,141 @@
+{
+  "enchanted_book_fail": {
+    "subtitles": "sounds.rechanted.enchanted_book_fail",
+    "sounds": [
+        "rechanted:enchanted_book_fail"
+    ]
+  },
+
+  "rebirth_item": {
+    "subtitles": "sounds.rechanted.rebirth_item",
+    "sounds": [
+      "rechanted:rebirth_item"
+    ]
+  },
+
+  "enchant_table_ambient": {
+    "subtitles": "sounds.rechanted.enchant_table_ambient",
+    "sounds": [
+      {
+        "name": "rechanted:enchant_table_ambient",
+        "stream": true,
+        "attenuation_distance": 5
+      }
+    ]
+  },
+
+  "enchant_table_charge": {
+    "subtitles": "sounds.rechanted.enchant_table_charge",
+    "sounds": [
+      "rechanted:enchant_table_charge"
+    ]
+  },
+
+  "enchant_table_discharge": {
+    "subtitles": "sounds.rechanted.enchant_table_discharge",
+    "sounds": [
+      {
+        "name": "rechanted:enchant_table_discharge"
+      }
+    ]
+  },
+
+  "enchant_table_open": {
+    "subtitles": "sounds.rechanted.enchant_table_open",
+    "sounds": [
+      {
+        "name": "rechanted:enchant_table_flip1"
+      },
+      {
+        "name": "rechanted:enchant_table_flip2"
+      },
+      {
+        "name": "rechanted:enchant_table_flip3"
+      }
+    ]
+  },
+  "enchant_table_close": {
+    "subtitles": "sounds.rechanted.enchant_table_close",
+    "sounds": [
+      {
+        "name": "rechanted:enchant_table_close1"
+      },
+      {
+        "name": "rechanted:enchant_table_close2"
+      },
+      {
+        "name": "rechanted:enchant_table_close3"
+      },
+      {
+        "name": "rechanted:enchant_table_close4"
+      }
+    ]
+  },
+  "super_burp": {
+    "subtitles": "sounds.rechanted.super_burp",
+    "sounds": [
+      {
+        "name": "rechanted:super_burp"
+      }
+    ]
+  },
+  "ender_eye_death": {
+    "subtitles": "sounds.rechanted.ender_eye_death",
+    "sounds": [
+      {
+        "name": "rechanted:ender_eye_death1"
+      },
+      {
+        "name": "rechanted:ender_eye_death2"
+      }
+    ]
+  },
+  "item_pending_t1": {
+    "subtitles": "sounds.rechanted.item_pending_t1",
+    "sounds": [
+      {
+        "name": "rechanted:item_pending_t1"
+      }
+    ]
+  },
+  "item_earned_t1": {
+    "subtitles": "sounds.rechanted.item_earned_t1",
+    "sounds": [
+      {
+        "name": "rechanted:item_earned_t1"
+      }
+    ]
+  },
+  "item_pending_t2": {
+    "subtitles": "sounds.rechanted.item_pending_t2",
+    "sounds": [
+      {
+        "name": "rechanted:item_pending_t2"
+      }
+    ]
+  },
+  "item_earned_t2": {
+    "subtitles": "sounds.rechanted.item_earned_t2",
+    "sounds": [
+      {
+        "name": "rechanted:item_earned_t2"
+      }
+    ]
+  },
+  "item_pending_t3": {
+    "subtitles": "sounds.rechanted.item_pending_t3",
+    "sounds": [
+      {
+        "name": "rechanted:item_pending_t3"
+      }
+    ]
+  },
+  "item_earned_t3": {
+    "subtitles": "sounds.rechanted.item_earned_t3",
+    "sounds": [
+      {
+        "name": "rechanted:item_earned_t3"
+      }
+    ]
+  }
+}

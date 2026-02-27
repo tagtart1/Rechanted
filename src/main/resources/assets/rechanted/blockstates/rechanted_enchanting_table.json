@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "rechanted:block/rechanted_enchanting_table"
+    },
+    "facing=south": {
+      "model": "rechanted:block/rechanted_enchanting_table",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "rechanted:block/rechanted_enchanting_table",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "rechanted:block/rechanted_enchanting_table",
+      "y": 270
+    }
+  }
+}

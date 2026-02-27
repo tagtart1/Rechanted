@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.tagtart.rechanted.mixins",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "mixins.rechanted.refmap.json",
+  "mixins": [
+    "FortuneMixin",
+    "EnchantmentTableBlockMixin",
+    "ItemRendererMixin",
+    "EnchantTableRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "parent": "rechanted:power_enchanting_table",
+  "display": {
+    "icon": {
+      "id": "rechanted:advancement_legendary_pull"
+    },
+    "title": {
+      "text": "Legendary Pull"
+    },
+    "description": {
+      "text": "Discover a legendary book."
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "hold_legendary_book": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

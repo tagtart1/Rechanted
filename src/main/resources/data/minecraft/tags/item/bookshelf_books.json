@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "rechantment:rechantment_book",
-    "rechantment:mysterious_book"
+    "rechanted:rechanted_book",
+    "rechanted:mysterious_book"
   ]
 }

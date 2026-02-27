@@ -1,0 +1,23 @@
+{
+  "parent": "rechanted:root",
+  "display": {
+    "icon": {
+      "id": "rechanted:rechanted_enchanting_table"
+    },
+    "title": {
+      "text": "Catalyst"
+    },
+    "description": {
+      "text": "Imbue the enchanting table with what villagers already hold dear."
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "use_emerald_on_enchanting_table": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

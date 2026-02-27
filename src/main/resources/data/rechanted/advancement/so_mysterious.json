@@ -1,0 +1,23 @@
+{
+  "parent": "rechanted:power_enchanting_table",
+  "display": {
+    "icon": {
+      "id": "rechanted:mysterious_book"
+    },
+    "title": {
+      "text": "So Mysterious"
+    },
+    "description": {
+      "text": "Uncover the contents of a Mysterious Book."
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "open_one_mysterious_book": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

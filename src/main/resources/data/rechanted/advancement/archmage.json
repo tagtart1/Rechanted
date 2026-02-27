@@ -1,0 +1,23 @@
+{
+  "parent": "rechanted:legendary_pull",
+  "display": {
+    "icon": {
+      "id": "rechanted:advancement_archmage"
+    },
+    "title": {
+      "text": "Archmage"
+    },
+    "description": {
+      "text": "Discover all enchanted books!"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "discover_all_enchanted_books": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

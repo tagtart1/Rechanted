@@ -2,7 +2,7 @@
   "providers": [
     {
       "type": "bitmap",
-      "file": "rechantment:icons/enchantment_simple.png",
+      "file": "rechanted:icons/enchantment_simple.png",
       "ascent": 8,
       "height": 14,
       "chars": [
@@ -11,7 +11,7 @@
     },
     {
       "type": "bitmap",
-      "file": "rechantment:icons/enchantment_unique.png",
+      "file": "rechanted:icons/enchantment_unique.png",
       "ascent": 8,
       "height": 14,
       "chars": [
@@ -20,7 +20,7 @@
     },
     {
       "type": "bitmap",
-      "file": "rechantment:icons/enchantment_elite.png",
+      "file": "rechanted:icons/enchantment_elite.png",
       "ascent": 8,
       "height": 14,
       "chars": [
@@ -29,7 +29,7 @@
     },
     {
       "type": "bitmap",
-      "file": "rechantment:icons/enchantment_ultimate.png",
+      "file": "rechanted:icons/enchantment_ultimate.png",
       "ascent": 8,
       "height": 14,
       "chars": [
@@ -38,7 +38,7 @@
     },
     {
       "type": "bitmap",
-      "file": "rechantment:icons/enchantment_legendary.png",
+      "file": "rechanted:icons/enchantment_legendary.png",
       "ascent": 8,
       "height": 14,
       "chars": [
@@ -47,7 +47,7 @@
     },
     {
       "type": "bitmap",
-      "file": "rechantment:icons/item_axe.png",
+      "file": "rechanted:icons/item_axe.png",
       "ascent": 8,
       "height": 11,
       "chars": [
@@ -56,7 +56,7 @@
     },
     {
       "type": "bitmap",
-      "file": "rechantment:icons/item_boots.png",
+      "file": "rechanted:icons/item_boots.png",
       "ascent": 8,
       "height": 11,
       "chars": [
@@ -65,7 +65,7 @@
     },
     {
       "type": "bitmap",
-      "file": "rechantment:icons/item_bow.png",
+      "file": "rechanted:icons/item_bow.png",
       "ascent": 8,
       "height": 11,
       "chars": [
@@ -74,7 +74,7 @@
     },
     {
       "type": "bitmap",
-      "file": "rechantment:icons/item_chestplate.png",
+      "file": "rechanted:icons/item_chestplate.png",
       "ascent": 8,
       "height": 11,
       "chars": [
@@ -83,7 +83,7 @@
     },
     {
       "type": "bitmap",
-      "file": "rechantment:icons/item_crossbow.png",
+      "file": "rechanted:icons/item_crossbow.png",
       "ascent": 8,
       "height": 11,
       "chars": [
@@ -92,7 +92,7 @@
     },
     {
       "type": "bitmap",
-      "file": "rechantment:icons/item_elytra.png",
+      "file": "rechanted:icons/item_elytra.png",
       "ascent": 8,
       "height": 11,
       "chars": [
@@ -101,7 +101,7 @@
     },
     {
       "type": "bitmap",
-      "file": "rechantment:icons/item_fishing_rod.png",
+      "file": "rechanted:icons/item_fishing_rod.png",
       "ascent": 8,
       "height": 11,
       "chars": [
@@ -110,7 +110,7 @@
     },
     {
       "type": "bitmap",
-      "file": "rechantment:icons/item_food.png",
+      "file": "rechanted:icons/item_food.png",
       "ascent": 8,
       "height": 11,
       "chars": [
@@ -119,7 +119,7 @@
     },
     {
       "type": "bitmap",
-      "file": "rechantment:icons/item_helmet.png",
+      "file": "rechanted:icons/item_helmet.png",
       "ascent": 8,
       "height": 11,
       "chars": [
@@ -128,7 +128,7 @@
     },
     {
       "type": "bitmap",
-      "file": "rechantment:icons/item_hoe.png",
+      "file": "rechanted:icons/item_hoe.png",
       "ascent": 8,
       "height": 11,
       "chars": [
@@ -137,7 +137,7 @@
     },
     {
       "type": "bitmap",
-      "file": "rechantment:icons/item_leggings.png",
+      "file": "rechanted:icons/item_leggings.png",
       "ascent": 8,
       "height": 11,
       "chars": [
@@ -146,7 +146,7 @@
     },
     {
       "type": "bitmap",
-      "file": "rechantment:icons/item_pickaxe.png",
+      "file": "rechanted:icons/item_pickaxe.png",
       "ascent": 8,
       "height": 11,
       "chars": [
@@ -155,7 +155,7 @@
     },
     {
       "type": "bitmap",
-      "file": "rechantment:icons/item_shield.png",
+      "file": "rechanted:icons/item_shield.png",
       "ascent": 8,
       "height": 11,
       "chars": [
@@ -164,7 +164,7 @@
     },
     {
       "type": "bitmap",
-      "file": "rechantment:icons/item_shovel.png",
+      "file": "rechanted:icons/item_shovel.png",
       "ascent": 8,
       "height": 11,
       "chars": [
@@ -173,7 +173,7 @@
     },
     {
       "type": "bitmap",
-      "file": "rechantment:icons/item_sword.png",
+      "file": "rechanted:icons/item_sword.png",
       "ascent": 8,
       "height": 11,
       "chars": [
@@ -182,7 +182,7 @@
     },
     {
       "type": "bitmap",
-      "file": "rechantment:icons/item_trident.png",
+      "file": "rechanted:icons/item_trident.png",
       "ascent": 8,
       "height": 11,
       "chars": [
@@ -191,7 +191,7 @@
     },
     {
       "type": "bitmap",
-      "file": "rechantment:icons/item_spear.png",
+      "file": "rechanted:icons/item_spear.png",
       "ascent": 8,
       "height": 11,
       "chars": [
@@ -200,7 +200,7 @@
     },
     {
       "type": "bitmap",
-      "file": "rechantment:icons/item_mace.png",
+      "file": "rechanted:icons/item_mace.png",
       "ascent": 8,
       "height": 11,
       "chars": [

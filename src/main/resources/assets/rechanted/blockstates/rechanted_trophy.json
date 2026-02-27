@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "rechanted:block/rechanted_trophy"
+    },
+    "facing=south": {
+      "model": "rechanted:block/rechanted_trophy",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "rechanted:block/rechanted_trophy",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "rechanted:block/rechanted_trophy",
+      "y": 270
+    }
+  }
+}
