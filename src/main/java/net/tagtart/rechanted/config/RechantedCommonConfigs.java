@@ -186,13 +186,13 @@ public class RechantedCommonConfigs {
                                 .define("floor_block_type", "minecraft:iron_block");
                 RARITY_0_BONUS_ITEM_ROLL_CHANCE = BUILDER
                                 .translation("config.rechanted.simple.bonus_item_roll_chance.title")
-                                .defineInRange("bonus_item_roll_chance", 0.06, 0.0, 1.0);
+                                .defineInRange("bonus_item_roll_chance", 0.085, 0.0, 1.0);
                 RARITY_0_BONUS_ITEM_MYSTERIOUS_BOOK_WEIGHT = BUILDER
                                 .translation("config.rechanted.simple.bonus_item_mysterious_book_weight.title")
-                                .defineInRange("bonus_item_mysterious_book_weight", 25, 0, Integer.MAX_VALUE);
+                                .defineInRange("bonus_item_mysterious_book_weight", 60, 0, Integer.MAX_VALUE);
                 RARITY_0_BONUS_ITEM_COMMON_GEM_POOL_WEIGHT = BUILDER
                                 .translation("config.rechanted.simple.bonus_item_common_gem_pool_weight.title")
-                                .defineInRange("bonus_item_common_gem_pool_weight", 75, 0, Integer.MAX_VALUE);
+                                .defineInRange("bonus_item_common_gem_pool_weight", 40, 0, Integer.MAX_VALUE);
                 RARITY_0_BONUS_ITEM_RARE_GEM_POOL_WEIGHT = BUILDER
                                 .translation("config.rechanted.simple.bonus_item_rare_gem_pool_weight.title")
                                 .defineInRange("bonus_item_rare_gem_pool_weight", 10, 0, Integer.MAX_VALUE);
@@ -257,16 +257,16 @@ public class RechantedCommonConfigs {
                                 .define("floor_block_type", "minecraft:gold_block");
                 RARITY_1_BONUS_ITEM_ROLL_CHANCE = BUILDER
                                 .translation("config.rechanted.unique.bonus_item_roll_chance.title")
-                                .defineInRange("bonus_item_roll_chance", 0.065, 0.0, 1.0);
+                                .defineInRange("bonus_item_roll_chance", 0.085, 0.0, 1.0);
                 RARITY_1_BONUS_ITEM_MYSTERIOUS_BOOK_WEIGHT = BUILDER
                                 .translation("config.rechanted.unique.bonus_item_mysterious_book_weight.title")
-                                .defineInRange("bonus_item_mysterious_book_weight", 25, 0, Integer.MAX_VALUE);
+                                .defineInRange("bonus_item_mysterious_book_weight", 60, 0, Integer.MAX_VALUE);
                 RARITY_1_BONUS_ITEM_COMMON_GEM_POOL_WEIGHT = BUILDER
                                 .translation("config.rechanted.unique.bonus_item_common_gem_pool_weight.title")
-                                .defineInRange("bonus_item_common_gem_pool_weight", 75, 0, Integer.MAX_VALUE);
+                                .defineInRange("bonus_item_common_gem_pool_weight", 40, 0, Integer.MAX_VALUE);
                 RARITY_1_BONUS_ITEM_RARE_GEM_POOL_WEIGHT = BUILDER
                                 .translation("config.rechanted.unique.bonus_item_rare_gem_pool_weight.title")
-                                .defineInRange("bonus_item_rare_gem_pool_weight", 15, 0, Integer.MAX_VALUE);
+                                .defineInRange("bonus_item_rare_gem_pool_weight", 12, 0, Integer.MAX_VALUE);
                 RARITY_1_GRINDSTONE_XP_MIN = BUILDER.translation("config.rechanted.unique.grindstone_xp_min.title")
                                 .defineInRange("grindstone_xp_min", 5, 0, Integer.MAX_VALUE);
                 RARITY_1_GRINDSTONE_XP_MAX = BUILDER.translation("config.rechanted.unique.grindstone_xp_max.title")
@@ -320,16 +320,16 @@ public class RechantedCommonConfigs {
                                 .define("floor_block_type", "minecraft:diamond_block");
                 RARITY_2_BONUS_ITEM_ROLL_CHANCE = BUILDER
                                 .translation("config.rechanted.elite.bonus_item_roll_chance.title")
-                                .defineInRange("bonus_item_roll_chance", 0.075, 0.0, 1.0);
+                                .defineInRange("bonus_item_roll_chance", 0.095, 0.0, 1.0);
                 RARITY_2_BONUS_ITEM_MYSTERIOUS_BOOK_WEIGHT = BUILDER
                                 .translation("config.rechanted.elite.bonus_item_mysterious_book_weight.title")
-                                .defineInRange("bonus_item_mysterious_book_weight", 20, 0, Integer.MAX_VALUE);
+                                .defineInRange("bonus_item_mysterious_book_weight", 60, 0, Integer.MAX_VALUE);
                 RARITY_2_BONUS_ITEM_COMMON_GEM_POOL_WEIGHT = BUILDER
                                 .translation("config.rechanted.elite.bonus_item_common_gem_pool_weight.title")
-                                .defineInRange("bonus_item_common_gem_pool_weight", 100, 0, Integer.MAX_VALUE);
+                                .defineInRange("bonus_item_common_gem_pool_weight", 50, 0, Integer.MAX_VALUE);
                 RARITY_2_BONUS_ITEM_RARE_GEM_POOL_WEIGHT = BUILDER
                                 .translation("config.rechanted.elite.bonus_item_rare_gem_pool_weight.title")
-                                .defineInRange("bonus_item_rare_gem_pool_weight", 30, 0, Integer.MAX_VALUE);
+                                .defineInRange("bonus_item_rare_gem_pool_weight", 20, 0, Integer.MAX_VALUE);
                 RARITY_2_GRINDSTONE_XP_MIN = BUILDER.translation("config.rechanted.elite.grindstone_xp_min.title")
                                 .defineInRange("grindstone_xp_min", 10, 0, Integer.MAX_VALUE);
                 RARITY_2_GRINDSTONE_XP_MAX = BUILDER.translation("config.rechanted.elite.grindstone_xp_max.title")
@@ -387,13 +387,13 @@ public class RechantedCommonConfigs {
                                 .define("floor_block_type", "minecraft:emerald_block");
                 RARITY_3_BONUS_ITEM_ROLL_CHANCE = BUILDER
                                 .translation("config.rechanted.ultimate.bonus_item_roll_chance.title")
-                                .defineInRange("bonus_item_roll_chance", 0.07, 0.0, 1.0);
+                                .defineInRange("bonus_item_roll_chance", 0.09, 0.0, 1.0);
                 RARITY_3_BONUS_ITEM_MYSTERIOUS_BOOK_WEIGHT = BUILDER
                                 .translation("config.rechanted.ultimate.bonus_item_mysterious_book_weight.title")
-                                .defineInRange("bonus_item_mysterious_book_weight", 25, 0, Integer.MAX_VALUE);
+                                .defineInRange("bonus_item_mysterious_book_weight", 60, 0, Integer.MAX_VALUE);
                 RARITY_3_BONUS_ITEM_COMMON_GEM_POOL_WEIGHT = BUILDER
                                 .translation("config.rechanted.ultimate.bonus_item_common_gem_pool_weight.title")
-                                .defineInRange("bonus_item_common_gem_pool_weight", 100, 0, Integer.MAX_VALUE);
+                                .defineInRange("bonus_item_common_gem_pool_weight", 50, 0, Integer.MAX_VALUE);
                 RARITY_3_BONUS_ITEM_RARE_GEM_POOL_WEIGHT = BUILDER
                                 .translation("config.rechanted.ultimate.bonus_item_rare_gem_pool_weight.title")
                                 .defineInRange("bonus_item_rare_gem_pool_weight", 20, 0, Integer.MAX_VALUE);
@@ -454,16 +454,16 @@ public class RechantedCommonConfigs {
                                 .define("floor_block_type", "minecraft:ancient_debris");
                 RARITY_4_BONUS_ITEM_ROLL_CHANCE = BUILDER
                                 .translation("config.rechanted.legendary.bonus_item_roll_chance.title")
-                                .defineInRange("bonus_item_roll_chance", 0.1, 0.0, 1.0);
+                                .defineInRange("bonus_item_roll_chance", 0.12, 0.0, 1.0);
                 RARITY_4_BONUS_ITEM_MYSTERIOUS_BOOK_WEIGHT = BUILDER
                                 .translation("config.rechanted.legendary.bonus_item_mysterious_book_weight.title")
                                 .defineInRange("bonus_item_mysterious_book_weight", 15, 0, Integer.MAX_VALUE);
                 RARITY_4_BONUS_ITEM_COMMON_GEM_POOL_WEIGHT = BUILDER
                                 .translation("config.rechanted.legendary.bonus_item_common_gem_pool_weight.title")
-                                .defineInRange("bonus_item_common_gem_pool_weight", 100, 0, Integer.MAX_VALUE);
+                                .defineInRange("bonus_item_common_gem_pool_weight", 50, 0, Integer.MAX_VALUE);
                 RARITY_4_BONUS_ITEM_RARE_GEM_POOL_WEIGHT = BUILDER
                                 .translation("config.rechanted.legendary.bonus_item_rare_gem_pool_weight.title")
-                                .defineInRange("bonus_item_rare_gem_pool_weight", 35, 0, Integer.MAX_VALUE);
+                                .defineInRange("bonus_item_rare_gem_pool_weight", 20, 0, Integer.MAX_VALUE);
                 RARITY_4_GRINDSTONE_XP_MIN = BUILDER.translation("config.rechanted.legendary.grindstone_xp_min.title")
                                 .defineInRange("grindstone_xp_min", 75, 0, Integer.MAX_VALUE);
                 RARITY_4_GRINDSTONE_XP_MAX = BUILDER.translation("config.rechanted.legendary.grindstone_xp_max.title")
@@ -490,12 +490,12 @@ public class RechantedCommonConfigs {
                                 .define("grindstone_result_item", "minecraft:paper");
                 BUILDER.comment("Global weighted pools used by bonus item rewards.");
                 ArrayList<String> common_gem_pool_defaults = new ArrayList<>();
-                common_gem_pool_defaults.add("rechanted:chance_gem|80");
+                common_gem_pool_defaults.add("rechanted:chance_gem|75");
                 common_gem_pool_defaults.add("rechanted:warp_gem|35");
                 common_gem_pool_defaults.add("rechanted:lucky_gem|35");
                 common_gem_pool_defaults.add("rechanted:tasty_gem|20");
                 COMMON_GEM_POOL = BUILDER.translation("config.rechanted.common_gem_pool.title").defineList(
-                                "common_gem_pool", common_gem_pool_defaults, () -> "rechanted:chance_gem|80",
+                                "common_gem_pool", common_gem_pool_defaults, () -> "rechanted:chance_gem|75",
                                 s -> s instanceof String);
 
                 ArrayList<String> rare_gem_pool_defaults = new ArrayList<>();
@@ -518,7 +518,6 @@ public class RechantedCommonConfigs {
                 announce_enchantments.add("rechanted:inquisitive|4");
                 announce_enchantments.add("minecraft:looting|3");
                 announce_enchantments.add("rechanted:rebirth|1");
-                announce_enchantments.add("minecraft:unbreaking|2-3");
                 ANNOUNCEMENT_ENCHANTMENTS = BUILDER.translation("config.rechanted.announce_enchantments.title")
                                 .defineList("announce_enchantments", announce_enchantments,
                                                 () -> "rechanted:sharpness|3-5", s -> s instanceof String);
