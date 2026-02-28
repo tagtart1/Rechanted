@@ -28,6 +28,9 @@ public class ModLootModifiers {
     public static final Supplier<MapCodec<RemoveMendingLootModifier>> REMOVE_MENDING_LOOT =
             LOOT_MODIFIERS.register("remove_mending_loot", () -> RemoveMendingLootModifier.CODEC);
 
+    public static final Supplier<MapCodec<AddDustyMysteriousBookToFishingLootModifier>> ADD_DUSTY_MYSTERIOUS_BOOK_TO_FISHING =
+            LOOT_MODIFIERS.register("add_dusty_mysterious_book_to_fishing", () -> AddDustyMysteriousBookToFishingLootModifier.CODEC);
+
     public static void register(IEventBus eventBus) {
         LOOT_MODIFIERS.register(eventBus);
     }

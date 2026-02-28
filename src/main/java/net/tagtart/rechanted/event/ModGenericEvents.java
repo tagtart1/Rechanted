@@ -586,6 +586,7 @@ public class ModGenericEvents {
 
         markAsObtained(stack);
 
+        AdvancementHelper.awardUnforgottenAdvancementIfEligible(player, level, stack);
         AdvancementHelper.awardLegendaryPullAdvancementIfEligible(player, level, stack);
         AdvancementHelper.awardArchmageProgressFromBook(player, level, stack);
     }

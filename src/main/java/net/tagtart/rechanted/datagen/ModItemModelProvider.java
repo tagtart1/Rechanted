@@ -26,6 +26,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.CLONE_GEM.get());
         basicItem(ModItems.SMITHING_GEM.get());
         basicItem(ModItems.MYSTERIOUS_BOOK.get());
+        basicItem(ModItems.DUSTY_MYSTERIOUS_BOOK.get());
 
         genericIconItem(ModItems.LEGENDARY_PULL_ICON.getId().getPath(), "item/legendary");
         genericIconItem(ModItems.ARCHMAGE_ICON.getId().getPath(), "item/advancement_archmage");

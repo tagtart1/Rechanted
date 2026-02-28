@@ -1,0 +1,23 @@
+{
+  "parent": "rechanted:power_enchanting_table",
+  "display": {
+    "icon": {
+      "id": "rechanted:dusty_mysterious_book"
+    },
+    "title": {
+      "text": "Unforgotten Magic"
+    },
+    "description": {
+      "text": "Find a Dusty Book, a collection less valued but still appreciated enchantments."
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "hold_first_dusty_mysterious_book": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

@@ -40,7 +40,9 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.WARP_GEM.get());
                         output.accept(ModItems.LUCKY_GEM.get());
                         output.accept(ModItems.SMITHING_GEM.get());
+
                         output.accept(ModItems.MYSTERIOUS_BOOK.get());
+                        output.accept(ModItems.DUSTY_MYSTERIOUS_BOOK.get());
 
                         BookRarityProperties[] bookRarityProperties = BookRarityProperties.getAllProperties();
                         for(BookRarityProperties bookRarityProperty : bookRarityProperties) {

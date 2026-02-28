@@ -32,6 +32,9 @@ public class RechantedCommonConfigs {
         public static final ModConfigSpec.IntValue RARITY_0_GRINDSTONE_XP_MAX;
         public static final ModConfigSpec.ConfigValue<List<? extends String>> RARITY_0_ENCHANTMENTS;
 
+        // Chance for dusty book to drop from fishing loot pool.
+        public static final ModConfigSpec.DoubleValue RARITY_0_FISHING_JUNK_DROP_CHANCE;
+
         // Simple tier configs.
         public static final ModConfigSpec.ConfigValue<? extends String> RARITY_1_KEY;
         public static final ModConfigSpec.IntValue RARITY_1_COLOR;
@@ -164,6 +167,7 @@ public class RechantedCommonConfigs {
         public static final ModConfigSpec.DoubleValue WORLD_LOOT_GEM_DROP_CHANCE;
         public static final ModConfigSpec.ConfigValue<? extends Boolean> MODIFY_VILLAGER_TRADES;
         public static final ModConfigSpec.IntValue VILLAGER_MYSTERIOUS_BOOK_EMERALD_COST;
+        public static final ModConfigSpec.IntValue VILLAGER_DUSTY_MYSTERIOUS_BOOK_EMERALD_COST;
         // Fortune nerf configs
         public static final ModConfigSpec.ConfigValue<? extends Boolean> FORTUNE_NERF_ENABLED;
         public static final ModConfigSpec.DoubleValue FORTUNE_1_CHANCE;
@@ -179,6 +183,8 @@ public class RechantedCommonConfigs {
                 // Dusty rarity properties; not accessible from enchanting table by default, but still here
                 // for consistency or if someone wants to swap a tier out for it.
                 BUILDER.translation("config.rechanted.dusty.name").push("Dusty");
+                BUILDER.comment("This rarity is not accessible from the enchanter, but has the same configs for consistency.",
+                        "Tiers obtainable in the enchanter start at Simple tier.");
                 RARITY_0_KEY = BUILDER.translation("config.rechanted.dusty.key.title").define("key", "dusty");
                 RARITY_0_COLOR = BUILDER.translation("config.rechanted.dusty.color.title").defineInRange("color",
                         3881787, 0, Integer.MAX_VALUE);
@@ -244,6 +250,10 @@ public class RechantedCommonConfigs {
                 RARITY_0_ENCHANTMENTS = BUILDER.translation("config.rechanted.dusty.enchantments.title").defineList(
                         "enchantments", rarity_0_default_enchantments,
                         () -> "minecraft:sharpness|1|1-4|3,3,2,1", s -> s instanceof String);
+
+                RARITY_0_FISHING_JUNK_DROP_CHANCE = BUILDER.translation("config.rechanted.dusty.fishing_junk_drop_chance.title")
+                        .defineInRange("fishing_junk_drop_chance", 0.075, 0.0, 1.0);
+
                 BUILDER.pop();
 
                 // Simple rarity properties.
@@ -677,6 +687,11 @@ public class RechantedCommonConfigs {
                 VILLAGER_MYSTERIOUS_BOOK_EMERALD_COST = BUILDER
                                 .translation("config.rechanted.mysterious_book_emerald_cost.title")
                                 .defineInRange("mysterious_book_emerald_cost", 32, 1, 64);
+
+                VILLAGER_DUSTY_MYSTERIOUS_BOOK_EMERALD_COST = BUILDER
+                        .translation("config.rechanted.dusty_mysterious_book_emerald_cost.title")
+                        .defineInRange("dusty_mysterious_book_emerald_cost", 8, 1, 64);
+
                 BUILDER.pop();
 
                 BUILDER.translation("config.rechanted.fortune_nerf.name")

@@ -5,10 +5,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.data.GlobalLootModifierProvider;
 import net.tagtart.rechanted.Rechanted;
-import net.tagtart.rechanted.loot.FishingNerfLootModifier;
-import net.tagtart.rechanted.loot.ReplaceEnchantedLootModifier;
-import net.tagtart.rechanted.loot.ReplaceVanillaEnchantedBookModifier;
-import net.tagtart.rechanted.loot.RemoveMendingLootModifier;
+import net.tagtart.rechanted.loot.*;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -23,5 +20,6 @@ public class ModGlobalLootModifiersProvider extends GlobalLootModifierProvider {
         add("fishing_nerf_loot", new FishingNerfLootModifier(new LootItemCondition[]{}));
         add("replace_enchanted_loot", new ReplaceEnchantedLootModifier(new LootItemCondition[]{}));
         add("remove_mending_loot", new RemoveMendingLootModifier(new LootItemCondition[]{}));
+        add("add_dusty_mysterious_book_to_fishing", new AddDustyMysteriousBookToFishingLootModifier(new LootItemCondition[]{}));
     }
 }

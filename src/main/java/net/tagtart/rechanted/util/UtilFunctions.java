@@ -206,6 +206,11 @@ public class UtilFunctions {
     }
 
     public static ItemStack rollModdedBook(RegistryAccess registryAccess, boolean allowWorldLootGemDrops) {
+        return rollModdedBook(registryAccess, allowWorldLootGemDrops, -1);
+    }
+
+
+    public static ItemStack rollModdedBook(RegistryAccess registryAccess, boolean allowWorldLootGemDrops, int forcedRarity) {
         Random random = new Random();
 
         if (allowWorldLootGemDrops) {
@@ -220,7 +225,14 @@ public class UtilFunctions {
         }
 
         ItemStack replacementBook = new ItemStack(ModItems.RECHANTED_BOOK.get());
-        BookRarityProperties bookRarityProperties = BookRarityProperties.getRandomRarityWeighted();
+        BookRarityProperties bookRarityProperties;
+        if (forcedRarity == -1) {
+            bookRarityProperties = BookRarityProperties.getRandomRarityWeighted();
+        }
+        else {
+            forcedRarity = Math.clamp(forcedRarity, 0, BookRarityProperties.getAllProperties().length - 1);
+            bookRarityProperties = BookRarityProperties.getAllProperties()[forcedRarity];
+        }
         EnchantmentPoolEntry randomEnchantment = bookRarityProperties.getRandomEnchantmentWeighted();
         int enchantmentLevel = randomEnchantment.getRandomEnchantLevelWeighted();
 

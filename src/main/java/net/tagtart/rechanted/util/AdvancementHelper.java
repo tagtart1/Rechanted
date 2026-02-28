@@ -82,6 +82,10 @@ public final class AdvancementHelper {
             .fromNamespaceAndPath(Rechanted.MOD_ID, "exceptional_levels_of_mystery");
     private static final String EXCEPTIONAL_LEVELS_OF_MYSTERY_CRITERION = "open_ten_mysterious_books";
 
+    private static final ResourceLocation FIRST_DUSTY_BOOK_HELD_ADVANCEMENT_ID = ResourceLocation
+            .fromNamespaceAndPath(Rechanted.MOD_ID, "unforgotten_magic");
+    private static final String FIRST_DUSTY_BOOK_HELD_CRITERION = "hold_first_dusty_mysterious_book";
+
     private static final int SO_MYSTERIOUS_REQUIRED_OPENS = 1;
     private static final int EXCEPTIONAL_LEVELS_OF_MYSTERY_REQUIRED_OPENS = 10;
     private static final int UNBOXING_REQUIRED_OPENS = 5;
@@ -99,6 +103,21 @@ public final class AdvancementHelper {
         var advancement = level.getServer().getAdvancements().get(UPGRADE_ENCHANT_TABLE_ADVANCEMENT_ID);
         if (advancement != null) {
             serverPlayer.getAdvancements().award(advancement, UPGRADE_ENCHANT_TABLE_CRITERION);
+        }
+    }
+
+    public static void awardUnforgottenAdvancementIfEligible(Player player, ServerLevel level, ItemStack stack) {
+        if (!(player instanceof ServerPlayer serverPlayer)) {
+            return;
+        }
+
+        if (stack.isEmpty() || !stack.is(ModItems.DUSTY_MYSTERIOUS_BOOK.get())) {
+            return;
+        }
+
+        var advancement = level.getServer().getAdvancements().get(FIRST_DUSTY_BOOK_HELD_ADVANCEMENT_ID);
+        if (advancement != null) {
+            serverPlayer.getAdvancements().award(advancement, FIRST_DUSTY_BOOK_HELD_CRITERION);
         }
     }
 
@@ -326,7 +345,7 @@ public final class AdvancementHelper {
     }
 
     public static boolean isTrackedBook(ItemStack stack) {
-        return !stack.isEmpty() && stack.is(ModItems.RECHANTED_BOOK.get());
+        return !stack.isEmpty() && (stack.is(ModItems.RECHANTED_BOOK.get()) || stack.is(ModItems.DUSTY_MYSTERIOUS_BOOK.get()));
     }
 
     public static void awardArchmageProgressFromBook(Player player, ServerLevel level, ItemStack stack) {

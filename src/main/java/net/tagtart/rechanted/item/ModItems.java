@@ -37,6 +37,7 @@ public class  ModItems {
      public static final DeferredItem<Item> RECHANTED_BOOK = ITEMS.register("rechanted_book", () -> new RechantedBookItem(new Item.Properties()));
 
      public static final DeferredItem<Item> MYSTERIOUS_BOOK = ITEMS.register("mysterious_book", () -> new MysteriousBookItem(new Item.Properties()));
+     public static final DeferredItem<Item> DUSTY_MYSTERIOUS_BOOK = ITEMS.register("dusty_mysterious_book", () -> new DustyMysteriousBookItem(new Item.Properties()));
 
      public static final DeferredItem<Item> LEGENDARY_PULL_ICON = ITEMS.register("advancement_legendary_pull",
              () -> new Item(new Item.Properties()));

@@ -81,11 +81,11 @@ public class VillagerTradeEvents {
 
     private static MerchantOffer replaceEnchantedBookOffer(MerchantOffer offer, int tradeLevel) {
         if (isApprenticeLevel(tradeLevel)) {
-            return createCandleOffer(offer);
+            return createDustyMysteriousBookOffer(offer);
         }
 
         if (isBelowJourneyman(tradeLevel)) {
-            return createAmethystOffer(offer);
+            return createDustyMysteriousBookOffer(offer);
         }
 
         return createMysteriousBookOffer(offer);
@@ -106,6 +106,15 @@ public class VillagerTradeEvents {
         ItemCost bookCost = new ItemCost(Items.BOOK, 1);
         
         return buildOffer(originalOffer, emeraldCost, Optional.of(bookCost), mysteriousBook, 3);
+    }
+
+    private static MerchantOffer createDustyMysteriousBookOffer(MerchantOffer originalOffer) {
+        ItemStack dustyMysteriousBook = new ItemStack(ModItems.DUSTY_MYSTERIOUS_BOOK.get());
+        int emeraldCount = RechantedCommonConfigs.VILLAGER_DUSTY_MYSTERIOUS_BOOK_EMERALD_COST.get();
+        ItemCost emeraldCost = new ItemCost(Items.EMERALD, emeraldCount);
+        ItemCost bookCost = new ItemCost(Items.BOOK, 1);
+
+        return buildOffer(originalOffer, emeraldCost, Optional.of(bookCost), dustyMysteriousBook, 3);
     }
 
     private static MerchantOffer createAmethystOffer(MerchantOffer originalOffer) {
