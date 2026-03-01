@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 public class RechantedTrophyBlock extends BaseEntityBlock {
 
     public static final MapCodec<RechantedTrophyBlock> CODEC = simpleCodec(RechantedTrophyBlock::new);
-    public static final VoxelShape SHAPE = Block.box(3.0, 0.0, 3.0, 11.0, 10.0, 11.0);
+    public static final VoxelShape SHAPE = Block.box(3.0, 0.0, 3.0, 13.0, 10.0, 13.0);
 
     public RechantedTrophyBlock(Properties properties) {
         super(properties);
