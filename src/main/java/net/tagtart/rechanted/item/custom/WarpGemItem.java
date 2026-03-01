@@ -89,9 +89,28 @@ public class WarpGemItem  extends Item {
         player.awardStat(Stats.ITEM_USED.get(this));
         EquipmentSlot usedSlot = hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
         itemstack.hurtAndBreak(1, player, usedSlot);
+        if (itemstack.getDamageValue() >= itemstack.getMaxDamage()) {
+            level.playSound(
+                    null,
+                    player.blockPosition(),
+                    SoundEvents.ENDERMAN_DEATH,
+                    SoundSource.HOSTILE,
+                    0.1f,
+                    0.35f
+            );
+
+            level.playSound(
+                    null,
+                    player.blockPosition(),
+                    SoundEvents.ENDERMAN_TELEPORT,
+                    SoundSource.HOSTILE,
+                    0.5f,
+                    0.25f
+            );
+        }
+
         return InteractionResultHolder.sidedSuccess(itemstack, level.isClientSide());
     }
-
 
     // Applies randomized starting durability for generated warp gem stacks.
     public static void initializeRandomizedDurability(ItemStack stack, RandomSource random) {

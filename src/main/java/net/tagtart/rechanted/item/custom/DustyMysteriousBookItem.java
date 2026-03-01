@@ -106,7 +106,7 @@ public class DustyMysteriousBookItem extends Item {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents,
             TooltipFlag tooltipFlag) {
         int maxWidthTooltip = 165;
-        Component itemDescription = Component.translatable("item.rechanted.dusty_mysterious_book");
+        Component itemDescription = Component.translatable("item.rechanted.dusty_mysterious_book.desc");
 
         String itemDescriptionString = itemDescription.getString();
 
