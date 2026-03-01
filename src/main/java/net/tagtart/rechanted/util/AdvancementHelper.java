@@ -16,6 +16,7 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.phys.AABB;
 import net.tagtart.rechanted.Rechanted;
 import net.tagtart.rechanted.attachments.ModAttachments;
+import net.tagtart.rechanted.block.ModBlocks;
 import net.tagtart.rechanted.item.ModItems;
 
 import java.util.ArrayList;
@@ -373,7 +374,14 @@ public final class AdvancementHelper {
         if (hasDiscoveredAllArchmageEnchantments(serverPlayer, requiredEnchantments)) {
             var advancement = level.getServer().getAdvancements().get(ARCHMAGE_ADVANCEMENT_ID);
             if (advancement != null) {
-                serverPlayer.getAdvancements().award(advancement, ARCHMAGE_CRITERION);
+                boolean awarded = serverPlayer.getAdvancements().award(advancement, ARCHMAGE_CRITERION);
+                if (awarded) {
+                    ItemStack trophy = new ItemStack(ModBlocks.RECHANTED_TROPHY_BLOCK);
+
+                    if (!serverPlayer.addItem(trophy)) {
+                        serverPlayer.drop(trophy, false);
+                    }
+                }
             }
         }
     }

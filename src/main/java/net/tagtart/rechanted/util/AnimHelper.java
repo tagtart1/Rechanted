@@ -156,4 +156,9 @@ public class AnimHelper {
             scaledTime2 * scaledTime2 * ((s + 1f) * scaledTime2 + s) + 2f
         );
     }
+
+    public static float easeOutExpo(float t)  {
+        float t1 = Math.min(1.0f, t);
+        return 1.0f - (float)Math.pow(2.0, -9.0 * t1);
+    }
 }

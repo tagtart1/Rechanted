@@ -4,6 +4,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -26,15 +27,20 @@ public class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS =
             DeferredRegister.createBlocks(Rechanted.MOD_ID);
 
-    private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block) {
+    private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block, Item.Properties properties) {
         DeferredBlock<T> toReturn = BLOCKS.register(name, block);
-        registerBlockItem(name, toReturn);
+
+        if (properties == null) {
+            properties = new Item.Properties();
+        }
+        registerBlockItem(name, toReturn, properties);
+
         return toReturn;
     }
 
     //Register the actual block ITEM into the registry, like what you see in the inventory
-    private static <T extends Block> void registerBlockItem(String name, DeferredBlock<T> block) {
-        ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+    private static <T extends Block> void registerBlockItem(String name, DeferredBlock<T> block, Item.Properties properties) {
+        ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), properties));
     }
 
     public static void register(IEventBus eventBus) { BLOCKS.register(eventBus); }
@@ -47,7 +53,8 @@ public class ModBlocks {
                     .requiresCorrectToolForDrops()
                     .lightLevel(state -> 7)
                     .strength(5.0F, 1200.0F)
-            ));
+            ),
+            new Item.Properties());
 
     public static final DeferredBlock<Block> RECHANTED_TROPHY_BLOCK = registerBlock("rechanted_trophy",
             () -> new RechantedTrophyBlock(BlockBehaviour.Properties.of()
@@ -56,5 +63,5 @@ public class ModBlocks {
                     .requiresCorrectToolForDrops()
                     .lightLevel(state -> 7)
                     .strength(5.0F, 1200.0F)
-            ));
+            ), new Item.Properties().rarity(Rarity.EPIC));
 }

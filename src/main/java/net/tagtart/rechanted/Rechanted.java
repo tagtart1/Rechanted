@@ -16,6 +16,7 @@ import net.tagtart.rechanted.attachments.ModAttachments;
 import net.tagtart.rechanted.block.ModBlocks;
 import net.tagtart.rechanted.block.entity.ModBlockEntities;
 import net.tagtart.rechanted.block.renderer.RechantedTableRenderer;
+import net.tagtart.rechanted.block.renderer.RechantedTrophyRenderer;
 import net.tagtart.rechanted.component.ModDataComponents;
 import net.tagtart.rechanted.command.ModCommands;
 import net.tagtart.rechanted.config.RechantedCommonConfigs;
@@ -23,6 +24,7 @@ import net.tagtart.rechanted.effect.ModEffects;
 import net.tagtart.rechanted.enchantment.ModEnchantmentEffects;
 import net.tagtart.rechanted.enchantment.ModEnchantments;
 import net.tagtart.rechanted.entity.ModEntities;
+import net.tagtart.rechanted.entity.ModEntityModelLayers;
 import net.tagtart.rechanted.entity.renderer.LuckyGemEntityRenderer;
 import net.tagtart.rechanted.entity.renderer.ReturnGemBeamEntityRenderer;
 import net.tagtart.rechanted.item.ModCreativeModeTabs;
@@ -124,6 +126,15 @@ public class Rechanted {
             event.registerEntityRenderer(ModEntities.LUCKY_GEM_ENTITY.get(), LuckyGemEntityRenderer::new);
 
             event.registerBlockEntityRenderer(ModBlockEntities.RECHANTED_TABLE_BE.get(), RechantedTableRenderer::new);
+            event.registerBlockEntityRenderer(ModBlockEntities.RECHANTED_TROPHY_BE.get(), RechantedTrophyRenderer::new);
+        }
+
+        @SubscribeEvent
+        public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
+            event.registerLayerDefinition(
+                    ModEntityModelLayers.TROPHY_BOOK,
+                    RechantedTrophyRenderer.TrophyBookModel::createBodyLayer
+            );
         }
     }
 }

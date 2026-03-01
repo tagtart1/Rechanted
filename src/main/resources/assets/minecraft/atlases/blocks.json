@@ -7,6 +7,10 @@
     {
       "type": "single",
       "resource": "entity/enabled_enchanting_table_book"
+    },
+    {
+      "type": "single",
+      "resource": "entity/trophy_enchanting_table_book"
     }
   ]
 }

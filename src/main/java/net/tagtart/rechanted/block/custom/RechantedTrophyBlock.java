@@ -1,26 +1,40 @@
 package net.tagtart.rechanted.block.custom;
 
 import com.mojang.serialization.MapCodec;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.EnchantingTableBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.tagtart.rechanted.block.ModBlocks;
+import net.tagtart.rechanted.block.entity.RechantedTableBlockEntity;
 import net.tagtart.rechanted.block.entity.RechantedTrophyBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 public class RechantedTrophyBlock extends BaseEntityBlock {
 
     public static final MapCodec<RechantedTrophyBlock> CODEC = simpleCodec(RechantedTrophyBlock::new);
-    public static final VoxelShape SHAPE = Block.box(4.0, 0.0, 4.0, 12.0, 16.0, 12.0);
+    public static final VoxelShape SHAPE = Block.box(3.0, 0.0, 3.0, 11.0, 10.0, 11.0);
 
     public RechantedTrophyBlock(Properties properties) {
         super(properties);
@@ -63,5 +77,30 @@ public class RechantedTrophyBlock extends BaseEntityBlock {
     @Override
     protected boolean isPathfindable(BlockState state, PathComputationType pathComputationType) {
         return false;
+    }
+
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
+        if (state.getBlock() == ModBlocks.RECHANTED_TROPHY_BLOCK.get()) {
+            BlockEntityTicker<RechantedTrophyBlockEntity> ticker = (pLevel1, pPos, pState1, pBlockEntity) -> {
+                pBlockEntity.tick(pLevel1, pPos, pState1);
+            };
+            return (BlockEntityTicker<T>)ticker;
+        }
+
+        return null;
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult hitResult) {
+        if (pPlayer.level().isClientSide) {
+            return InteractionResult.SUCCESS;
+        } else {
+            BlockEntity entity = pLevel.getBlockEntity(pPos);
+
+            if (entity instanceof RechantedTrophyBlockEntity be) {
+                be.onInteraction(pLevel, pPlayer);
+            }
+            return InteractionResult.CONSUME;
+        }
     }
 }
