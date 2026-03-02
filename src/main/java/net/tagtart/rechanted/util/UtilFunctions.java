@@ -1,14 +1,10 @@
 package net.tagtart.rechanted.util;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.*;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.core.*;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
@@ -31,6 +27,7 @@ import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.FireworkExplosion;
 import net.minecraft.world.item.component.Fireworks;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -94,15 +91,15 @@ public class UtilFunctions {
         return lines;
     }
 
-    public static List<Component> getIncompatibilityTooltipLines(Holder<Enchantment> enchantment, Item.TooltipContext context) {
+    public static List<Component> getIncompatibilityTooltipLines(Holder<Enchantment> enchantment, Item.TooltipContext context, TooltipFlag flag) {
         if (enchantment == null || context == null) {
             return List.of();
         }
 
-        return getIncompatibilityTooltipLines(enchantment, context.registries());
+        return getIncompatibilityTooltipLines(enchantment, context.registries(), flag);
     }
 
-    public static List<Component> getIncompatibilityTooltipLines(Holder<Enchantment> enchantment, HolderLookup.Provider registryAccess) {
+    public static List<Component> getIncompatibilityTooltipLines(Holder<Enchantment> enchantment, HolderLookup.Provider registryAccess, TooltipFlag flag) {
         if (enchantment == null || registryAccess == null) {
             return List.of();
         }
@@ -113,7 +110,7 @@ public class UtilFunctions {
         }
 
         List<Component> tooltipLines = new ArrayList<>();
-        if (!Screen.hasShiftDown()) {
+        if (!flag.hasShiftDown()) {
             tooltipLines.add(Component.literal("Hold ").withStyle(ChatFormatting.GRAY)
                     .append(Component.literal("Shift").withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC))
                     .append(Component.literal(" for more info").withStyle(ChatFormatting.GRAY)));
@@ -503,38 +500,6 @@ public class UtilFunctions {
         }
 
         return configuredEnchantments;
-    }
-
-
-
-    public static void fakeInnerBlit(GuiGraphics guiGraphics, int pX1, int pX2, int pY1, int pY2, int pBlitOffset, float pMinU, float pMaxU, float pMinV, float pMaxV) {
-        Matrix4f matrix4f = new Matrix4f();
-        if (guiGraphics != null) {
-            matrix4f = guiGraphics.pose().last().pose();
-        }
-        BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        bufferbuilder.addVertex(matrix4f, (float)pX1, (float)pY1, (float)pBlitOffset).setUv(pMinU, pMinV);
-        bufferbuilder.addVertex(matrix4f, (float)pX1, (float)pY2, (float)pBlitOffset).setUv(pMinU, pMaxV);
-        bufferbuilder.addVertex(matrix4f, (float)pX2, (float)pY2, (float)pBlitOffset).setUv(pMaxU, pMaxV);
-        bufferbuilder.addVertex(matrix4f, (float)pX2, (float)pY1, (float)pBlitOffset).setUv(pMaxU, pMinV);
-        BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
-    }
-
-    public static Vector2i queryTextureSize(ResourceLocation textureLocation) {
-
-        AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(textureLocation);
-
-
-        // Force bind to get dimensions if not already loaded
-        texture.bind();
-        int id = texture.getId();
-        // Use GL11 to query width/height from the bound texture
-        int width = GlStateManager._getTexLevelParameter(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
-        int height = GlStateManager._getTexLevelParameter(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_HEIGHT);
-
-        System.out.println("Big Penis: " + width + " and " + height);
-
-        return new Vector2i(width, height);
     }
 
     public static void translatePoseByInterpolatedPlayerPos(PoseStack poseStack, Player player, Entity entity, float partialTick) {

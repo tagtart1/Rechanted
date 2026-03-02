@@ -10,7 +10,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.tagtart.rechanted.item.ModItems;
+import net.tagtart.rechanted.util.ClientUtils;
 import net.tagtart.rechanted.util.UtilFunctions;
 import org.apache.logging.log4j.util.TriConsumer;
 
@@ -18,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+@OnlyIn(Dist.CLIENT)
 public class HoverableGuiRenderable implements Renderable {
 
 
@@ -115,7 +119,7 @@ public class HoverableGuiRenderable implements Renderable {
                 float trueU = renderUVOffsetU + ((float)frameU / (float)animatedTextureData.textureWidth);
                 float trueV = renderUVOffsetV + ((float)frameV / (float)animatedTextureData.textureHeight);
 
-                UtilFunctions.fakeInnerBlit(null, renderOffsetPosX, renderOffsetPosX + frameWidth,
+                ClientUtils.fakeInnerBlit(null, renderOffsetPosX, renderOffsetPosX + frameWidth,
                         renderOffsetPosY, renderOffsetPosY + frameHeight,
                         0,
                         trueU, trueU + frameUVSizeU,

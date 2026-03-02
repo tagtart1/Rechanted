@@ -6,9 +6,12 @@
   "refmap": "mixins.rechanted.refmap.json",
   "mixins": [
     "FortuneMixin",
-    "EnchantmentTableBlockMixin",
-    "ItemRendererMixin",
-    "EnchantTableRendererMixin"
+    "EnchantmentTableBlockMixin"
+  ],
+
+  "client": [
+    "EnchantTableRendererMixin",
+    "ItemRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

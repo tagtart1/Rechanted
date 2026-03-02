@@ -3,7 +3,10 @@ package net.tagtart.rechanted.screen;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class HoverableButtonGuiRenderable extends HoverableGuiRenderable{
     public HoverableButtonGuiRenderable(ResourceLocation textureResource, int posX, int posY) {
         super(textureResource, posX, posY);

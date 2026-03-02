@@ -15,12 +15,15 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.tagtart.rechanted.Rechanted;
 import net.tagtart.rechanted.block.entity.RechantedTableBlockEntity;
 import net.tagtart.rechanted.networking.data.OpenEnchantTableScreenC2SPayload;
 import net.tagtart.rechanted.networking.data.PlayerPurchaseEnchantedBookC2SPayload;
 import net.tagtart.rechanted.util.BookRarityProperties;
+import net.tagtart.rechanted.util.ClientUtils;
 import net.tagtart.rechanted.util.UtilFunctions;
 import org.joml.Vector2i;
 import oshi.util.tuples.Pair;
@@ -28,6 +31,7 @@ import oshi.util.tuples.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
+@OnlyIn(Dist.CLIENT)
 public class RechantedTableScreen extends AbstractContainerScreen<RechantedTableMenu> {
 
     private static final ResourceLocation SIMPLE_LINE_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechanted.MOD_ID, "textures/gui/enchant_table_effect_simple.png");
@@ -103,7 +107,7 @@ public class RechantedTableScreen extends AbstractContainerScreen<RechantedTable
         hoverables.add(new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(4),BookRarityProperties.getAllProperties()[4].iconResourceLocation, leftPos + 127, topPos + 41));
 
         HoverableWithTooltipGuiRenderable animatedLegendaryHoverable = new HoverableWithTooltipGuiRenderable(() -> getEnchantTableTooltipLines(5), LEGENDARY_BOOK_MANUAL_ANIMATION_LOCATION,  leftPos + 90, topPos + 39);
-        Vector2i texSize = UtilFunctions.queryTextureSize(LEGENDARY_BOOK_MANUAL_ANIMATION_LOCATION);
+        Vector2i texSize = ClientUtils.queryTextureSize(LEGENDARY_BOOK_MANUAL_ANIMATION_LOCATION);
         animatedLegendaryHoverable.setAnimatedData(new HoverableGuiRenderable.AnimatedTextureData(
                  texSize.x, texSize.y, 3, 7, true
         ));
@@ -189,7 +193,7 @@ public class RechantedTableScreen extends AbstractContainerScreen<RechantedTable
 
         lineShader.apply();
 
-        UtilFunctions.fakeInnerBlit(guiGraphics, this.leftPos, this.leftPos + imageWidth, this.topPos, this.topPos + imageHeight, 0,
+        ClientUtils.fakeInnerBlit(guiGraphics, this.leftPos, this.leftPos + imageWidth, this.topPos, this.topPos + imageHeight, 0,
                 0.0f, 1.0f, 0.0f, 1.0f);
     }
 

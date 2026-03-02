@@ -1,17 +1,12 @@
 package net.tagtart.rechanted;
 
-import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
-import net.minecraft.client.renderer.blockentity.EnchantTableRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.tagtart.rechanted.attachments.ModAttachments;
 import net.tagtart.rechanted.block.ModBlocks;
 import net.tagtart.rechanted.block.entity.ModBlockEntities;
@@ -22,7 +17,6 @@ import net.tagtart.rechanted.command.ModCommands;
 import net.tagtart.rechanted.config.RechantedCommonConfigs;
 import net.tagtart.rechanted.effect.ModEffects;
 import net.tagtart.rechanted.enchantment.ModEnchantmentEffects;
-import net.tagtart.rechanted.enchantment.ModEnchantments;
 import net.tagtart.rechanted.entity.ModEntities;
 import net.tagtart.rechanted.entity.ModEntityModelLayers;
 import net.tagtart.rechanted.entity.renderer.LuckyGemEntityRenderer;
@@ -88,9 +82,6 @@ public class Rechanted {
         // Register our mod's ModConfigSpec so that FML can create and load the config
         // file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, RechantedCommonConfigs.SPEC);
-
-        // Register the config screen to enable the config button in the Mods menu
-        modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
@@ -110,7 +101,7 @@ public class Rechanted {
         public static void onClientSetup(FMLClientSetupEvent event) {
 
             ModItemProperties.addCustomItemProperties();
-
+            ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class, () -> ConfigurationScreen::new);
         }
 
         @SubscribeEvent

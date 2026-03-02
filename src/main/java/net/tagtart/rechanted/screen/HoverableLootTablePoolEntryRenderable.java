@@ -10,9 +10,12 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.tagtart.rechanted.Rechanted;
 import net.tagtart.rechanted.item.custom.RechantedBookItem;
 import net.tagtart.rechanted.util.BookRarityProperties;
+import net.tagtart.rechanted.util.ClientUtils;
 import net.tagtart.rechanted.util.EnchantmentPoolEntry;
 import net.tagtart.rechanted.util.UtilFunctions;
 
@@ -21,6 +24,7 @@ import java.util.List;
 
 import static net.tagtart.rechanted.util.UtilFunctions.getIncompatibleEnchantments;
 
+@OnlyIn(Dist.CLIENT)
 public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderable {
 
     private static final ResourceLocation TABLE_ENTRY_BOX_LOCATION = ResourceLocation
@@ -169,7 +173,7 @@ public class HoverableLootTablePoolEntryRenderable extends HoverableGuiRenderabl
             gridShader.apply();
         }
 
-        UtilFunctions.fakeInnerBlit(guiGraphics, renderOffsetPosX, renderOffsetPosX + imageWidth,
+        ClientUtils.fakeInnerBlit(guiGraphics, renderOffsetPosX, renderOffsetPosX + imageWidth,
                 renderOffsetPosY - scrollOffset, (renderOffsetPosY - scrollOffset) + getEntryLabelBottomY(), 0,
                 0.0f, 1.0f, 0.0f, 1.0f);
     }

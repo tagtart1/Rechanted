@@ -26,6 +26,7 @@ import net.minecraft.world.phys.Vec3;
 import net.tagtart.rechanted.entity.ModEntities;
 import net.tagtart.rechanted.entity.ReturnGemBeamEntity;
 import net.tagtart.rechanted.event.TickDelayedTasks;
+import net.tagtart.rechanted.sound.CustomClientSoundInstanceHandler;
 import net.tagtart.rechanted.util.UtilFunctions;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +39,6 @@ public class ReturnGemItem extends Item {
 
     private static final int MAX_TOOLTIP_WIDTH = 165;
 
-    private final SoundInstance chargeSound = SimpleSoundInstance.forLocalAmbience(SoundEvents.GOAT_HORN_SOUND_VARIANTS.get(3).value(), 1.0f, 1.0f);
     private static final Random rand = new Random();
 
     public record ReturnGemTransition(ReturnGemBeamEntity entity, DimensionTransition transition) {}
@@ -114,7 +114,7 @@ public class ReturnGemItem extends Item {
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity livingEntity, int timeCharged) {
         if (level.isClientSide()) {
-            Minecraft.getInstance().getSoundManager().stop(chargeSound);
+            Minecraft.getInstance().getSoundManager().stop(CustomClientSoundInstanceHandler.RETURN_GEM_CHARGE);
         }
     }
 
@@ -178,7 +178,7 @@ public class ReturnGemItem extends Item {
 
     private void playSound(Level level, Player player) {
         if (level.isClientSide()) {
-            Minecraft.getInstance().getSoundManager().play(chargeSound);
+            Minecraft.getInstance().getSoundManager().play(CustomClientSoundInstanceHandler.RETURN_GEM_CHARGE);
         }
     }
 

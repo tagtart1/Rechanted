@@ -13,11 +13,14 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Inventory;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.tagtart.rechanted.Rechanted;
 import net.tagtart.rechanted.block.entity.RechantedTableBlockEntity;
 import net.tagtart.rechanted.networking.data.OpenEnchantTableScreenC2SPayload;
 import net.tagtart.rechanted.util.BookRarityProperties;
+import net.tagtart.rechanted.util.ClientUtils;
 import net.tagtart.rechanted.util.EnchantmentPoolEntry;
 import net.tagtart.rechanted.util.UtilFunctions;
 import org.joml.Vector2i;
@@ -26,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+@OnlyIn(Dist.CLIENT)
 public class RechantedTablePoolDisplayScreen extends AbstractContainerScreen<RechantedTablePoolDisplayMenu> {
 
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Rechanted.MOD_ID, "textures/gui/enchant_table_loot_pool_screen.png");
@@ -202,7 +206,7 @@ public class RechantedTablePoolDisplayScreen extends AbstractContainerScreen<Rec
 
         lineShader.apply();
 
-        UtilFunctions.fakeInnerBlit(guiGraphics, this.leftPos, this.leftPos + imageWidth, this.topPos, this.topPos + imageHeight, 0,
+        ClientUtils.fakeInnerBlit(guiGraphics, this.leftPos, this.leftPos + imageWidth, this.topPos, this.topPos + imageHeight, 0,
                 0.0f, 1.0f, 0.0f, 1.0f);
     }
 
@@ -423,7 +427,7 @@ public class RechantedTablePoolDisplayScreen extends AbstractContainerScreen<Rec
 
     private void updateIndexAnimationData() {
         if (viewingPropertyIndex == 5) {
-            Vector2i texSize = UtilFunctions.queryTextureSize(LEGENDARY_BOOK_MANUAL_ANIMATION_LOCATION);
+            Vector2i texSize = ClientUtils.queryTextureSize(LEGENDARY_BOOK_MANUAL_ANIMATION_LOCATION);
             bookIcon.renderTexture = LEGENDARY_BOOK_MANUAL_ANIMATION_LOCATION;
             bookIcon.setAnimatedData(new HoverableGuiRenderable.AnimatedTextureData(
                     texSize.x, texSize.y, 3, 7, true

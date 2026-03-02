@@ -1,8 +1,11 @@
 package net.tagtart.rechanted.sound;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -11,6 +14,9 @@ import java.util.HashMap;
 
 @OnlyIn(Dist.CLIENT)
 public class CustomClientSoundInstanceHandler {
+
+    public static final SoundInstance RETURN_GEM_CHARGE = SimpleSoundInstance.forLocalAmbience(SoundEvents.GOAT_HORN_SOUND_VARIANTS.get(3).value(), 1.0f, 1.0f);
+
     public static HashMap<BlockPos, LoopingAmbientSound> playingAmbientSounds = new HashMap<>();
 
     public static void createAnyPlayAmbientSound(SoundEvent pSoundEvent, BlockPos pPos, float volume) {

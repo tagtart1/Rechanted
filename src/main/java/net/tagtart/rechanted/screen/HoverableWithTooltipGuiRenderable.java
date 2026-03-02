@@ -4,11 +4,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+@OnlyIn(Dist.CLIENT)
 public class HoverableWithTooltipGuiRenderable extends HoverableGuiRenderable {
 
     public Supplier<ArrayList<Component>> tooltipSupplier; // So that a screen can supply a custom tooltip and change how it does that.
