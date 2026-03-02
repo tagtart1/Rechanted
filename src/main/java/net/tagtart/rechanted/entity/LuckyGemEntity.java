@@ -376,11 +376,11 @@ public class LuckyGemEntity extends Entity implements ItemSupplier {
                             VERTICAL_RISE_NOTE_START_PITCH + noteStep * VERTICAL_RISE_NOTE_PITCH_STEP,
                             VERTICAL_RISE_NOTE_START_PITCH,
                             VERTICAL_RISE_NOTE_MAX_PITCH);
-                    this.playSound(ModSounds.LUCKY_GEM_CHIME.get(), 0.8F, notePitch);
+                    this.playSound(ModSounds.LUCKY_GEM_CHIME.get(), 1.75F, notePitch);
                 }
             } else {
                 if (this.life == DIVE_PHASE_START_TICK) {
-                    this.playSound(SoundEvents.BREEZE_SHOOT, 1.0F, 1.0F);
+                    this.playSound(SoundEvents.BREEZE_SHOOT, 1.75F, 1.0F);
                 }
                 vec3 = new Vec3(0.0D, DIVE_VERTICAL_VELOCITY, 0.0D);
                 this.setDeltaMovement(vec3);
