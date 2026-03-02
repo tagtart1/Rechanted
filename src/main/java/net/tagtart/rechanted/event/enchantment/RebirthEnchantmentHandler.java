@@ -44,7 +44,7 @@ public class RebirthEnchantmentHandler {
         }
         EquipmentSlot slot = event.getSlot();
         if (slot != EquipmentSlot.HEAD && slot != EquipmentSlot.CHEST && slot != EquipmentSlot.LEGS && slot != EquipmentSlot.FEET) {
-            Rechanted.LOGGER.info("Rebirth armor guard: ignoring non-armor slot {}", slot);
+            //Rechanted.LOGGER.info("Rebirth armor guard: ignoring non-armor slot {}", slot);
             return;
         }
 

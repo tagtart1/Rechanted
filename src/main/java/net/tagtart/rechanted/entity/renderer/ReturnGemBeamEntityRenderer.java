@@ -48,7 +48,7 @@ public class ReturnGemBeamEntityRenderer extends EntityRenderer<ReturnGemBeamEnt
     private void renderBeaconBeam(
             PoseStack poseStack, MultiBufferSource bufferSource, ReturnGemBeamEntity entity, float partialTick, float beamRadius, float glowRadius, long gameTime, int yOffset, int height, int color
     ) {
-        renderBeaconBeam(poseStack, bufferSource, BeaconRenderer.BEAM_LOCATION, entity, Minecraft.getInstance().player, partialTick, 1.0F, gameTime, yOffset, height, color, beamRadius, glowRadius);
+        renderBeaconBeam(poseStack, bufferSource, BeaconRenderer.BEAM_LOCATION, entity, entity.getOwner(), partialTick, 1.0F, gameTime, yOffset, height, color, beamRadius, glowRadius);
     }
 
     /*

@@ -32,6 +32,7 @@ import net.minecraft.world.phys.Vec3;
 import net.tagtart.rechanted.component.ModDataComponents;
 import net.tagtart.rechanted.event.ItemEntityTrailHandler;
 import net.tagtart.rechanted.item.ModItems;
+import net.tagtart.rechanted.sound.ModSounds;
 import net.tagtart.rechanted.util.AdvancementHelper;
 import net.tagtart.rechanted.util.AnimHelper;
 import net.tagtart.rechanted.util.UtilFunctions;
@@ -375,7 +376,7 @@ public class LuckyGemEntity extends Entity implements ItemSupplier {
                             VERTICAL_RISE_NOTE_START_PITCH + noteStep * VERTICAL_RISE_NOTE_PITCH_STEP,
                             VERTICAL_RISE_NOTE_START_PITCH,
                             VERTICAL_RISE_NOTE_MAX_PITCH);
-                    this.playSound(SoundEvents.NOTE_BLOCK_BELL.value(), 0.8F, notePitch);
+                    this.playSound(ModSounds.LUCKY_GEM_CHIME.get(), 0.8F, notePitch);
                 }
             } else {
                 if (this.life == DIVE_PHASE_START_TICK) {

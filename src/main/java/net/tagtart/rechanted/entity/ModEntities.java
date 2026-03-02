@@ -17,12 +17,12 @@ public class ModEntities {
 
     public static DeferredHolder<EntityType<?>, EntityType<ThrownWarpGemEntity>> THROWN_WARP_GEM_ENTITY = ENTITY_TYPES.register(
         "thrown_warp_gem",
-        () -> EntityType.Builder.<ThrownWarpGemEntity>of(ThrownWarpGemEntity::new, MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10).build("thrown_warp_gem")
+        () -> EntityType.Builder.<ThrownWarpGemEntity>of(ThrownWarpGemEntity::new, MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(64).updateInterval(1).build("thrown_warp_gem")
     );
 
     public static DeferredHolder<EntityType<?>, EntityType<LuckyGemEntity>> LUCKY_GEM_ENTITY = ENTITY_TYPES.register(
         "lucky_gem",
-        () -> EntityType.Builder.<LuckyGemEntity>of(LuckyGemEntity::new, MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(1).build("lucky_gem")
+        () -> EntityType.Builder.<LuckyGemEntity>of(LuckyGemEntity::new, MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(64).updateInterval(1).build("lucky_gem")
     );
 
     public static void register(IEventBus eventBus) {

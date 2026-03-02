@@ -185,7 +185,7 @@ public class ReturnGemItem extends Item {
 
     public static void spawnReturnEntity(ServerPlayer player, DimensionTransition transition) {
         ReturnGemBeamEntity newEntity = new ReturnGemBeamEntity(ModEntities.RETURN_GEM_BEAM_ENTITY.get(), player.level());
-        newEntity.setPlayer(player);
+        newEntity.setOwner(player);
         newEntity.setPos(new Vec3(player.getX(), player.getY() - 10.0, player.getZ()));
 
         // Resistance IV while the return beam is active (consumption -> teleport window).

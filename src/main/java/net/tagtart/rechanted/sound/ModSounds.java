@@ -19,7 +19,6 @@ public class ModSounds {
     public static final Supplier<SoundEvent> ENCHANTED_BOOK_FAIL = registerSoundEvents("enchanted_book_fail");
     public static final Supplier<SoundEvent> REBIRTH_ITEM = registerSoundEvents("rebirth_item");
 
-
     public static final Supplier<SoundEvent> ENCHANT_TABLE_AMBIENT = registerSoundEvents("enchant_table_ambient");
     public static final Supplier<SoundEvent> ENCHANT_TABLE_CHARGE = registerSoundEvents("enchant_table_charge");
     public static final Supplier<SoundEvent> ENCHANT_TABLE_DISCHARGE = registerSoundEvents("enchant_table_discharge");
@@ -38,10 +37,18 @@ public class ModSounds {
     public static final Supplier<SoundEvent> TIER_3_ITEM_PENDING = registerSoundEvents("item_pending_t3");
     public static final Supplier<SoundEvent> TIER_3_ITEM_EARNED = registerSoundEvents("item_earned_t3");
 
+    // To give this sound extra range; vanilla sound event has only 16 range.
+    public static final String vanillaChimeName = "block.note_block.bell";
+    public static final Supplier<SoundEvent> LUCKY_GEM_CHIME = SOUND_EVENTS.register(vanillaChimeName, () -> SoundEvent.createFixedRangeEvent(
+            ResourceLocation.withDefaultNamespace(vanillaChimeName),
+            128.0f));
+
 
     private static Supplier<SoundEvent> registerSoundEvents(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Rechanted.MOD_ID, name)));
     }
+
+
 
     public static void register(IEventBus eventBus) {
         SOUND_EVENTS.register(eventBus);
