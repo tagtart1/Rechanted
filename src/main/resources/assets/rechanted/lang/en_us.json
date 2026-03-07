@@ -507,6 +507,8 @@
 
   "config.rechanted.nerf_enabled.title": "Fortune Nerf Enabled",
   "config.rechanted.nerf_enabled.tooltip": "Enable fortune enchantment nerfing",
+  "config.rechanted.disable_xp_from_slimes_and_silverfish.title": "Disable XP from slimes and silverfish",
+  "config.rechanted.disable_xp_from_slimes_and_silverfish.tooltip": "To nerf overpowered XP farms using the infestation and oozing potions",
   "config.rechanted.fortune_1_chance.title": "Fortune I Chance",
   "config.rechanted.fortune_1_chance.tooltip": "Chance for Fortune I to double drops",
   "config.rechanted.fortune_2_chance.title": "Fortune II Chance",

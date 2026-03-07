@@ -21,6 +21,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.monster.Silverfish;
+import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.*;
@@ -341,6 +343,12 @@ public class ModGenericEvents {
 
     @SubscribeEvent
     public static void onExpDropFromHostile(LivingExperienceDropEvent event) {
+        if (RechantedCommonConfigs.DISABLE_XP_FROM_SLIMES_AND_SILVERFISH.get()
+                && (event.getEntity() instanceof Slime || event.getEntity() instanceof Silverfish)) {
+            event.setDroppedExperience(0);
+            return;
+        }
+
         MobCategory mobCategory = event.getEntity().getType().getCategory();
         if (event.getAttackingPlayer() == null)
             return;

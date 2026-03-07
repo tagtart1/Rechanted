@@ -170,6 +170,7 @@ public class RechantedCommonConfigs {
         public static final ModConfigSpec.IntValue VILLAGER_DUSTY_MYSTERIOUS_BOOK_EMERALD_COST;
         // Fortune nerf configs
         public static final ModConfigSpec.ConfigValue<? extends Boolean> FORTUNE_NERF_ENABLED;
+        public static final ModConfigSpec.ConfigValue<? extends Boolean> DISABLE_XP_FROM_SLIMES_AND_SILVERFISH;
         public static final ModConfigSpec.DoubleValue FORTUNE_1_CHANCE;
         public static final ModConfigSpec.DoubleValue FORTUNE_2_CHANCE;
         public static final ModConfigSpec.DoubleValue FORTUNE_3_CHANCE;
@@ -693,6 +694,11 @@ public class RechantedCommonConfigs {
                         .defineInRange("dusty_mysterious_book_emerald_cost", 8, 1, 64);
 
                 BUILDER.pop();
+
+                BUILDER.comment("To nerf overpowered XP farms using the infestation and oozing potions.");
+                DISABLE_XP_FROM_SLIMES_AND_SILVERFISH = BUILDER
+                                .translation("config.rechanted.disable_xp_from_slimes_and_silverfish.title")
+                                .define("disable_xp_from_slimes_and_silverfish", false);
 
                 BUILDER.translation("config.rechanted.fortune_nerf.name")
                                 .comment("Settings to control Fortune enchantment drop multipliers")

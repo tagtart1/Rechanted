@@ -403,6 +403,8 @@
   "config.rechanted.mysterious_book_emerald_cost.title": "Costo en esmeraldas del Libro Misterioso",
   "config.rechanted.nerf_enabled.title": "Nerfeo de Fortuna activado",
   "config.rechanted.nerf_enabled.tooltip": "Activar nerfeo del encantamiento Fortuna",
+  "config.rechanted.disable_xp_from_slimes_and_silverfish.title": "Desactivar XP de slimes y silverfish",
+  "config.rechanted.disable_xp_from_slimes_and_silverfish.tooltip": "Para nerfear granjas de XP op usando las pociones de infestación y oozing",
   "config.rechanted.fortune_1_chance.title": "Probabilidad de Fortuna I",
   "config.rechanted.fortune_1_chance.tooltip": "Probabilidad de que Fortuna I duplique drops",
   "config.rechanted.fortune_2_chance.title": "Probabilidad de Fortuna II",
