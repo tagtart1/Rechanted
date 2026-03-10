@@ -29,6 +29,7 @@
   "message.rechanted.inventory_full": "You do not have enough space in your inventory for a book!",
   "message.rechanted.bonus_pending": "Wait, something's happening!",
   "message.rechanted.bonus_item_found": "You found a bonus item!",
+  "message.rechanted.gear_about_to_break": "Your %s is about to break! (%d uses left)",
 
   "enchantment.rarity.dusty": "尘",
   "enchantment.rarity.simple": "眤",
@@ -509,6 +510,8 @@
   "config.rechanted.nerf_enabled.tooltip": "Enable fortune enchantment nerfing",
   "config.rechanted.disable_xp_from_slimes_and_silverfish.title": "Disable XP from slimes and silverfish",
   "config.rechanted.disable_xp_from_slimes_and_silverfish.tooltip": "To nerf overpowered XP farms using the infestation and oozing potions",
+  "config.rechanted.gear_break_warning_enabled.title": "Gear Break Warning",
+  "config.rechanted.gear_break_warning_enabled.tooltip": "Show a red action-bar warning when gear drops below 20 durability",
   "config.rechanted.fortune_1_chance.title": "Fortune I Chance",
   "config.rechanted.fortune_1_chance.tooltip": "Chance for Fortune I to double drops",
   "config.rechanted.fortune_2_chance.title": "Fortune II Chance",

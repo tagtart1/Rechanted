@@ -6,7 +6,8 @@
   "refmap": "mixins.rechanted.refmap.json",
   "mixins": [
     "FortuneMixin",
-    "EnchantmentTableBlockMixin"
+    "EnchantmentTableBlockMixin",
+    "ItemStackDurabilityWarningMixin"
   ],
 
   "client": [
