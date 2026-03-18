@@ -214,7 +214,7 @@ public class RechantedCommonConfigs {
                 RARITY_0_REQUIRED_LAPIS = BUILDER.translation("config.rechanted.dusty.required_lapis.title")
                         .defineInRange("required_lapis", 1, 0, 64);
                 RARITY_0_FLOOR_BLOCK_TYPE = BUILDER.translation("config.rechanted.dusty.floor_block_type.title")
-                        .define("floor_block_type", "minecraft:air");
+                        .define("floor_block_type", "minecraft:bedrock");
                 RARITY_0_BONUS_ITEM_ROLL_CHANCE = BUILDER
                         .translation("config.rechanted.dusty.bonus_item_roll_chance.title")
                         .defineInRange("bonus_item_roll_chance", 0.085, 0.0, 1.0);
