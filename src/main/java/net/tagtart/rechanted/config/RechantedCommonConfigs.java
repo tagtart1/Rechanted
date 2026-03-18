@@ -171,6 +171,7 @@ public class RechantedCommonConfigs {
         // Fortune nerf configs
         public static final ModConfigSpec.ConfigValue<? extends Boolean> FORTUNE_NERF_ENABLED;
         public static final ModConfigSpec.ConfigValue<? extends Boolean> DISABLE_XP_FROM_SLIMES_AND_SILVERFISH;
+        public static final ModConfigSpec.ConfigValue<? extends Boolean> GEAR_BREAK_WARNING_ENABLED;
         public static final ModConfigSpec.DoubleValue FORTUNE_1_CHANCE;
         public static final ModConfigSpec.DoubleValue FORTUNE_2_CHANCE;
         public static final ModConfigSpec.DoubleValue FORTUNE_3_CHANCE;
@@ -699,6 +700,9 @@ public class RechantedCommonConfigs {
                 DISABLE_XP_FROM_SLIMES_AND_SILVERFISH = BUILDER
                                 .translation("config.rechanted.disable_xp_from_slimes_and_silverfish.title")
                                 .define("disable_xp_from_slimes_and_silverfish", false);
+                GEAR_BREAK_WARNING_ENABLED = BUILDER
+                                .translation("config.rechanted.gear_break_warning_enabled.title")
+                                .define("gear_break_warning_enabled", true);
 
                 BUILDER.translation("config.rechanted.fortune_nerf.name")
                                 .comment("Settings to control Fortune enchantment drop multipliers")
