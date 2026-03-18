@@ -29,7 +29,7 @@
   "message.rechanted.inventory_full": "You do not have enough space in your inventory for a book!",
   "message.rechanted.bonus_pending": "Wait, something's happening!",
   "message.rechanted.bonus_item_found": "You found a bonus item!",
-  "message.rechanted.gear_about_to_break": "Your %s is about to break! (%d uses left)",
+  "message.rechanted.gear_about_to_break": "Your hard-earned %s is about to break! (%d uses left)",
 
   "enchantment.rarity.dusty": "尘",
   "enchantment.rarity.simple": "眤",

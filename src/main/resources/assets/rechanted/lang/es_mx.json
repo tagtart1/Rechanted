@@ -22,7 +22,7 @@
   "message.rechanted.inventory_full": "¡No tienes suficiente espacio en tu inventario para un libro!",
   "message.rechanted.bonus_pending": "Espera, ¡está pasando algo!",
   "message.rechanted.bonus_item_found": "¡Encontraste un objeto bonus!",
-  "message.rechanted.gear_about_to_break": "¡Tu %s está por romperse! (quedan %d usos)",
+  "message.rechanted.gear_about_to_break": "¡Tu tan ganado %s está por romperse! (quedan %d usos)",
   "enchantment.rarity.simple": "眤",
   "enchantment.rarity.unique": "眥",
   "enchantment.rarity.elite": "眦",

@@ -20,59 +20,56 @@ import java.util.function.Consumer;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackDurabilityWarningMixin {
-    @Unique
-    private int rechanted$durabilityBeforeDamage = -1;
+     @Unique
+     private int rechanted$durabilityBeforeDamage = -1;
 
-    @Inject(method = "hurtAndBreak(ILnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LivingEntity;Ljava/util/function/Consumer;)V", at = @At("HEAD"))
-    private void rechanted$captureDurabilityBeforeDamage(
-            int amount,
-            ServerLevel level,
-            @Nullable LivingEntity entity,
-            Consumer<Item> onBreak,
-            CallbackInfo ci
-    ) {
-        ItemStack stack = (ItemStack) (Object) this;
-        rechanted$durabilityBeforeDamage = stack.isDamageableItem() ? stack.getDamageValue() : -1;
-    }
+     @Inject(method = "hurtAndBreak(ILnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LivingEntity;Ljava/util/function/Consumer;)V", at = @At("HEAD"))
+     private void rechanted$captureDurabilityBeforeDamage(
+               int amount,
+               ServerLevel level,
+               @Nullable LivingEntity entity,
+               Consumer<Item> onBreak,
+               CallbackInfo ci) {
+          ItemStack stack = (ItemStack) (Object) this;
+          rechanted$durabilityBeforeDamage = stack.isDamageableItem() ? stack.getDamageValue() : -1;
+     }
 
-    @Inject(method = "hurtAndBreak(ILnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LivingEntity;Ljava/util/function/Consumer;)V", at = @At("TAIL"))
-    private void rechanted$warnGearAboutToBreak(
-            int amount,
-            ServerLevel level,
-            @Nullable LivingEntity entity,
-            Consumer<Item> onBreak,
-            CallbackInfo ci
-    ) {
-        if (!(entity instanceof ServerPlayer serverPlayer)) {
-            return;
-        }
-        if (!RechantedCommonConfigs.GEAR_BREAK_WARNING_ENABLED.get()) {
-            return;
-        }
+     @Inject(method = "hurtAndBreak(ILnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LivingEntity;Ljava/util/function/Consumer;)V", at = @At("TAIL"))
+     private void rechanted$warnGearAboutToBreak(
+               int amount,
+               ServerLevel level,
+               @Nullable LivingEntity entity,
+               Consumer<Item> onBreak,
+               CallbackInfo ci) {
+          if (!(entity instanceof ServerPlayer serverPlayer)) {
+               return;
+          }
+          if (!RechantedCommonConfigs.GEAR_BREAK_WARNING_ENABLED.get()) {
+               return;
+          }
 
-        ItemStack stack = (ItemStack) (Object) this;
-        if (stack.isEmpty() || !stack.isDamageableItem() || !stack.isEnchanted() || !stack.is(ModItemTagsProvider.REBIRTH_ENCHANTABLE)) {
-            return;
-        }
+          ItemStack stack = (ItemStack) (Object) this;
+          if (stack.isEmpty() || !stack.isDamageableItem() || !stack.isEnchanted()
+                    || !stack.is(ModItemTagsProvider.REBIRTH_ENCHANTABLE)) {
+               return;
+          }
 
-        int damageAfter = stack.getDamageValue();
-        if (rechanted$durabilityBeforeDamage < 0 || damageAfter <= rechanted$durabilityBeforeDamage) {
-            return;
-        }
+          int damageAfter = stack.getDamageValue();
+          if (rechanted$durabilityBeforeDamage < 0 || damageAfter <= rechanted$durabilityBeforeDamage) {
+               return;
+          }
 
-        int remainingUses = stack.getMaxDamage() - damageAfter;
-        if (remainingUses <= 0 || remainingUses >= 20) {
-            return;
-        }
+          int remainingUses = stack.getMaxDamage() - damageAfter;
+          if (remainingUses <= 0 || remainingUses >= 10) {
+               return;
+          }
 
-        serverPlayer.displayClientMessage(
-                Component.translatable(
-                                "message.rechanted.gear_about_to_break",
-                                stack.getHoverName(),
-                                remainingUses
-                        )
-                        .withStyle(ChatFormatting.RED),
-                true
-        );
-    }
+          serverPlayer.displayClientMessage(
+                    Component.translatable(
+                              "message.rechanted.gear_about_to_break",
+                              stack.getHoverName(),
+                              remainingUses)
+                              .withStyle(ChatFormatting.RED),
+                    true);
+     }
 }
