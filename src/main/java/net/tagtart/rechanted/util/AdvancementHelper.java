@@ -32,6 +32,10 @@ import java.util.Set;
 import java.util.UUID;
 
 public final class AdvancementHelper {
+    private static final ResourceLocation ENCHANT_ITEM_ADVANCEMENT_ID = ResourceLocation
+            .fromNamespaceAndPath("minecraft", "story/enchant_item");
+    private static final String ENCHANT_ITEM_CRITERION = "enchanted_item";
+
     private static final ResourceLocation UPGRADE_ENCHANT_TABLE_ADVANCEMENT_ID = ResourceLocation
             .fromNamespaceAndPath(Rechanted.MOD_ID, "upgrade_enchanting_table");
     private static final String UPGRADE_ENCHANT_TABLE_CRITERION = "use_emerald_on_enchanting_table";
@@ -94,6 +98,17 @@ public final class AdvancementHelper {
     private static final Map<UUID, ArrayDeque<Long>> UNBOXING_OPEN_TIMES_BY_PLAYER = new HashMap<>();
 
     private AdvancementHelper() {
+    }
+
+    public static void awardEnchantItemAdvancement(Player player, ServerLevel level) {
+        if (!(player instanceof ServerPlayer serverPlayer)) {
+            return;
+        }
+
+        var advancement = level.getServer().getAdvancements().get(ENCHANT_ITEM_ADVANCEMENT_ID);
+        if (advancement != null) {
+            serverPlayer.getAdvancements().award(advancement, ENCHANT_ITEM_CRITERION);
+        }
     }
 
     public static void awardUpgradeEnchantingTableAdvancement(Player player, ServerLevel level) {

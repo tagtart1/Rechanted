@@ -28,6 +28,7 @@ import net.tagtart.rechanted.block.entity.RechantedTableBlockEntity;
 import net.tagtart.rechanted.component.ModDataComponents;
 import net.tagtart.rechanted.item.ModItems;
 import net.tagtart.rechanted.screen.RechantedTableMenu;
+import net.tagtart.rechanted.util.AdvancementHelper;
 import net.tagtart.rechanted.util.BonusItemResolver;
 import net.tagtart.rechanted.util.BookRarityProperties;
 import net.tagtart.rechanted.util.EnchantmentPoolEntry;
@@ -182,6 +183,7 @@ public record PlayerPurchaseEnchantedBookC2SPayload(int bookPropertiesIndex, Blo
                 // Give enchanted book
                 // Note: had to make the call to set the item directly in inventory to have announced message
                 player.getInventory().setItem(player.getInventory().getFreeSlot(), toGive);
+                AdvancementHelper.awardEnchantItemAdvancement(player, level);
 
                 if (random.nextDouble() < bookProperties.bonusItemRollChance) {
                     Optional<BookRarityProperties.BonusPoolEntryType> bonusType =  bookProperties.getRandomBonusPoolEntryWeighted(random);
