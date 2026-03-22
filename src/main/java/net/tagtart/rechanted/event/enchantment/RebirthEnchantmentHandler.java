@@ -25,12 +25,12 @@ public class RebirthEnchantmentHandler {
             return;
         }
 
-        Rechanted.LOGGER.info(
-                "Rebirth onItemBreak: player={}, item={}, hand={}",
-                player.getName().getString(),
-                event.getOriginal(),
-                event.getHand()
-        );
+//        Rechanted.LOGGER.info(
+//                "Rebirth onItemBreak: player={}, item={}, hand={}",
+//                player.getName().getString(),
+//                event.getOriginal(),
+//                event.getHand()
+//        );
 
         int freeSlot = player.getInventory().selected;
         boolean isOffhand = event.getHand() == InteractionHand.OFF_HAND;
@@ -51,14 +51,14 @@ public class RebirthEnchantmentHandler {
         ItemStack oldStack = event.getFrom();
         ItemStack newStack = event.getTo();
         if (oldStack.isEmpty() || !newStack.isEmpty()) {
-            Rechanted.LOGGER.info(
-                    "Rebirth armor guard: slot={} rejected by stack transition, fromEmpty={}, toEmpty={}, from={}, to={}",
-                    slot,
-                    oldStack.isEmpty(),
-                    newStack.isEmpty(),
-                    oldStack,
-                    newStack
-            );
+//            Rechanted.LOGGER.info(
+//                    "Rebirth armor guard: slot={} rejected by stack transition, fromEmpty={}, toEmpty={}, from={}, to={}",
+//                    slot,
+//                    oldStack.isEmpty(),
+//                    newStack.isEmpty(),
+//                    oldStack,
+//                    newStack
+//            );
             return;
         }
         // LivingEquipmentChangeEvent can fire with pre-break durability (maxDamage - 1) when the slot is cleared.
@@ -67,26 +67,26 @@ public class RebirthEnchantmentHandler {
         int maxDamage = oldStack.getMaxDamage();
         int breakThreshold = Math.max(0, maxDamage - 1);
         if (!oldStack.isDamageableItem() || damage < breakThreshold) {
-            Rechanted.LOGGER.info(
-                    "Rebirth armor guard: slot={} rejected by damage check, damageable={}, damage={}, maxDamage={}, threshold={}, item={}",
-                    slot,
-                    oldStack.isDamageableItem(),
-                    damage,
-                    maxDamage,
-                    breakThreshold,
-                    oldStack
-            );
+//            Rechanted.LOGGER.info(
+//                    "Rebirth armor guard: slot={} rejected by damage check, damageable={}, damage={}, maxDamage={}, threshold={}, item={}",
+//                    slot,
+//                    oldStack.isDamageableItem(),
+//                    damage,
+//                    maxDamage,
+//                    breakThreshold,
+//                    oldStack
+//            );
             return;
         }
 
-        Rechanted.LOGGER.info(
-                "Rebirth armor accepted: player={}, slot={}, item={}, damage={}, maxDamage={}",
-                player.getName().getString(),
-                slot,
-                oldStack,
-                oldStack.getDamageValue(),
-                oldStack.getMaxDamage()
-        );
+//        Rechanted.LOGGER.info(
+//                "Rebirth armor accepted: player={}, slot={}, item={}, damage={}, maxDamage={}",
+//                player.getName().getString(),
+//                slot,
+//                oldStack,
+//                oldStack.getDamageValue(),
+//                oldStack.getMaxDamage()
+//        );
 
         tryRebirth(player, oldStack, -1, false, slot);
     }
@@ -94,26 +94,26 @@ public class RebirthEnchantmentHandler {
     private static void tryRebirth(ServerPlayer player, ItemStack itemStack, int inventorySlot, boolean isOffhand, EquipmentSlot equipmentSlot) {
         int rebirthEnchantmentLevel = UtilFunctions.getEnchantmentFromItem("rechanted:rebirth", itemStack, player.registryAccess());
         if (rebirthEnchantmentLevel == 0) {
-            Rechanted.LOGGER.info(
-                    "Rebirth tryRebirth guard: missing enchantment, player={}, item={}, slot={}, inventorySlot={}, offhand={}",
-                    player.getName().getString(),
-                    itemStack,
-                    equipmentSlot,
-                    inventorySlot,
-                    isOffhand
-            );
+//            Rechanted.LOGGER.info(
+//                    "Rebirth tryRebirth guard: missing enchantment, player={}, item={}, slot={}, inventorySlot={}, offhand={}",
+//                    player.getName().getString(),
+//                    itemStack,
+//                    equipmentSlot,
+//                    inventorySlot,
+//                    isOffhand
+//            );
             return;
         }
 
-        Rechanted.LOGGER.info(
-                "Rebirth tryRebirth accepted: player={}, item={}, slot={}, inventorySlot={}, offhand={}, level={}",
-                player.getName().getString(),
-                itemStack,
-                equipmentSlot,
-                inventorySlot,
-                isOffhand,
-                rebirthEnchantmentLevel
-        );
+//        Rechanted.LOGGER.info(
+//                "Rebirth tryRebirth accepted: player={}, item={}, slot={}, inventorySlot={}, offhand={}, level={}",
+//                player.getName().getString(),
+//                itemStack,
+//                equipmentSlot,
+//                inventorySlot,
+//                isOffhand,
+//                rebirthEnchantmentLevel
+//        );
 
         ItemStack newItemStack = itemStack.copy();
         newItemStack.update(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY, (itemEnchantments) -> {
@@ -125,14 +125,14 @@ public class RebirthEnchantmentHandler {
         newItemStack.setDamageValue(0);
         newItemStack.remove(DataComponents.REPAIR_COST);
 
-        Rechanted.LOGGER.info(
-                "Rebirth enqueue: player={}, rebornItem={}, slot={}, inventorySlot={}, offhand={}",
-                player.getName().getString(),
-                newItemStack,
-                equipmentSlot,
-                inventorySlot,
-                isOffhand
-        );
+//        Rechanted.LOGGER.info(
+//                "Rebirth enqueue: player={}, rebornItem={}, slot={}, inventorySlot={}, offhand={}",
+//                player.getName().getString(),
+//                newItemStack,
+//                equipmentSlot,
+//                inventorySlot,
+//                isOffhand
+//        );
 
         TickDelayedTasks.EnqueueItemForRebirth(player, newItemStack, inventorySlot, isOffhand, equipmentSlot);
     }

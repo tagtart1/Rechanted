@@ -43,8 +43,6 @@ public class ClientUtils {
         int width = GlStateManager._getTexLevelParameter(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
         int height = GlStateManager._getTexLevelParameter(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_HEIGHT);
 
-        System.out.println("Big Penis: " + width + " and " + height);
-
         return new Vector2i(width, height);
     }
 
