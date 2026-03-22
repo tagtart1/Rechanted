@@ -173,9 +173,7 @@ public class RechantedTableRenderer implements BlockEntityRenderer<RechantedTabl
 
         if (blockEntity.tableState == RechantedTableBlockEntity.CustomRechantedTableState.BonusPending) {
 
-            long stateStartTime = gameTime - (RechantedTableBlockEntity.BONUS_PENDING_ANIMATION_LENGTH_TICKS
-                    - blockEntity.currentStateTimeRemaining);
-            float time = (gameTime + partialTick - stateStartTime);
+            float time = getCurrentInterpolatedStateTime(RechantedTableBlockEntity.BONUS_PENDING_ANIMATION_LENGTH_TICKS, blockEntity, partialTick);
 
             float yOffset = AnimHelper.evaluateKeyframes(BONUS_PENDING_Y_TRANSLATION_KEYFRAMES, time);
             float yRotationOffset = AnimHelper.evaluateKeyframes(BONUS_PENDING_Y_ROTATION_KEYFRAMES, time);
@@ -196,9 +194,7 @@ public class RechantedTableRenderer implements BlockEntityRenderer<RechantedTabl
 
         if (blockEntity.tableState == RechantedTableBlockEntity.CustomRechantedTableState.BonusEarned) {
 
-            long stateStartTime = gameTime - (RechantedTableBlockEntity.BONUS_EARNED_ANIMATION_LENGTH_TICKS
-                    - blockEntity.currentStateTimeRemaining);
-            float time = (gameTime + partialTick - stateStartTime);
+            float time = getCurrentInterpolatedStateTime(RechantedTableBlockEntity.BONUS_EARNED_ANIMATION_LENGTH_TICKS, blockEntity, partialTick);
 
             float yOffset = AnimHelper.evaluateKeyframes(BONUS_EARNED_Y_TRANSLATION_KEYFRAMES, time);
             float zRotationOffset = AnimHelper.evaluateKeyframes(BONUS_EARNED_Z_DEG_ROTATION_KEYFRAMES, time);
@@ -215,9 +211,8 @@ public class RechantedTableRenderer implements BlockEntityRenderer<RechantedTabl
         }
 
         if (blockEntity.tableState == RechantedTableBlockEntity.CustomRechantedTableState.LightBonusPending) {
-            long stateStartTime = gameTime - (RechantedTableBlockEntity.LIGHT_BONUS_PENDING_ANIMATION_LENGTH_TICKS
-                    - blockEntity.currentStateTimeRemaining);
-            float time = (gameTime + partialTick - stateStartTime);
+
+            float time = getCurrentInterpolatedStateTime(RechantedTableBlockEntity.LIGHT_BONUS_PENDING_ANIMATION_LENGTH_TICKS, blockEntity, partialTick);
 
             float bookOpenOffset = AnimHelper.evaluateKeyframes(LIGHT_BONUS_PENDING_BOOK_OPEN_KEYFRAMES, time);
             float facingRotationOffset = AnimHelper.evaluateKeyframes(LIGHT_BONUS_PENDING_BOOK_Y_DEG_KEYFRAMES, time);
@@ -235,9 +230,8 @@ public class RechantedTableRenderer implements BlockEntityRenderer<RechantedTabl
         }
 
         if (blockEntity.tableState == RechantedTableBlockEntity.CustomRechantedTableState.LightBonusEarned) {
-            long stateStartTime = gameTime - (RechantedTableBlockEntity.LIGHT_BONUS_EARNED_ANIMATION_LENGTH_TICKS
-                    - blockEntity.currentStateTimeRemaining);
-            float time = (gameTime + partialTick - stateStartTime);
+
+            float time = getCurrentInterpolatedStateTime(RechantedTableBlockEntity.LIGHT_BONUS_EARNED_ANIMATION_LENGTH_TICKS, blockEntity, partialTick);
 
             float bookOpenOffset = AnimHelper.evaluateKeyframes(LIGHT_BONUS_EARNED_BOOK_OPEN_KEYFRAMES, time);
             float facingRotation = getCorrectBookFacingYRotation(blockEntity);
@@ -253,9 +247,8 @@ public class RechantedTableRenderer implements BlockEntityRenderer<RechantedTabl
         }
 
         if (blockEntity.tableState == RechantedTableBlockEntity.CustomRechantedTableState.SuperBonusPending) {
-            long stateStartTime = gameTime - (RechantedTableBlockEntity.SUPER_BONUS_PENDING_ANIMATION_LENGTH_TICKS
-                    - blockEntity.currentStateTimeRemaining);
-            float time = (gameTime + partialTick - stateStartTime);
+
+            float time = getCurrentInterpolatedStateTime(RechantedTableBlockEntity.SUPER_BONUS_PENDING_ANIMATION_LENGTH_TICKS, blockEntity, partialTick);
 
             float yOffset = AnimHelper.evaluateKeyframes(BONUS_PENDING_Y_TRANSLATION_KEYFRAMES, time);
             float yRotationOffset = AnimHelper.evaluateKeyframes(BONUS_PENDING_Y_ROTATION_KEYFRAMES, time);
@@ -276,9 +269,8 @@ public class RechantedTableRenderer implements BlockEntityRenderer<RechantedTabl
         }
 
         if (blockEntity.tableState == RechantedTableBlockEntity.CustomRechantedTableState.SuperBonusEarned) {
-            long stateStartTime = gameTime - (RechantedTableBlockEntity.SUPER_BONUS_EARNED_ANIMATION_LENGTH_TICKS
-                    - blockEntity.currentStateTimeRemaining);
-            float time = (gameTime + partialTick - stateStartTime);
+
+            float time = getCurrentInterpolatedStateTime(RechantedTableBlockEntity.SUPER_BONUS_EARNED_ANIMATION_LENGTH_TICKS, blockEntity, partialTick);
 
             float yOffset = AnimHelper.evaluateKeyframes(BONUS_EARNED_Y_TRANSLATION_KEYFRAMES, time);
             float zRotationOffset = AnimHelper.evaluateKeyframes(SUPER_BONUS_EARNED_Z_DEG_ROTATION_KEYFRAMES, time);
@@ -412,6 +404,12 @@ public class RechantedTableRenderer implements BlockEntityRenderer<RechantedTabl
 
         return facingRotation;
     }
+
+    private float getCurrentInterpolatedStateTime(long currentStateLengthTicks, RechantedTableBlockEntity blockEntity, float partialTick) {
+        long stateTime = currentStateLengthTicks - blockEntity.currentStateTimeRemaining;
+        return stateTime + partialTick;
+    }
+
 
     // Same as enchantment table still; copy-pasted
     @Override
