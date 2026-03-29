@@ -164,7 +164,7 @@ public record PlayerPurchaseEnchantedBookC2SPayload(int bookPropertiesIndex, Blo
                 ItemStack toGive = new ItemStack(ModItems.RECHANTED_BOOK.get());
                 EnchantmentPoolEntry randomEnchantment = bookProperties.getRandomEnchantmentWeighted();
                 int randomEnchantmentLevel = randomEnchantment.getRandomEnchantLevelWeighted();
-                int successRate = random.nextInt(bookProperties.minSuccess, bookProperties.maxSuccess);
+                int successRate = random.nextInt(bookProperties.minSuccess, bookProperties.maxSuccess + 1);
 
                 ItemEnchantments.Mutable storedEnchants = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
 

@@ -155,7 +155,7 @@ public class ModEnchantments {
                 HolderSet.direct(items.getOrThrow(ResourceKey.create(Registries.ITEM, ResourceLocation.withDefaultNamespace("shield")))),
                 HolderSet.direct(items.getOrThrow(ResourceKey.create(Registries.ITEM, ResourceLocation.withDefaultNamespace("shield")))),
                 5,
-                1,
+                3,
                 Enchantment.dynamicCost(10, 20),
                 Enchantment.dynamicCost(60, 20),
                 2, EquipmentSlotGroup.OFFHAND))

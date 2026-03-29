@@ -234,7 +234,9 @@ public class ShinyChanceGemItem extends Item {
 
     private static void rerollSuccessRate(ItemStack otherItemStack, BookRarityProperties appliedBookProperties,
             Random rand) {
-        int newSuccessRate = rand.nextInt(appliedBookProperties.minSuccess, appliedBookProperties.maxSuccess + 1);
+
+        int newMinimumRate = getCurrentSuccessRate(otherItemStack, appliedBookProperties) + 1;
+        int newSuccessRate = rand.nextInt(newMinimumRate, appliedBookProperties.maxSuccess + 1);
         otherItemStack.set(ModDataComponents.SUCCESS_RATE, newSuccessRate);
         otherItemStack.set(ModDataComponents.REROLLED_SUCCESS_RATE, true);
     }

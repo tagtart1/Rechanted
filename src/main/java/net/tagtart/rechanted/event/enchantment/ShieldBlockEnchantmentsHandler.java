@@ -19,6 +19,9 @@ import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
 import net.tagtart.rechanted.Rechanted;
 import net.tagtart.rechanted.enchantment.ModEnchantments;
 
+import java.util.Arrays;
+import java.util.List;
+
 @EventBusSubscriber(modid = Rechanted.MOD_ID)
 public class ShieldBlockEnchantmentsHandler {
 
@@ -57,6 +60,10 @@ public class ShieldBlockEnchantmentsHandler {
                     if (attacker.isPushable()) {
                         attacker.push(toAttacker.x, 0.4f, toAttacker.y);
                     }
+
+                    // Apply damage per bash level; is just 1 extra damager per enchantment level.
+                    float damage = (float)bashLevel;
+                    attacker.hurt(attacker.level().damageSources().playerAttack(player), damage);
                 }
             }
         }
