@@ -22,6 +22,7 @@
   "tooltip.rechanted.enchantment_table.requirements_not_met": "Requirements not met!",
   "tooltip.rechanted.enchantment_table.bookshelves": "Bookshelves",
   "tooltip.rechanted.enchantment_table.lapis": "Lapis Lazuli",
+  "tooltip.rechanted.vanilla_book_disabled": "Disabled. Try putting this into a crafting grid...",
 
   "message.rechanted.insufficient_exp": "You only have %d/%d experience!",
   "message.rechanted.insufficient_books": "You only have %d/%d of the required bookshelves in range!",

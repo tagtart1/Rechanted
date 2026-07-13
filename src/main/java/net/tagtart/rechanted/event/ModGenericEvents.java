@@ -175,7 +175,7 @@ public class ModGenericEvents {
             return;
 
         if (stack.getItem() instanceof EnchantedBookItem) {
-            tooltip.add(Component.literal("Vanilla books have been disabled.").withStyle(ChatFormatting.RED));
+            tooltip.add(Component.translatable("tooltip.rechanted.vanilla_book_disabled").withStyle(ChatFormatting.RED));
         }
 
         else if (stack.isEnchanted()) {

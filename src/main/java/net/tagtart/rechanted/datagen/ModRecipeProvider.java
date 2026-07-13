@@ -5,6 +5,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SmithingTransformRecipeBuilder;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -21,6 +22,11 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
 
     @Override
     protected void buildRecipes(RecipeOutput recipeOutput) {
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.MYSTERIOUS_BOOK.get())
+                .requires(Items.ENCHANTED_BOOK)
+                .unlockedBy("has_enchanted_book", has(Items.ENCHANTED_BOOK))
+                .save(recipeOutput);
+
         netheriteUpgrade(recipeOutput, Items.DIAMOND_SWORD, Items.NETHERITE_SWORD, RecipeCategory.COMBAT, "rechanted:netherite_sword_smithing_gem");
         netheriteUpgrade(recipeOutput, Items.DIAMOND_PICKAXE, Items.NETHERITE_PICKAXE, RecipeCategory.TOOLS, "rechanted:netherite_pickaxe_smithing_gem");
         netheriteUpgrade(recipeOutput, Items.DIAMOND_AXE, Items.NETHERITE_AXE, RecipeCategory.TOOLS, "rechanted:netherite_axe_smithing_gem");
