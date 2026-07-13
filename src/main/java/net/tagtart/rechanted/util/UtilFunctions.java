@@ -305,6 +305,11 @@ public class UtilFunctions {
     // Note that is checks if the blocks match the required type for safety.
     // Recommended to pass in smaller (possibly already filtered) arrays for performance.
     public static boolean playerMeetsFloorRequirement(BookRarityProperties bookProperties, BlockState[] states) {
+        // Air should never count as a valid activation floor, even if configured accidentally.
+        if (bookProperties.floorBlock == Blocks.AIR) {
+            return false;
+        }
+
         int blocksPresent = Arrays.stream(states).filter(blockState -> blockState.is(bookProperties.floorBlock)).toArray().length;
         return blocksPresent >= 9;
     }
