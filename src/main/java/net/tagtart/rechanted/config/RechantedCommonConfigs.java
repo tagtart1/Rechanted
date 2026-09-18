@@ -213,6 +213,7 @@ public class RechantedCommonConfigs {
                         .defineInRange("required_bookshelves", 3, 0, Integer.MAX_VALUE);
                 RARITY_0_REQUIRED_LAPIS = BUILDER.translation("config.rechanted.dusty.required_lapis.title")
                         .defineInRange("required_lapis", 1, 0, 64);
+                BUILDER.comment("Floor block required to target this tier in the enchanting table. It doesn't do anything for Dusty tier and is only here for consistency.");
                 RARITY_0_FLOOR_BLOCK_TYPE = BUILDER.translation("config.rechanted.dusty.floor_block_type.title")
                         .define("floor_block_type", "minecraft:bedrock");
                 RARITY_0_BONUS_ITEM_ROLL_CHANCE = BUILDER
@@ -286,6 +287,7 @@ public class RechantedCommonConfigs {
                                .defineInRange("required_bookshelves", 4, 0, Integer.MAX_VALUE);
                 RARITY_1_REQUIRED_LAPIS = BUILDER.translation("config.rechanted.simple.required_lapis.title")
                                .defineInRange("required_lapis", 2, 0, 64);
+                BUILDER.comment("Floor block required to target this tier in the enchanting table.");
                 RARITY_1_FLOOR_BLOCK_TYPE = BUILDER.translation("config.rechanted.simple.floor_block_type.title")
                                .define("floor_block_type", "minecraft:iron_block");
                 RARITY_1_BONUS_ITEM_ROLL_CHANCE = BUILDER
@@ -592,7 +594,8 @@ public class RechantedCommonConfigs {
                                 .push("Configs for all rarities");
                 GRINDSTONE_RESULT_ITEM = BUILDER.translation("config.rechanted.grindstone_result_item.title")
                                 .define("grindstone_result_item", "minecraft:paper");
-                BUILDER.comment("Global weighted pools used by bonus item rewards.");
+                BUILDER.comment("Global weighted pools used by bonus item rewards.",
+                                "Format: <gem-item-name>|<weight>");
                 ArrayList<String> common_gem_pool_defaults = new ArrayList<>();
                 common_gem_pool_defaults.add("rechanted:chance_gem|75");
                 common_gem_pool_defaults.add("rechanted:warp_gem|35");

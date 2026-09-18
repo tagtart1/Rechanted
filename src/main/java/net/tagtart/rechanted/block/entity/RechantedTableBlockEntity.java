@@ -812,7 +812,7 @@ public class RechantedTableBlockEntity extends EnchantingTableBlockEntity implem
 
     protected int checkAllRequirements(BlockPos pPos) {
         int reqMet = -1;
-        for (int i = 0; i < 5; ++i) {
+        for (int i = 1; i < 6; ++i) { // elements 1 - 5 to ignore dusty tier
             BookRarityProperties properties = BookRarityProperties.getAllProperties()[i];
             refreshCachedBlockStates(properties, pPos);
             if (meetsAllChargedEffectRequirements(properties, cachedBookshelvesInRange, cachedFloorBlocksInRange)) {
