@@ -672,12 +672,12 @@ public class RechantedCommonConfigs {
                 EXCLUDE_LOWER_TIER_LOOT = BUILDER.translation("config.rechanted.exclude_lower_tier_loot.title")
                                 .define("exclude_lower_tier_loot", true);
 
-                BUILDER.comment("Makes enchanted fished treasure have weaker enchants (level 5 enchants) and excludes it from REPLACE_ENCHANTED_LOOT");
-                BUILDER.comment("Example: Enchanted bows and fishing rods will commonly have Power I or Lure I respectively");
-                BUILDER.comment("This setting is applied before REPLACE_ENCHANTED_LOOT");
-                BUILDER.comment("Without this enabled, fishing loot becomes an overpowered source for enchanted books with REPLACE_ENCHANTED_LOOT");
+                BUILDER.comment("Without this enabled, fishing loot becomes an overpowered source for enchanted books when REPLACE_ENCHANTED_LOOT is enabled");
+                BUILDER.comment("Also makes enchanted fished treasure have weaker enchants (level 5 enchants) and excludes it from REPLACE_ENCHANTED_LOOT");
+                BUILDER.comment("Example: Enchanted bows and fishing rods will now commonly have Power I or Lure I respectively");
+                BUILDER.comment("We recommend enabling this if used Rechanted with Tide/Tide 2.0, otherwise players are showered in books when using Luck of the Sea");
                 NERF_FISHING_LOOT = BUILDER.translation("config.rechanted.nerf_fishing_loot.title")
-                                .define("nerf_fishing_loot", true);
+                                .define("nerf_fishing_loot", false);
                 BUILDER.comment("Chance for replaced world loot books to become a random gem instead.");
                 BUILDER.comment("Set to 0 to disable. Gems from this roll are uniform across all mod gems.");
                 WORLD_LOOT_GEM_DROP_CHANCE = BUILDER.translation("config.rechanted.world_loot_gem_drop_chance.title")
