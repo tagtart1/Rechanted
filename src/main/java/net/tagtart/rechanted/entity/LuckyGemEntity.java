@@ -14,6 +14,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.ChatFormatting;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -236,6 +238,17 @@ public class LuckyGemEntity extends Entity implements ItemSupplier {
             }
             this.level().addFreshEntity(rewardEntity);
         }
+
+        // Give user 7 minutes of luck 7
+        // Almost shipped 1.0 without this obvious feature lol
+        this.getOwnerPlayer().addEffect(new MobEffectInstance(
+                MobEffects.LUCK,
+                8400,
+                6,
+                false,
+                true,
+                true
+        ));
     }
 
     private void spawnPhaseTrailParticles(double x, double y, double z, Vec3 velocity, FlightPhase phase) {
