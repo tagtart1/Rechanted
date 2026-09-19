@@ -307,9 +307,9 @@ public class RechantedCommonConfigs {
                                 "Minimum and maximum amount of xp orbs this tier provides when put into a grindstone",
                                 "Make sure min is less than max, or problems may occur");
                 RARITY_1_GRINDSTONE_XP_MIN = BUILDER.translation("config.rechanted.simple.grindstone_xp_min.title")
-                                .defineInRange("grindstone_xp_min", 3, 0, Integer.MAX_VALUE);
+                                .defineInRange("grindstone_xp_min", 7, 0, Integer.MAX_VALUE);
                 RARITY_1_GRINDSTONE_XP_MAX = BUILDER.translation("config.rechanted.simple.grindstone_xp_max.title")
-                                .defineInRange("grindstone_xp_max", 7, 0, Integer.MAX_VALUE);
+                                .defineInRange("grindstone_xp_max", 20, 0, Integer.MAX_VALUE);
                 BUILDER.comment(
                                 "List of potential enchantments with weights, levels, and per-level weights.",
                                 "Format: <enchantment>|<weight>|<level-range>|<level-weights>",
@@ -374,9 +374,9 @@ public class RechantedCommonConfigs {
                                 .translation("config.rechanted.unique.bonus_item_rare_gem_pool_weight.title")
                                 .defineInRange("bonus_item_rare_gem_pool_weight", 12, 0, Integer.MAX_VALUE);
                 RARITY_2_GRINDSTONE_XP_MIN = BUILDER.translation("config.rechanted.unique.grindstone_xp_min.title")
-                                .defineInRange("grindstone_xp_min", 5, 0, Integer.MAX_VALUE);
+                                .defineInRange("grindstone_xp_min", 10, 0, Integer.MAX_VALUE);
                 RARITY_2_GRINDSTONE_XP_MAX = BUILDER.translation("config.rechanted.unique.grindstone_xp_max.title")
-                                .defineInRange("grindstone_xp_max", 10, 0, Integer.MAX_VALUE);
+                                .defineInRange("grindstone_xp_max", 30, 0, Integer.MAX_VALUE);
                 ArrayList<String> rarity_2_default_enchantments = new ArrayList<>();
                 rarity_2_default_enchantments.add("minecraft:projectile_protection|2|2-4|2,1,1");
                 rarity_2_default_enchantments.add("minecraft:fire_protection|2|1-4|2,2,1,1");
@@ -437,9 +437,9 @@ public class RechantedCommonConfigs {
                                 .translation("config.rechanted.elite.bonus_item_rare_gem_pool_weight.title")
                                 .defineInRange("bonus_item_rare_gem_pool_weight", 20, 0, Integer.MAX_VALUE);
                 RARITY_3_GRINDSTONE_XP_MIN = BUILDER.translation("config.rechanted.elite.grindstone_xp_min.title")
-                                .defineInRange("grindstone_xp_min", 10, 0, Integer.MAX_VALUE);
+                                .defineInRange("grindstone_xp_min", 50, 0, Integer.MAX_VALUE);
                 RARITY_3_GRINDSTONE_XP_MAX = BUILDER.translation("config.rechanted.elite.grindstone_xp_max.title")
-                                .defineInRange("grindstone_xp_max", 20, 0, Integer.MAX_VALUE);
+                                .defineInRange("grindstone_xp_max", 100, 0, Integer.MAX_VALUE);
                 ArrayList<String> rarity_3_default_enchantments = new ArrayList<>();
                 rarity_3_default_enchantments.add("rechanted:hells_fury|3|1-4|3,3,2,1");
                 rarity_3_default_enchantments.add("rechanted:voids_bane|3|1-4|3,3,2,1");
@@ -504,9 +504,9 @@ public class RechantedCommonConfigs {
                                 .translation("config.rechanted.ultimate.bonus_item_rare_gem_pool_weight.title")
                                 .defineInRange("bonus_item_rare_gem_pool_weight", 20, 0, Integer.MAX_VALUE);
                 RARITY_4_GRINDSTONE_XP_MIN = BUILDER.translation("config.rechanted.ultimate.grindstone_xp_min.title")
-                                .defineInRange("grindstone_xp_min", 20, 0, Integer.MAX_VALUE);
+                                .defineInRange("grindstone_xp_min", 100, 0, Integer.MAX_VALUE);
                 RARITY_4_GRINDSTONE_XP_MAX = BUILDER.translation("config.rechanted.ultimate.grindstone_xp_max.title")
-                                .defineInRange("grindstone_xp_max", 50, 0, Integer.MAX_VALUE);
+                                .defineInRange("grindstone_xp_max", 150, 0, Integer.MAX_VALUE);
                 ArrayList<String> rarity_4_default_enchantments = new ArrayList<>();
                 rarity_4_default_enchantments.add("minecraft:swift_sneak|2|1-3|3,2,1");
                 rarity_4_default_enchantments.add("minecraft:luck_of_the_sea|2|1-3|4,2,1");
@@ -571,9 +571,9 @@ public class RechantedCommonConfigs {
                                 .translation("config.rechanted.legendary.bonus_item_rare_gem_pool_weight.title")
                                 .defineInRange("bonus_item_rare_gem_pool_weight", 20, 0, Integer.MAX_VALUE);
                 RARITY_5_GRINDSTONE_XP_MIN = BUILDER.translation("config.rechanted.legendary.grindstone_xp_min.title")
-                                .defineInRange("grindstone_xp_min", 75, 0, Integer.MAX_VALUE);
+                                .defineInRange("grindstone_xp_min", 150, 0, Integer.MAX_VALUE);
                 RARITY_5_GRINDSTONE_XP_MAX = BUILDER.translation("config.rechanted.legendary.grindstone_xp_max.title")
-                                .defineInRange("grindstone_xp_max", 150, 0, Integer.MAX_VALUE);
+                                .defineInRange("grindstone_xp_max", 250, 0, Integer.MAX_VALUE);
                 ArrayList<String> rarity_5_default_enchantments = new ArrayList<>();
                 rarity_5_default_enchantments.add("rechanted:inquisitive|3|1-4|5,4,2,1");
                 rarity_5_default_enchantments.add("rechanted:thunder_strike|3|1-4|5,3,2,1");
@@ -674,7 +674,7 @@ public class RechantedCommonConfigs {
 
                 BUILDER.comment("Without this enabled, fishing loot becomes an overpowered source for enchanted books when REPLACE_ENCHANTED_LOOT is enabled");
                 BUILDER.comment("Also makes enchanted fished treasure have weaker enchants (level 5 enchants) and excludes it from REPLACE_ENCHANTED_LOOT");
-                BUILDER.comment("Example: Enchanted bows and fishing rods will now commonly have Power I or Lure I respectively");
+                BUILDER.comment("Example: Enchanted bows and fishing rods will now commonly have Power I or Lure I respectively but still roll with Unbreaking I");
                 BUILDER.comment("We recommend enabling this if using Rechanted with Tide/Tide 2.0, otherwise players are showered in books when using Luck of the Sea");
                 NERF_FISHING_LOOT = BUILDER.translation("config.rechanted.nerf_fishing_loot.title")
                                 .define("nerf_fishing_loot", false);
