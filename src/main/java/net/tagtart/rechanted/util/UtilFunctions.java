@@ -233,7 +233,11 @@ public class UtilFunctions {
         EnchantmentPoolEntry randomEnchantment = bookRarityProperties.getRandomEnchantmentWeighted();
         int enchantmentLevel = randomEnchantment.getRandomEnchantLevelWeighted();
 
-        int successRate = random.nextInt(bookRarityProperties.minSuccess, bookRarityProperties.maxSuccess + 1);
+
+        int successRate = Math.min(100, bookRarityProperties.maxSuccess);
+        if (bookRarityProperties.minSuccess < bookRarityProperties.maxSuccess) {
+            successRate = random.nextInt(bookRarityProperties.minSuccess, bookRarityProperties.maxSuccess + 1);
+        }
 
         Holder.Reference<Enchantment> enchantment = UtilFunctions.getEnchantmentReferenceIfPresent(
                 registryAccess,
