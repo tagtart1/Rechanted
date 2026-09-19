@@ -675,7 +675,7 @@ public class RechantedCommonConfigs {
                 BUILDER.comment("Without this enabled, fishing loot becomes an overpowered source for enchanted books when REPLACE_ENCHANTED_LOOT is enabled");
                 BUILDER.comment("Also makes enchanted fished treasure have weaker enchants (level 5 enchants) and excludes it from REPLACE_ENCHANTED_LOOT");
                 BUILDER.comment("Example: Enchanted bows and fishing rods will now commonly have Power I or Lure I respectively");
-                BUILDER.comment("We recommend enabling this if used Rechanted with Tide/Tide 2.0, otherwise players are showered in books when using Luck of the Sea");
+                BUILDER.comment("We recommend enabling this if using Rechanted with Tide/Tide 2.0, otherwise players are showered in books when using Luck of the Sea");
                 NERF_FISHING_LOOT = BUILDER.translation("config.rechanted.nerf_fishing_loot.title")
                                 .define("nerf_fishing_loot", false);
                 BUILDER.comment("Chance for replaced world loot books to become a random gem instead.");
