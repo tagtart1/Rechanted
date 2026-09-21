@@ -180,8 +180,7 @@ public class UtilFunctions {
                 upperBound = Integer.parseInt(range[1]);
             }
 
-            if (enchantmentLevel >= lowerBound &&enchantmentLevel <= upperBound && Objects.equals(parts[0], enchantmentRaw))
-            {
+            if (enchantmentLevel >= lowerBound && enchantmentLevel <= upperBound && Objects.equals(parts[0], enchantmentRaw)) {
                 return true;
             }
         }
@@ -225,8 +224,7 @@ public class UtilFunctions {
         BookRarityProperties bookRarityProperties;
         if (forcedRarity == -1) {
             bookRarityProperties = BookRarityProperties.getRandomRarityWeighted();
-        }
-        else {
+        } else {
             forcedRarity = Math.clamp(forcedRarity, 0, BookRarityProperties.getAllProperties().length - 1);
             bookRarityProperties = BookRarityProperties.getAllProperties()[forcedRarity];
         }
@@ -295,8 +293,31 @@ public class UtilFunctions {
         return new Pair<>(states.toArray(BlockState[]::new), positions.toArray(BlockPos[]::new));
     }
 
+    // The player.totalExperience value isn't trustworthy. It desyncs if levels are added/removed directly
+    // via commands or using an anvil. So, we calculate it manually always.
+    // Formula from:
+    // https://minecraft.wiki/w/Experience#:~:text=using%20the%20equations%3A-,Total%20experience,-%3D
+    public static int getPlayerExperiencePoints(Player player) {
+        int level = Math.max(player.experienceLevel, 0);
+
+        int totalEXPtoLevel = 0;
+        if (level <= 16) { // Levels 0 - 16
+            totalEXPtoLevel = (level * level) + 6 * level;
+        }
+        else if (level <= 31 ) { // Levels 17 - 31
+            totalEXPtoLevel = (int)(2.5 * (level * level) - 40.5 * level + 360.0);
+        }
+        else {
+            totalEXPtoLevel = (int)(4.5 * (level * level) - 162.5 * level + 2220);
+        }
+
+        int xpBarFillAmount = (int)(player.experienceProgress * player.getXpNeededForNextLevel());
+
+        return totalEXPtoLevel + xpBarFillAmount;
+    }
+
     public static boolean playerMeetsExpRequirement(BookRarityProperties bookProperties, Player player) {
-        return player.totalExperience >= bookProperties.requiredExp;
+        return getPlayerExperiencePoints(player) >= bookProperties.requiredExp;
     }
 
     // Note that is checks if the blocks match the required type for safety.
@@ -545,7 +566,7 @@ public class UtilFunctions {
     }
 
     // Mapping of Roman numerals to values.
-    // Can't lie this entirely 100% copy-pasted from ChatGPT because I'm a slob
+    // Can't lie this entirely 100% copy-pasted from ChatGPT because I'm a slob <--- (shame on you, me from 2024! wtf!! I'm a changed man now I swear)
     private static final int[] ROMAN_VALUES = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
     private static final String[] ROMAN_SYMBOLS = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
     public static String intToRoman(int num) {

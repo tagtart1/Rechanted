@@ -270,7 +270,7 @@ public class RechantedTableScreen extends AbstractContainerScreen<RechantedTable
                         Minecraft.getInstance().player.playSound(SoundEvents.LODESTONE_COMPASS_LOCK, 0.7F, 1.0f);
 
                         String translatedMsg = Component.translatable("message.rechanted.insufficient_exp").getString();
-                        String argsAdded = String.format(translatedMsg, player.totalExperience, properties.requiredExp);
+                        String argsAdded = String.format(translatedMsg, UtilFunctions.getPlayerExperiencePoints(player), properties.requiredExp);
                         player.sendSystemMessage(Component.literal(argsAdded).withStyle(ChatFormatting.RED));
 
                         break;
@@ -332,7 +332,7 @@ public class RechantedTableScreen extends AbstractContainerScreen<RechantedTable
         // Experience requirement
         Component experienceTitle = Component.translatable("tooltip.rechanted.enchantment_table.cost").withStyle(MID_GRAY_COLOR_STYLE);
         ChatFormatting expReqMetColor = expRequirementMet(properties) ? ChatFormatting.GREEN : ChatFormatting.RED;
-        Component experienceFrac = Component.literal(playerInventory.player.totalExperience + " / " + properties.requiredExp + " EXP").withStyle(expReqMetColor);
+        Component experienceFrac = Component.literal(UtilFunctions.getPlayerExperiencePoints(playerInventory.player) + " / " + properties.requiredExp + " EXP").withStyle(expReqMetColor);
         tooltipLines.add(experienceTitle.copy().append(":"));
         tooltipLines.add(grayHyphen.copy().append(experienceFrac));
 

@@ -158,7 +158,8 @@ public record PlayerPurchaseEnchantedBookC2SPayload(int bookPropertiesIndex, Blo
                 }
 
                 // Remove EXP and Lapis from player.
-                player.giveExperiencePoints(-Math.min(player.totalExperience, bookProperties.requiredExp));
+                //player.giveExperiencePoints(-Math.min(player.totalExperience, bookProperties.requiredExp));
+                player.giveExperiencePoints(-Math.min(UtilFunctions.getPlayerExperiencePoints(player), bookProperties.requiredExp));
                 enchTableEntity.getItemHandlerLapisStack().shrink(bookProperties.requiredLapis);
 
                 ItemStack toGive = new ItemStack(ModItems.RECHANTED_BOOK.get());
