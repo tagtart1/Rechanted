@@ -20,6 +20,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.tagtart.rechanted.Rechanted;
 import net.tagtart.rechanted.block.entity.RechantedTableBlockEntity;
+import net.tagtart.rechanted.config.RechantedCommonConfigs;
 import net.tagtart.rechanted.networking.data.OpenEnchantTableScreenC2SPayload;
 import net.tagtart.rechanted.networking.data.PlayerPurchaseEnchantedBookC2SPayload;
 import net.tagtart.rechanted.util.BookRarityProperties;
@@ -62,6 +63,8 @@ public class RechantedTableScreen extends AbstractContainerScreen<RechantedTable
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(Rechanted.MOD_ID, "textures/gui/enchantment_table.png");
 
+    private static final ResourceLocation GREYSCALE_TEXTURE = ResourceLocation.fromNamespaceAndPath(Rechanted.MOD_ID, "textures/gui/enchantment_table_greyscale.png");
+
     private ArrayList<HoverableWithTooltipGuiRenderable> hoverables;
 
     public Inventory playerInventory;
@@ -72,6 +75,7 @@ public class RechantedTableScreen extends AbstractContainerScreen<RechantedTable
     private float timeElapsed = 0.0f;
     private float bonusEarnedEffectVCoord = 1000.0f;
     private float lightBonusEarnedFlashAmount = 0.0f;
+    private static float lineEffectSpeed = 0.23f;
 
     private final float REQ_CHECK_RATE = 0.2f;  // How often shader will check if requirements are met to display effect.
     private float timeSinceLastReqCheck = 0.0f; // Time since last requirement check was made for shader effect.
@@ -80,6 +84,10 @@ public class RechantedTableScreen extends AbstractContainerScreen<RechantedTable
     public RechantedTableScreen(RechantedTableMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
         playerInventory = pPlayerInventory;
+    }
+
+    private static ResourceLocation getEnabledGUITexture() {
+        return (RechantedCommonConfigs.USE_GREYSCALE_GUI.get()) ? GREYSCALE_TEXTURE : TEXTURE;
     }
 
     @Override
@@ -130,12 +138,13 @@ public class RechantedTableScreen extends AbstractContainerScreen<RechantedTable
     protected void renderBg(GuiGraphics guiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
 
         // Normal blitting of GUI is first. Custom shader effect is applied on top.
-        guiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
+        guiGraphics.blit(getEnabledGUITexture(), this.leftPos, this.topPos, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
         renderBGEffect(guiGraphics, pPartialTick, pMouseX, pMouseY);
     }
 
     protected void renderBGEffect(GuiGraphics guiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
-        timeElapsed += pPartialTick;
+        timeElapsed += lineEffectSpeed * pPartialTick;
+
         timeSinceLastReqCheck += pPartialTick;
 
         // If a bonus item is earned, this will act as a flag to retain most recently met requirements instead

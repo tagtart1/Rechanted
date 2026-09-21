@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.SimpleMenuProvider;
@@ -18,6 +19,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.tagtart.rechanted.Rechanted;
 import net.tagtart.rechanted.block.entity.RechantedTableBlockEntity;
+import net.tagtart.rechanted.config.RechantedCommonConfigs;
 import net.tagtart.rechanted.networking.data.OpenEnchantTableScreenC2SPayload;
 import net.tagtart.rechanted.util.BookRarityProperties;
 import net.tagtart.rechanted.util.ClientUtils;
@@ -33,6 +35,7 @@ import java.util.List;
 public class RechantedTablePoolDisplayScreen extends AbstractContainerScreen<RechantedTablePoolDisplayMenu> {
 
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Rechanted.MOD_ID, "textures/gui/enchant_table_loot_pool_screen.png");
+    private static final ResourceLocation GREYSCALE_TEXTURE = ResourceLocation.fromNamespaceAndPath(Rechanted.MOD_ID, "textures/gui/enchant_table_loot_pool_screen_greyscale.png");
 
     private static final ResourceLocation LEFT_ARROW_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechanted.MOD_ID, "textures/gui/arrow_button_left.png");
     private static final ResourceLocation RIGHT_ARROW_LOCATION = ResourceLocation.fromNamespaceAndPath(Rechanted.MOD_ID, "textures/gui/arrow_button_right.png");
@@ -78,6 +81,7 @@ public class RechantedTablePoolDisplayScreen extends AbstractContainerScreen<Rec
     private double maxScrollPosition = 0.0f;
     private int maxEntryOffset = 0;
     private boolean draggingScrollbar = false;
+    private float lineEffectSpeed = 0.23f;
 
     private int scissorMinX;
     private int scissorMaxX;
@@ -89,6 +93,10 @@ public class RechantedTablePoolDisplayScreen extends AbstractContainerScreen<Rec
     public RechantedTablePoolDisplayScreen(RechantedTablePoolDisplayMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
         playerInventory = pPlayerInventory;
+    }
+
+    private static ResourceLocation getEnabledGUITexture() {
+        return (RechantedCommonConfigs.USE_GREYSCALE_GUI.get()) ? GREYSCALE_TEXTURE : TEXTURE;
     }
 
     @Override
@@ -165,10 +173,10 @@ public class RechantedTablePoolDisplayScreen extends AbstractContainerScreen<Rec
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
-        timeElapsed += pPartialTick;
+        timeElapsed += lineEffectSpeed * pPartialTick;
 
         // Main GUI texture + shader effect on top of it.
-        guiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
+        guiGraphics.blit(getEnabledGUITexture(), this.leftPos, this.topPos, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
 
         // Scroll-bar; if all content fits within visible section, display "off" version of texture
         if (maxEntryOffset - entry_base_posY < VISIBLE_HEIGHT) {

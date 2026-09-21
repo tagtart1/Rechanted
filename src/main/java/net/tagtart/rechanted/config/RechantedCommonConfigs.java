@@ -176,6 +176,9 @@ public class RechantedCommonConfigs {
         public static final ModConfigSpec.DoubleValue FORTUNE_2_CHANCE;
         public static final ModConfigSpec.DoubleValue FORTUNE_3_CHANCE;
 
+        // Misc. settings
+        public static final ModConfigSpec.ConfigValue<? extends Boolean> USE_GREYSCALE_GUI;
+
         static {
 
                 // Simple rarity builder default config
@@ -722,6 +725,14 @@ public class RechantedCommonConfigs {
                                 .defineInRange("fortune_3_chance", 0.65, 0.0, 1.0);
 
                 BUILDER.pop();
+
+                BUILDER.pop();
+
+                BUILDER.comment("Random settings");
+                BUILDER.push("Miscellaneous Settings");
+                USE_GREYSCALE_GUI = BUILDER.translation("config.rechanted.use_greyscale_gui.title")
+                        .comment("Enabled greyscale variants of the enchanting table and loot pool gui")
+                        .define("use_greyscale_gui", false);
 
                 SPEC = BUILDER.build();
         }

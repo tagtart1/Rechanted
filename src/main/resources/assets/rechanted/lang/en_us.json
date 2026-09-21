@@ -520,6 +520,8 @@
   "config.rechanted.fortune_3_chance.title": "Fortune III Chance",
   "config.rechanted.fortune_3_chance.tooltip": "Chance for Fortune III to double drops",
 
+  "config.rechanted.use_greyscale_gui.title": "Replaces Enchanting Table and Loot Pool GUIs with greyscale variants",
+
   "effect.rechanted.berserk": "Berserk",
   "effect.rechanted.berserk_cooldown": "Berserk Cooldown",
 
